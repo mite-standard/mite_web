@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import contextlib
+import json
 import os
 from importlib import metadata
 from pathlib import Path
@@ -42,6 +43,8 @@ def create_app(test_config: dict | None = None) -> Flask:
     """
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app, test_config)
+
+    # TODO(MMZ 21.4.24): check if data repository has been created
 
     create_instance_path(app)
     register_context_processors(app)
@@ -67,6 +70,17 @@ def configure_app(app: Flask, test_config: dict | None = None) -> Flask:
     return app
 
 
+def verify_data() -> None:
+    """Verifies that mite_data was downloaded and made available
+
+    Raises:
+        RuntimeError: Data directory not found or empty
+    """
+    dirpath = Path(__file__).parent.joinpath("data/data_html")
+    if not dirpath.exists() or not list(dirpath.iterdir()):
+        raise RuntimeError
+
+
 def create_instance_path(app: Flask):
     """Create the instance path for the Flask app if not available (for testing purposes).
 
@@ -86,4 +100,10 @@ def register_context_processors(app: Flask):
 
     @app.context_processor
     def metadata_mite_web() -> dict:
-        return {"version_mite_web": metadata.version("mite_web")}
+        with open(Path(__file__).parent.joinpath("data/version.json")) as infile:
+            content = json.load(infile)
+
+        return {
+            "version_mite_web": metadata.version("mite_web"),
+            "version_mite_data": content.get("version_mite_data"),
+        }

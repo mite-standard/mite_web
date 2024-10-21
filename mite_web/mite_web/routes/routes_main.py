@@ -28,9 +28,29 @@ from mite_web.routes import bp
 
 @bp.route("/")
 def index() -> str:
-    """Render the index (landing) page of fermo_gui
+    """Render the index page of mite_web
 
     Returns:
         The index.html page as string.
     """
     return render_template("index.html")
+
+
+@bp.route("/repository/")
+def repository() -> str:
+    """Render the repository page of mite_web
+
+    Returns:
+        The repository.html page as string.
+    """
+    return render_template("repository.html")
+
+
+@bp.route("/about/")
+def about() -> str:
+    """Render the about page of mite_web
+
+    Returns:
+        The repository.html page as string.
+    """
+    return render_template("about.html")
