@@ -1,4 +1,5 @@
 # Config
+mite_web/mite_web/data
 config.py
 .idea
 .ruff-cache
