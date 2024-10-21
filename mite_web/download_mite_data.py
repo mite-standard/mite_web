@@ -50,7 +50,7 @@ if response.status_code == 200:
     print(f"Downloaded mite_data record version {version} successfully!")
 
     with open(version_path, "w") as f:
-        f.write(json.dumps({"version": f"{version}"}))
+        f.write(json.dumps({"version_mite_data": f"{version}"}))
 else:
     raise Exception(f"Error downloading 'mite_data' record: {response.status_code}")
 
