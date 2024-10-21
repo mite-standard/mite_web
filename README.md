@@ -12,27 +12,36 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 ## Installation
 
-### For users
-
-- Install `python3`
-- Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
-- Download or clone this repository
-- Run `hatch -v env create`
-
 ### For developers
 
 - Install `python3`
 - Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
 - Download or clone this repository
-- Run `hatch -v env create dev`. This will download and install the appropriate Python version and any required packages
-- Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
+- Run `hatch -v env create`. This will download and install the appropriate Python version and any required packages
+- Run `hatch run pre-commit install`. This will set up `pre-commit`
+- Create a `config.py` file with the content indicated below
 
 ## Quick Start
 
-### For users
-
-- `TBA`
-
 ### For developers
 
-- `TBA`
+Run in dev mode:
+
+- Move into the `mite_web` directory and run `hatch run flask --app mite_web run --debug`
+
+Run as Docker application:
+
+## Config files
+
+For production, a config file must be added to the `mite_web` directory (next to the `pyproject.toml` file)
+
+```python
+SECRET_KEY: str
+MAIL_USERNAME: str
+MAIL_PASSWORD: str
+MAIL_DEFAULT_SENDER: str
+MAIL_SERVER: str
+MAIL_PORT: int
+MAIL_USE_TLS: bool
+MAIL_USE_SSL: bool
+```

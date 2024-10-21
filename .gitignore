@@ -1,4 +1,5 @@
 # Config
+config.py
 .idea
 .ruff-cache
 
