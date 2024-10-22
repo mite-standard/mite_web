@@ -42,3 +42,8 @@ a:not(.footer a) {
 .custom-bold {
     font-weight: bold;
 }
+
+.btn-primary {
+    background-color: rgb(var(--bs-primary-rgb));
+    border-color: rgb(var(--bs-primary-rgb));
+}
