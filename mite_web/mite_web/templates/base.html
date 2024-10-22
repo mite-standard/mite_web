@@ -12,8 +12,8 @@
   <body class="d-flex flex-column vh-100">
     {% block header%}
       <header>
-        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary p-1">
-          <div class="container-fluid px-5" style="font-size: 18px;">
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark navbar-custom p-1">
+          <div class="container-fluid px-5 navbar-font-size">
             <a class="navbar-brand" href="{{ url_for('routes.index') }}">
               <img src="{{ url_for('static', filename='/images/mite_logo_alt.svg') }}"
                    alt="MITE alt logo" width="150" height="40">
@@ -31,12 +31,15 @@
                 <li class="nav-item">
                   <a class="nav-link" href="{{ url_for('routes.repository') }}">Repository</a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('routes.about') }}">About</a>
+                </li>
               </ul>
-              <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+              <ul class="navbar-nav flex-row ml-auto d-none d-md-flex">
                 <li class="nav-item">
                   <a class="nav-link" href="https://github.com/mite-standard" target="_blank"
                      rel="noopener" aria-label="GitHub MITE-Standard Organisation Page">
-                    <img src="{{ url_for('static', filename='/images/github.svg') }}" alt="GitHub Icon">
+                    <img src="{{ url_for('static', filename='/images/github.svg') }}" alt="GitHub Icon" class="icon">
                   </a>
                 </li>
               </ul>
@@ -54,10 +57,10 @@
       <footer class="container-fluid bg-light text-muted py-3 border-top">
         <div class="row">
           <div class="col-md-12">
-            <div class="d-flex flex-column h-100 text-center">
+            <div class="d-flex flex-column text-center">
               <div class="mt-auto px-5">
-                <h6 class="text-uppercase fw-bold mb-1">MITE Website v{{version_mite_web}} displaying MITE Data v{{version_mite_data}}</h6>
-                <p class="mb-0">© 2024 - present Mitja M. Zdouc <a class="text-decoration-none" style="color: #116789" target="_blank" href="{{ url_for('routes.about') }}">et al.</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="text-decoration-none" style="color: #116789" target="_blank">MIT License.</a> If you have found this software useful, please <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="text-decoration-none" style="color: #116789" target="_blank">cite us.</a></p>
+                <h6 class="text-uppercase custom-bold mb-1">MITE Website v{{version_mite_web}} displaying MITE Data v{{version_mite_data}}</h6>
+                <p class="mb-0">© 2024 - present Mitja M. Zdouc <a class="footer-link" target="_blank" href="{{ url_for('routes.about') }}">et al.</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="footer-link" target="_blank">MIT License.</a> If you have found this software useful, please <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="footer-link" target="_blank">cite us.</a></p>
               </div>
             </div>
           </div>

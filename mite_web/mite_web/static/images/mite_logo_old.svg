@@ -8,7 +8,7 @@
    version="1.1"
    id="svg2210"
    inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
-   sodipodi:docname="mite_logo.svg"
+   sodipodi:docname="MITE.svg"
    enable-background="new"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -27,15 +27,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="236.3757"
-     inkscape:cy="90.408653"
+     inkscape:cx="235.87062"
+     inkscape:cy="89.903577"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1016"
+     inkscape:window-height="1043"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="1080"
      inkscape:window-maximized="1"
      inkscape:showpageshadow="0"
      inkscape:pagecheckerboard="1"
@@ -65,7 +65,7 @@
        inkscape:export-ydpi="112">
       <path
          d="m 1046.1135,191.66382 h -36.2893 v -50.80497 h 36.2893 v 9.84994 h -24.4397 v 10.2943 h 19.2555 v 9.5537 h -19.2555 v 11.25709 h 24.4397 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:69.9071px;line-height:1;font-family:UnYetgul;-inkscape-font-specification:UnYetgul;letter-spacing:0px;word-spacing:0px;fill:#116789;fill-opacity:1;stroke:none;stroke-width:1.1109"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:69.9071px;line-height:1;font-family:UnYetgul;-inkscape-font-specification:UnYetgul;letter-spacing:0px;word-spacing:0px;fill:#0e75bc;fill-opacity:1;stroke:none;stroke-width:1.1109"
          id="path15856"
          inkscape:connector-curvature="0" />
       <g
@@ -75,7 +75,7 @@
            d="m 54.668317,51.549 -0.457,-7.546 c -0.08,-1.182 -0.133,-2.148 -0.133,-3.76 h -0.027 c -0.215,1.584 -0.349,2.523 -0.645,3.518 l -2.283,7.788 h -4.082 l -1.986,-7.573 c -0.27,-1.047 -0.485,-2.094 -0.618,-3.76 h -0.027 c 0,1.666 0,2.686 -0.081,3.867 l -0.375,7.466 h -4.834 l 1.827,-18.718 h 5.881 l 1.826,7.412 c 0.27,1.047 0.457,2.041 0.618,3.545 h 0.027 c 0.161,-1.424 0.375,-2.337 0.726,-3.813 l 1.907,-7.144 h 5.693 l 1.716,18.718 h -4.673"
            id="path4284"
            inkscape:connector-curvature="0"
-           style="fill:#116789;fill-opacity:1" />
+           style="fill:#0e75bc" />
       </g>
       <g
          transform="matrix(2.7142302,0,0,2.7142302,772.25614,51.747967)"
@@ -83,17 +83,17 @@
         <polyline
            points="65.127,51.549 65.127,32.907 69.8,32.477 69.8,51.549 65.127,51.549   "
            id="polyline4290"
-           style="fill:#116789;fill-opacity:1" />
+           style="fill:#0e75bc" />
       </g>
       <g
          id="g15884">
         <polyline
-           style="fill:#b1b695;fill-opacity:1"
+           style="fill:#818285;fill-opacity:1"
            id="polyline4332"
            points="57.223,57.832 50.473,53.873 50.473,55.701 41.777,55.701 42.554,60.201 50.473,60.201    50.473,61.792 57.223,57.832  "
            transform="matrix(2.7142302,0,0,2.7142302,851.36676,-12.717736)" />
         <polyline
-           style="fill:#116789;fill-opacity:1"
+           style="fill:#0e75bc"
            id="polyline4306-8"
            points="89.766,51.549 89.766,37.907 94.438,37.477 94.438,51.549 89.766,51.549    "
            transform="matrix(2.7142302,0,0,2.4926339,734.97559,63.171037)" />

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="250"
+   height="250"
+   viewBox="0 0 66.145832 66.145835"
+   version="1.1"
+   id="svg2210"
+   inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
+   sodipodi:docname="MITE_square.svg"
+   style="enable-background:new"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2204" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="71.215754"
+     inkscape:cy="134.60283"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     units="px"
+     inkscape:pagecheckerboard="true"
+     inkscape:snap-center="true"
+     inkscape:snap-page="true"
+     inkscape:showpageshadow="0"
+     inkscape:deskcolor="#505050" />
+  <metadata
+     id="metadata2207">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="opacity:1"
+     transform="translate(0,-230.85415)">
+    <rect
+       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:2.22900009;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect869"
+       width="66.145836"
+       height="66.145836"
+       x="0"
+       y="230.85416" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path15856"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:69.9071px;line-height:1;font-family:UnYetgul;-inkscape-font-specification:UnYetgul;letter-spacing:0px;word-spacing:0px;fill:#116789;fill-opacity:1;stroke:none;stroke-width:0.691143"
+       d="M 60.739233,295.87594 H 40.975601 v -30.19012 h 19.763632 v 5.85319 H 48.694114 v 6.11724 h 8.668275 v 5.67715 h -8.668275 v 6.68936 h 12.045119 z"
+       sodipodi:nodetypes="ccccccccccccc" />
+    <g
+       id="g4280"
+       transform="matrix(1.767978,0,0,1.6128919,-64.592497,179.02399)">
+      <path
+         style="fill:#116789;fill-opacity:1"
+         inkscape:connector-curvature="0"
+         id="path4284"
+         d="m 54.668317,51.549 -0.457,-7.546 c -0.08,-1.182 -0.133,-2.148 -0.133,-3.76 h -0.027 c -0.215,1.584 -0.349,2.523 -0.645,3.518 l -2.283,7.788 h -4.082 l -1.986,-7.573 c -0.27,-1.047 -0.485,-2.094 -0.618,-3.76 h -0.027 c 0,1.666 0,2.686 -0.081,3.867 l -0.375,7.466 h -4.834 l 1.827,-18.718 h 5.881 l 1.826,7.412 c 0.27,1.047 0.457,2.041 0.618,3.545 h 0.027 c 0.161,-1.424 0.375,-2.337 0.726,-3.813 l 1.907,-7.144 h 5.693 l 1.716,18.718 h -4.673" />
+    </g>
+    <g
+       id="g4286"
+       transform="matrix(1.767978,0,0,1.6128919,-64.751208,179.02399)">
+      <polyline
+         style="fill:#116789;fill-opacity:1"
+         id="polyline4290"
+         points="65.127,51.549 65.127,32.907 69.8,32.477 69.8,51.549 65.127,51.549   " />
+    </g>
+    <polyline
+       style="fill:#b1b695;fill-opacity:1"
+       id="polyline4332"
+       points="57.223,57.832 50.473,53.873 50.473,55.701 41.777,55.701 42.554,60.201 50.473,60.201    50.473,61.792 57.223,57.832  "
+       transform="matrix(1.8511273,0,0,1.5762087,-72.427116,178.76376)" />
+    <polyline
+       style="fill:#116789;fill-opacity:1"
+       id="polyline4306-8"
+       points="89.766,51.549 89.766,37.907 94.438,37.477 94.438,51.549 89.766,51.549    "
+       transform="matrix(1.767978,0,0,1.338764,-143.63062,226.864)" />
+  </g>
+</svg>
