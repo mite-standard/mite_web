@@ -64,3 +64,13 @@ def about() -> str:
         The repository.html page as string.
     """
     return render_template("about.html")
+
+
+@bp.route("/contact/")
+def contact() -> str:
+    """Render the contact page of mite_web
+
+    Returns:
+        The contact.html page as string.
+    """
+    return render_template("contact.html")
