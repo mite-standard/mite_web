@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Hello, About!</h1>
+
+<div class="container-fluid mx-5 mt-5">
+    <div class="row d-flex align-items-center">
+        <div class="col-auto">
+            <h1 class="fw-semibold lh-2">About</h1>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-auto">
+            <img class="d-none d-sm-block mx-auto my-3" style="width: 35vw; height: auto;" src="{{ url_for('static', filename='images/workflow.svg') }}" alt="MITE workflow" >
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}

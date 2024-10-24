@@ -46,6 +46,16 @@ def repository() -> str:
     return render_template("repository.html")
 
 
+@bp.route("/submission/")
+def submission() -> str:
+    """Render the submission page of mite_web
+
+    Returns:
+        The submission.html page as string.
+    """
+    return render_template("submission.html")
+
+
 @bp.route("/about/")
 def about() -> str:
     """Render the about page of mite_web
