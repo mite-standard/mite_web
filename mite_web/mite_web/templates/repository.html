@@ -1,5 +1,36 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Hello, Repository!</h1>
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="fw-semibold lh-2">Repository</h1>
+        </div>
+    </div>
+    <table class="my-3" data-toggle="table">
+        <thead>
+            <tr>
+                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
+                <th scope="col" data-sortable="true" data-field="status">Status</th>
+                <th scope="col" data-sortable="true" data-field="reviewed">Reviewed</th>
+                <th scope="col" data-sortable="true" data-field="name">Name</th>
+                <th scope="col" data-sortable="true" data-field="tailoring">Tailoring</th>
+                <th scope="col" data-sortable="false" data-field="description">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in entries.items() %}
+                <tr class="clickable" onclick="window.location='{{ url_for('routes.repository') }}'">
+                    <th width="20%" scope="row">{{ key }}</th>
+                    <td>{{ value.status }}</td>
+                    <td>{{ value.reviewed }}</td>
+                    <td>{{ value.name }}</td>
+                    <td>{{ value.tailoring }}</td>
+                    <td>{{ value.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
 {% endblock %}

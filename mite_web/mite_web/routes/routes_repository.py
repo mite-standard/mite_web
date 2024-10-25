@@ -1,4 +1,4 @@
-"""Routes for main and auxiliary pages.
+"""Routes for repository pages.
 
 Copyright (c) 2024-present Mitja Maximilian Zdouc, PhD
 
@@ -21,46 +21,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import json
+from pathlib import Path
+
 from flask import current_app, render_template
 
 from mite_web.routes import bp
 
 
-@bp.route("/")
-def index() -> str:
-    """Render the index page of mite_web
-
-    Returns:
-        The index.html page as string.
-    """
-    return render_template("index.html")
-
-
-@bp.route("/submission/")
-def submission() -> str:
-    """Render the submission page of mite_web
-
-    Returns:
-        The submission.html page as string.
-    """
-    return render_template("submission.html")
-
-
-@bp.route("/about/")
-def about() -> str:
-    """Render the about page of mite_web
+@bp.route("/repository/")
+def repository() -> str:
+    """Render the repository page of mite_web
 
     Returns:
         The repository.html page as string.
     """
-    return render_template("about.html")
+    with open(Path(__file__).parent.parent.joinpath("data/summary.json")) as infile:
+        summary = json.load(infile)
 
-
-@bp.route("/contact/")
-def contact() -> str:
-    """Render the contact page of mite_web
-
-    Returns:
-        The contact.html page as string.
-    """
-    return render_template("contact.html")
+    return render_template("repository.html", entries=summary.get("entries"))

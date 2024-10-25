@@ -150,14 +150,71 @@ class HtmlJsonManager(BaseModel):
                 )
 
 
+class AuxFileManager(BaseModel):
+    """Prepare auxiliary files for website
+
+    Attributes:
+        src: the location in which the downloaded mite json files are stored
+        target: the location in which the auxiliary files will be stored
+    """
+
+    src: Path = Path(__file__).parent.joinpath("mite_web/data/data")
+    target: Path = Path(__file__).parent.joinpath("mite_web/data/")
+
+    def run(self: Self) -> None:
+        """Call methods for preparation of auxiliary files"""
+        self.prepare_summary()
+
+    def prepare_summary(self: Self) -> None:
+        """Create a summary of mite entries for repository table"""
+        summary = {"entries": {}}
+
+        for entry in self.src.iterdir():
+            with open(entry) as infile:
+                mite_data = json.load(infile)
+
+            reviewer = set()
+            for log in mite_data.get("changelog", {}).get("releases"):
+                for row in log.get("entries"):
+                    reviewer.update(row.get("reviewers"))
+
+            summary["entries"][mite_data.get("accession")] = {
+                "status": True if mite_data.get("status") == "active" else False,
+                "reviewed": True if reviewer != {"BBBBBBBBBBBBBBBBBBBBBBBB"} else False,
+                "name": mite_data.get("enzyme", {}).get("name"),
+                "tailoring": "|".join(
+                    sorted(
+                        {
+                            tailoring
+                            for reaction in mite_data.get("reactions")
+                            for tailoring in reaction.get("tailoring", [])
+                        }
+                    )
+                ),
+                "description": mite_data.get("enzyme", {}).get("description")
+                if not None
+                else "N/A",
+            }
+
+        keys = list(summary.get("entries").keys())
+        keys.sort()
+        summary_sorted = {"entries": {key: summary["entries"][key] for key in keys}}
+
+        with open(self.target.joinpath("summary.json"), "w") as outfile:
+            outfile.write(json.dumps(summary_sorted, indent=2, ensure_ascii=False))
+
+
 def main() -> SystemExit:
     """Prepares mite_data for use in mite_web"""
     try:
         download_manager = DownloadManager()
         download_manager.run()
 
-        manager = HtmlJsonManager()
-        manager.run()
+        json_manager = HtmlJsonManager()
+        json_manager.run()
+
+        aux_manager = AuxFileManager()
+        aux_manager.run()
 
         return sys.exit(0)
     except Exception as e:

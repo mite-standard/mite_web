@@ -74,4 +74,6 @@ select = [
 ignore = [
     # whitespace-before-punctuation
     "E203",
+    # unneccesary True False
+    "SIM210",
 ]
