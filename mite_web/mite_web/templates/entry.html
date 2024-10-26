@@ -3,13 +3,13 @@
 {% block content %}
 <div class="container-fluid mt-2">
     <div class="row mb-4">
-        <div class="col-md-1">
+        <div class="col-auto">
             {{ navigation_entry.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
-        <div class="col-md-10 text-center">
+        <div class="col-auto text-center mx-auto">
             <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
         </div>
-        <div class="col-md-1">
+        <div class="col-auto">
             {{ navigation_entry.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
         </div>
     </div>
