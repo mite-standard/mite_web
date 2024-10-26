@@ -80,6 +80,10 @@ def verify_data() -> None:
     if not dirpath.exists() or not list(dirpath.iterdir()):
         raise RuntimeError
 
+    imgpath = Path(__file__).parent.joinpath("static/img")
+    if not imgpath.exists() or not list(imgpath.iterdir()):
+        raise RuntimeError
+
 
 def create_instance_path(app: Flask):
     """Create the instance path for the Flask app if not available (for testing purposes).

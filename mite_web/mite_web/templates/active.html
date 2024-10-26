@@ -1,3 +1,207 @@
-<div class="container mt-2">
-    <h2>Add html for active</h2>
+<div class="container-fluid mt-2">
+    <div class="row mb-4 justify-content-between">
+        <div class="col-md-6 d-flex align-items-center" style="max-height: 45vh; overflow-y: auto">
+            {% if data.enzyme.databaseIds.uniprot is defined %}
+            <div>
+                <img class="d-none d-sm-block" style="height: auto;" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualization">
+                <p class="text-center"><a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot')[0] }}">AlphaFold-predicted protein structure</a> (visualized by <a target="_blank" href="https://github.com/schrodinger/pymol-open-source">PyMol OS</a>)</p>
+            </div>
+            {% else %}
+            <img class="d-none d-sm-block" style="height: auto;" src="{{ url_for('static', filename='img/None.png') }}" alt="Protein visualization missing">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active custom-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="home" aria-selected="true"><b>General Information</b></button>
+                </li>
+                {% if data.enzyme.auxiliaryEnzymes is defined %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link custom-link" id="auxenz-tab" data-bs-toggle="tab" data-bs-target="#auxenz" type="button" role="tab" aria-controls="auxenz" aria-selected="false"><b>Auxiliary Enzymes</b></button>
+                    </li>
+                {% endif %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link custom-link" id="changelog-tab" data-bs-toggle="tab" data-bs-target="#changelog" type="button" role="tab" aria-controls="changelog" aria-selected="false"><b>Changelog</b></button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                {% include 'entry_general.html' %}
+                {% if data.enzyme.auxiliaryEnzymes is defined %}
+                    {% include 'entry_auxiliary_enz.html' %}
+                {% endif %}
+                {% include 'entry_changelog.html' %}
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4 justify-content-left">
+        <div class="col-auto">
+            <h4>Known Reactions: <b>{{ data.reactions|length }}</b></h4>
+        </div>
+        <div class="col-auto">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Select a reaction:</button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {% for reaction in data.reactions %}
+                    <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#reaction-{{ loop.index }}">Reaction {{ loop.index }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="reactions-group">
+		{% for reaction in data.reactions %}
+		<div class="collapse {% if loop.index == 1 %}show{% endif %}" id="reaction-{{ loop.index }}" data-bs-parent="#reactions-group">
+			<div class="card card-body">
+				<h5>Reaction {{ loop.index }}</h5>
+				<div class="container-fluid">
+					<div class="row d-flex align-items-start">
+						<div class="col-6">
+							<ul class="nav nav-tabs" id="reactionNavTab-{{ loop.index }}" role="tablist">
+								<li class="nav-item" role="presentation">
+									<button class="nav-link active custom-link" id="reaction-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#reaction-content-{{ loop.index }}" type="button" role="tab" aria-controls="reaction-content-{{ loop.index }}" aria-selected="true"><b>Reaction SMARTS</b></button>
+								</li>
+								<li class="nav-item" role="presentation">
+									<button class="nav-link custom-link" id="info-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#info-content-{{ loop.index }}" type="button" role="tab" aria-controls="info-content-{{ loop.index }}" aria-selected="false"><b>Reaction Information</b></button>
+								</li>
+							</ul>
+							<div class="tab-content" id="reactionTabContent-{{ loop.index }}">
+								<div class="tab-pane fade show active" id="reaction-content-{{ loop.index }}" role="tabpanel" aria-labelledby="reaction-content-{{ loop.index }}">
+									<table class="table table-striped">
+										<tbody>
+											<tr>
+												<td>
+													<img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ reaction.reactionSMARTS.reactionSMARTS[1] }}" alt="reaction SMARTS">
+													<div class="d-flex justify-content-center align-items-center">
+														<button class="btn btn-light btn-sm" data-clipboard-text="{{ reaction.reactionSMARTS.reactionSMARTS[0] }}">Copy reaction SMARTS</button>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="info-content-{{ loop.index }}" role="tabpanel" aria-labelledby="info-content-{{ loop.index }}">
+									<table class="table table-striped">
+										<tbody>
+											<tr>
+												{% if reaction.description %}
+													<td width="20%"><b>Description</b></td>
+													<td>{{ reaction.description }}</td>
+												{% endif %}
+											</tr>
+											<tr>
+												<td width="20%"><b>Tailoring</b></td>
+												<td>
+													<ul class="list-unstyled mb-0">
+														{% for tail in reaction.tailoring %}
+															<li>{{ tail }}</li>
+														{% endfor %}
+													</ul>
+												</td>
+											</tr>
+											<tr>
+												<td width="25%"><b>Database References</b></td>
+												<td>
+													{% if reaction.get("databaseIds") is not none %}
+														<ul class="list-unstyled mb-0">
+														{% for key, value in reaction.databaseIds.items() %}
+															{% for member in value %}
+															<li><a target="_blank" href="{{ member[1] }}">{{ key }}: {{ member[0] }}</a></li>
+															{% endfor %}
+														{% endfor %}
+														</ul>
+													{% else %}
+														No database crosslinks available
+													{% endif %}
+												</td>
+											</tr>
+											<tr>
+												<td width="20%"><b>Evidence</b></td>
+												<td>
+													<ul class="list-unstyled mb-0">
+														{% for code in reaction.evidenceCode %}
+															<li>{{ code }}</li>
+														{% endfor %}
+													</ul>
+												</td>
+											</tr>
+											<tr>
+												<td width="25%"><b>References</b></td>
+												<td>
+													{% if reaction.references is not none %}
+														<ul class="mb-0">
+														{% for ref in reaction.references %}
+															<li><a target="_blank" href="{{ ref[1] }}">{{ ref[0] }}</a></li>
+														{% endfor %}
+														</ul>
+													{% else %}
+														No references available
+													{% endif %}
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="col-6">
+							{% for exp_react in reaction.reactions %}
+							<h5>Example {{ loop.index }}</h5>
+							<table class="table table-striped">
+								<tbody>
+									<tr>
+										<td width="15%"><b>Metadata</b></td>
+										<td>
+											<ul class="list-unstyled mb-0">
+												{% if exp_react.description %}
+												<li><b>Description:</b> {{ exp_react.description }}</li>
+												{% else %}
+												<li><b>Description:</b> No description available</li>
+												{% endif %}
+												<li><b>Intermediate:</b> {{ exp_react.isIntermediate }}</li>
+											</ul>
+										</td>
+									</tr>
+									<tr>
+										<td width="15%"><b>Substrate</b></td>
+										<td>
+											<img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ exp_react.substrate[1] }}" alt="substrate SMILES">
+											<div class="d-flex justify-content-center align-items-center">
+												<button class="btn btn-light btn-sm" data-clipboard-text="{{ exp_react.substrate[0] }}">Copy SMILES</button>
+											</div>
+										</td>
+									</tr>
+									{% for product in exp_react.products %}
+									<tr>
+										<td width="15%"><b>Product {{ loop.index }}</b></td>
+										<td>
+											<img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ product[1] }}" alt="product SMILES">
+											<div class="d-flex justify-content-center align-items-center">
+												<button class="btn btn-light btn-sm" data-clipboard-text="{{ product[0] }}">Copy SMILES</button>
+											</div>
+										</td>
+									</tr>
+									{% endfor %}
+									{% if exp_react.forbidden_products %}
+										{% for forb_prod in exp_react.forbidden_products %}
+										<tr>
+											<td width="15%"><b>Forbidden Product {{ loop.index }}</b></td>
+											<td>
+												<img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ forb_prod[1] }}" alt="forbidden product SMILES">
+												<div class="d-flex justify-content-center align-items-center">
+													<button class="btn btn-light btn-sm" data-clipboard-text="{{ forb_prod[0] }}">Copy SMILES</button>
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+									{% endif %}
+								</tbody>
+							</table>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
 </div>

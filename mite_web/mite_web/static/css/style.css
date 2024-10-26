@@ -52,6 +52,6 @@ a:not(.footer a) {
     border: none;
 }
 
-.td_center {
-    text-align: center;
+.custom-link {
+    color: rgb(var(--bs-primary-rgb));
 }

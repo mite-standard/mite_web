@@ -100,7 +100,7 @@ class DownloadManager(BaseModel):
         )
         shutil.move(
             src=self.record_unzip.joinpath(subdir).joinpath("mite_data/img").resolve(),
-            dst=self.location.resolve(),
+            dst=self.location.parent.joinpath("static/").resolve(),
         )
         shutil.move(
             src=self.record_unzip.joinpath(subdir)
