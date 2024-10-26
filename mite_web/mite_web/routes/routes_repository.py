@@ -52,7 +52,16 @@ def repository(mite_acc: str) -> str:
     Returns:
         The mite entry using the entry.html page as string.
     """
-    # TODO(MMZ 26.10): add loading etc
-    data = {"mite_acc": mite_acc}
+    src = Path(__file__).parent.parent.joinpath(f"data/data_html/{mite_acc}.json")
 
-    return render_template("entry.html", data=data)
+    if not src.exists():
+        return render_template("entry_not_found.html", mite_acc=mite_acc)
+
+    with open(src) as infile:
+        data = json.load(infile)
+
+    acc_int = int(mite_acc.split("MITE")[1])
+    ret_acc = f"MITE{str(acc_int - 1).zfill(7)}"
+    fwd_acc = f"MITE{str(acc_int + 1).zfill(7)}"
+
+    return render_template("entry.html", data=data, ret_acc=ret_acc, fwd_acc=fwd_acc)

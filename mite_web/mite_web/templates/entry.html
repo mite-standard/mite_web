@@ -1,5 +1,24 @@
 {% extends 'base.html' %}
-
+{% import '_navigation_entry.html' as navigation_entry %}
 {% block content %}
-<h1>Hello, {{ data.mite_acc }}!</h1>
+<div class="container-fluid mt-2">
+    <div class="row mb-4">
+        <div class="col-md-1">
+            {{ navigation_entry.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+        </div>
+        <div class="col-md-10 text-center">
+            <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
+        </div>
+        <div class="col-md-1">
+            {{ navigation_entry.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+        </div>
+    </div>
+</div>
+{% if data.status != "active" %}
+    {% include 'retired.html' %}
+{% else %}
+    {% include 'active.html' %}
+{% endif %}
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
 {% endblock %}
