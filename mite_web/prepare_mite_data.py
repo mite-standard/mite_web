@@ -179,8 +179,12 @@ class AuxFileManager(BaseModel):
                     reviewer.update(row.get("reviewers"))
 
             summary["entries"][mite_data.get("accession")] = {
-                "status": True if mite_data.get("status") == "active" else False,
-                "reviewed": True if reviewer != {"BBBBBBBBBBBBBBBBBBBBBBBB"} else False,
+                "status": '<i class="bi bi-check-circle-fill"></i>'
+                if mite_data.get("status") == "active"
+                else '<i class="bi bi-circle"></i>',
+                "reviewed": '<i class="bi bi-check-circle-fill"></i>'
+                if reviewer != {"BBBBBBBBBBBBBBBBBBBBBBBB"}
+                else '<i class="bi bi-circle"></i>',
                 "name": mite_data.get("enzyme", {}).get("name"),
                 "tailoring": "|".join(
                     sorted(

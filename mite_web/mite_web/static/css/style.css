@@ -47,3 +47,11 @@ a:not(.footer a) {
     background-color: rgb(var(--bs-primary-rgb));
     border-color: rgb(var(--bs-primary-rgb));
 }
+
+.table thead tr th, .table tbody tr td {
+    border: none;
+}
+
+.td_center {
+    text-align: center;
+}

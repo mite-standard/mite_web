@@ -7,7 +7,8 @@
             <h1 class="fw-semibold lh-2">Repository</h1>
         </div>
     </div>
-    <table class="my-3" data-toggle="table">
+    <div id="search-count" class="lead"></div>
+    <table id="table" class="my-3 table-striped" data-toggle="table" data-search="true">
         <thead>
             <tr>
                 <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
@@ -20,10 +21,10 @@
         </thead>
         <tbody>
             {% for key, value in entries.items() %}
-                <tr class="clickable" onclick="window.location='{{ url_for('routes.repository') }}'">
-                    <th width="20%" scope="row">{{ key }}</th>
-                    <td>{{ value.status }}</td>
-                    <td>{{ value.reviewed }}</td>
+                <tr>
+                    <th width="20%" scope="row"><a class="footer-link" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
+                    <td>{{ value.status | safe }}</td>
+                    <td>{{ value.reviewed | safe }}</td>
                     <td>{{ value.name }}</td>
                     <td>{{ value.tailoring }}</td>
                     <td>{{ value.description }}</td>
@@ -31,6 +32,6 @@
             {% endfor %}
         </tbody>
     </table>
-
 </div>
+<script type="text/javascript" src="{{ url_for('static', filename='js/table_counter.js') }}" defer></script>
 {% endblock %}

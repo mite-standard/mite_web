@@ -29,14 +29,30 @@ from flask import current_app, render_template
 from mite_web.routes import bp
 
 
-@bp.route("/repository/")
-def repository() -> str:
-    """Render the repository page of mite_web
+@bp.route("/overview/")
+def overview() -> str:
+    """Render the repository overview page of mite_web
 
     Returns:
-        The repository.html page as string.
+        The overview.html page as string.
     """
     with open(Path(__file__).parent.parent.joinpath("data/summary.json")) as infile:
         summary = json.load(infile)
 
-    return render_template("repository.html", entries=summary.get("entries"))
+    return render_template("overview.html", entries=summary.get("entries"))
+
+
+@bp.route("/repository/<mite_acc>/")
+def repository(mite_acc: str) -> str:
+    """Render the individual pages
+
+    Arguments:
+        mite_acc: the mite accession, provided by the URL variable
+
+    Returns:
+        The mite entry using the entry.html page as string.
+    """
+    # TODO(MMZ 26.10): add loading etc
+    data = {"mite_acc": mite_acc}
+
+    return render_template("entry.html", data=data)
