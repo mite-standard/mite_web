@@ -2,7 +2,7 @@
 {% import '_navigation_entry.html' as navigation_entry %}
 {% block content %}
 <div class="container-fluid mt-2">
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-auto">
             {{ navigation_entry.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
