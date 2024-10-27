@@ -1,6 +1,6 @@
 # Config
 mite_web/mite_web/data
-mite_web/static/img
+mite_web/mite_web/static/img
 config.py
 .idea
 .ruff-cache
