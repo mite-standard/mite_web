@@ -1,0 +1,5 @@
+mite_web/.venv
+.git
+mite_web/tests
+mite_web/.pre-commit-config.yaml
+.idea/
