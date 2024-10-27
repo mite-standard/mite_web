@@ -55,5 +55,3 @@ a:not(.footer a) {
 .custom-link {
     color: rgb(var(--bs-primary-rgb));
 }
-
-.btn-clipboard {}

@@ -1,5 +1,9 @@
 <div class="container-fluid mt-2">
     <div class="row mb-4 justify-content-between">
+
+
+
+
         <div class="col-md-6 d-flex align-items-center" style="max-height: 45vh; overflow-y: auto">
             {% if data.enzyme.databaseIds.uniprot is defined %}
             <div>
@@ -10,29 +14,17 @@
             <img class="d-none d-sm-block" style="height: auto;" src="{{ url_for('static', filename='img/None.png') }}" alt="Protein visualization missing">
             {% endif %}
         </div>
+
+
+
+
         <div class="col-md-6">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active custom-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="home" aria-selected="true"><b>General Information</b></button>
-                </li>
-                {% if data.enzyme.auxiliaryEnzymes is defined %}
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link custom-link" id="auxenz-tab" data-bs-toggle="tab" data-bs-target="#auxenz" type="button" role="tab" aria-controls="auxenz" aria-selected="false"><b>Auxiliary Enzymes</b></button>
-                    </li>
-                {% endif %}
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link custom-link" id="changelog-tab" data-bs-toggle="tab" data-bs-target="#changelog" type="button" role="tab" aria-controls="changelog" aria-selected="false"><b>Changelog</b></button>
-                </li>
-            </ul>
-            <div class="tab-content" id="myTabContent">
-                {% include 'entry_general.html' %}
-                {% if data.enzyme.auxiliaryEnzymes is defined %}
-                    {% include 'entry_auxiliary_enz.html' %}
-                {% endif %}
-                {% include 'entry_changelog.html' %}
-            </div>
+			{% include 'active_table.html' %}
         </div>
     </div>
+
+
+
     <div class="row mb-4 justify-content-left">
         <div class="col-auto">
             <h4>Known Reactions: <b>{{ data.reactions|length }}</b></h4>
