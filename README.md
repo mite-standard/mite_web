@@ -33,15 +33,8 @@ Run as Docker application:
 
 ## Config files
 
-For production, a config file must be added to the `mite_web` directory (next to the `pyproject.toml` file)
+For production, a `config.py` file must be added to a directory `instance` in the `mite_web` directory (next to the `pyproject.toml` file)
 
 ```python
 SECRET_KEY: str
-MAIL_USERNAME: str
-MAIL_PASSWORD: str
-MAIL_DEFAULT_SENDER: str
-MAIL_SERVER: str
-MAIL_PORT: int
-MAIL_USE_TLS: bool
-MAIL_USE_SSL: bool
 ```
