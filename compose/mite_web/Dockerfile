@@ -12,8 +12,6 @@ RUN pip install --upgrade pip
 RUN pip install .
 
 RUN chmod +x ./entrypoint_docker.sh
-RUN chmod +x ./prepare_mite_data.py
-RUN python3 ./prepare_mite_data.py
 
 EXPOSE 8004
 

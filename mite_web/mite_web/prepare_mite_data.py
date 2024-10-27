@@ -27,10 +27,10 @@ class DownloadManager(BaseModel):
     """
 
     record_url: str = "https://zenodo.org/api/records/13294303"
-    location: Path = Path(__file__).parent.joinpath("mite_web/data")
-    record: Path = Path(__file__).parent.joinpath("mite_web/data/record.zip")
-    record_unzip: Path = Path(__file__).parent.joinpath("mite_web/data/record")
-    version: Path = Path(__file__).parent.joinpath("mite_web/data/version.json")
+    location: Path = Path(__file__).parent.joinpath("data")
+    record: Path = Path(__file__).parent.joinpath("data/record.zip")
+    record_unzip: Path = Path(__file__).parent.joinpath("data/record")
+    version: Path = Path(__file__).parent.joinpath("data/version.json")
 
     def run(self: Self) -> None:
         """Call methods for downloading and moving data"""
@@ -121,8 +121,8 @@ class HtmlJsonManager(BaseModel):
         target: the location in which the converted mite json files will be stored
     """
 
-    src: Path = Path(__file__).parent.joinpath("mite_web/data/data")
-    target: Path = Path(__file__).parent.joinpath("mite_web/data/data_html")
+    src: Path = Path(__file__).parent.joinpath("data/data")
+    target: Path = Path(__file__).parent.joinpath("data/data_html")
 
     def run(self: Self) -> None:
         """Call methods for preparation of html-compatible json files"""
@@ -158,8 +158,8 @@ class AuxFileManager(BaseModel):
         target: the location in which the auxiliary files will be stored
     """
 
-    src: Path = Path(__file__).parent.joinpath("mite_web/data/data")
-    target: Path = Path(__file__).parent.joinpath("mite_web/data/")
+    src: Path = Path(__file__).parent.joinpath("data/data")
+    target: Path = Path(__file__).parent.joinpath("data/")
 
     def run(self: Self) -> None:
         """Call methods for preparation of auxiliary files"""
@@ -208,7 +208,7 @@ class AuxFileManager(BaseModel):
             outfile.write(json.dumps(summary_sorted, indent=2, ensure_ascii=False))
 
 
-def main() -> SystemExit:
+def main() -> None | SystemExit:
     """Prepares mite_data for use in mite_web"""
     try:
         download_manager = DownloadManager()
@@ -219,8 +219,6 @@ def main() -> SystemExit:
 
         aux_manager = AuxFileManager()
         aux_manager.run()
-
-        return sys.exit(0)
     except Exception as e:
         print(f"An exception has occurred: {e}")
         return sys.exit(1)
