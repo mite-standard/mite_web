@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.urls]
+"Repository" = "https://github.com/mite-standard/mite_web"
+
+[project]
+name = "mite_web"
+version = "0.1.0"
+description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
+requires-python = ">=3.12"
+license-files = { paths = ["LICENSE"] }
+authors = [
+    { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
+]
+
+dependencies = [
+    "coloredlogs~=15.0.1",
+    "email-validator~=2.2",
+    "Flask~=3.0",
+    "Flask-WTF~=1.2",
+    "Flask-Mail~=0.9",
+    "gevent~=24.2",
+    "gunicorn~=22.0",
+    "mite_extras",
+    "pre-commit~=3.4",
+    "pydantic~=2.5",
+    "pytest~=7.4",
+    "requests~=2.32",
+    "ruff~=0.5"
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests/",
+]
+pythonpath = [
+    "mite_web/"
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-eradicate/eradicate
+    "ERA",
+    # isort
+    "I",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pygrep
+    "PGH",
+    # ruff checks
+    "RUF",
+    # flake8-simplify
+    "SIM",
+    # flake8-type-checking
+    "TCH",
+    # flake8-tidy-imports
+    "TID",
+    # pyupgrade
+    "UP",
+]
+ignore = [
+    # whitespace-before-punctuation
+    "E203",
+    # unneccesary True False
+    "SIM210",
+]

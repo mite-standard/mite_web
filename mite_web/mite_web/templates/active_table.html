@@ -1,0 +1,160 @@
+<h2 class="mb-3">Enzyme Information</h2>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active custom-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="home" aria-selected="true"><b>General Information</b></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link custom-link" id="changelog-tab" data-bs-toggle="tab" data-bs-target="#changelog" type="button" role="tab" aria-controls="changelog" aria-selected="false"><b>Changelog</b></button>
+    </li>
+    {% if data.enzyme.auxiliaryEnzymes is defined %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link custom-link" id="auxenz-tab" data-bs-toggle="tab" data-bs-target="#auxenz" type="button" role="tab" aria-controls="auxenz" aria-selected="false"><b>Auxiliary Enzymes</b></button>
+    </li>
+    {% endif %}
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+        <table class="table table-striped mt-3">
+            <tbody>
+                <tr>
+                    <td width="25%"><b>Accession ID</b></td><td>{{ data.accession }}</td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>Entry Status</b></td><td>Status: {{ data.status }}</td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>Enzyme Name</b></td><td>{{ data.enzyme.get("name") }}</td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>Enzyme Description</b></td><td>{{ data.enzyme.get("description") }}</td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>Database References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if data.enzyme.databaseIds is defined %}
+                            {% for key, value in data.enzyme.databaseIds.items() %}
+                            <li>{{ key }}: <a class="footer-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No database crosslinks available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="25%"><b>References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if data.enzyme.references is defined %}
+                            {% for row in data.enzyme.references %}
+                            <li><a class="footer-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No references available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                {% if data.comment is defined %}
+                <tr>
+                    <td width="25%"><b>Comment</b></td><td>{{ data.comment }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td width="25%"><b>Enzyme Visualization (AlphaFold-predicted)</b></td>
+                    {% if data.enzyme.databaseIds.uniprot is defined %}
+                    <td>
+                        <div>
+                            <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot')[0] }}">
+                                <img style="max-width: 100%; height: auto;" class="d-none d-sm-block" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
+                            </a>
+                        </div>
+                    </td>
+                    {% else %}
+                    <td>UniProt ID not available - could not render visualization</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="changelog" role="tabpanel" aria-labelledby="changelog-tab">
+        {% for entry in data.changelog %}
+        <div class="my-2"><p><b>Version {{ entry.version }} ({{ entry.date }})</b></p></div>
+        <table class="table table-striped my-3">
+            <tbody>
+                {% for row in entry.entries %}
+                <tr>
+                    <td width="25%"><b>Change {{ loop.index }} ({{ row.date }})</b></td>
+                    <td>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td width="20%"><b>Contributor(s)</b></td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for curator in row.contributors %}
+                                            <li>{{ curator }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="20%"><b>Reviewer(s)</b></td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for reviewer in row.reviewers %}
+                                            <li>{{ reviewer }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="20%"><b>Comment</b></td>
+                                    <td>"{{ row.comment }}"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+    {% if data.enzyme.auxiliaryEnzymes is defined %}
+    <div class="tab-pane fade" id="auxenz" role="tabpanel" aria-labelledby="auxenz-tab">
+        {% for auxenzyme in data.enzyme.auxiliaryEnzymes %}
+        <div class="my-2"><p><b>Auxiliary Enzyme #{{ loop.index }}</b></p></div>
+        <table class="table table-striped my-3">
+            <tbody>
+                <tr>
+                    <td width="25%"><b>Enzyme Name</b></td>
+                    <td>{{ auxenzyme.name }}</td>
+                </tr>
+                {% if auxenzyme.description is defined %}
+                <tr>
+                    <td width="25%"><b>Description</b></td>
+                    <td>{{ auxenzyme.description }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td width="25%"><b>Database References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if auxenzyme.databaseIds is defined %}
+                            {% for key, value in auxenzyme.databaseIds.items() %}
+                            <li>{{ key }}: <a target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No database crosslinks available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

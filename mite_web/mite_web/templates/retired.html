@@ -1,0 +1,21 @@
+<div class="container mt-2">
+    <div class="row mb-4">
+        <div class="col mx-auto text-center">
+            <h2>This entry has been retired</h2>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col mx-auto text-center">
+            <h3>Retirement reasons were:</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-6 mx-auto text-center">
+            <ul class="lh-base list-unstyled my-2">
+                {% for reason in data.retirementReasons %}
+                <li><p class="lead my-1">{{ reason }}</p></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

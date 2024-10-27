@@ -1,0 +1,57 @@
+/* Defines custom vars to be used in document */
+:root {
+    --bs-primary-rgb: 17,103,137;  /* FERMO blue */
+}
+
+body {
+    font-family: Verdana, sans-serif;
+    font-size: 13px;
+}
+
+/* Footer style elements */
+footer {
+    margin-top: auto;
+    font-size: 12px;
+}
+
+/* This will remove underline from all links in the footer */
+a:not(.footer a) {
+  text-decoration: none;
+}
+
+/* Custom style below */
+
+.navbar-custom {
+    background-color: rgb(var(--bs-primary-rgb));
+    color: white;
+}
+
+.navbar-font-size {
+    font-size: 18px;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-link {
+    color: rgb(var(--bs-primary-rgb));
+}
+
+.custom-bold {
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: rgb(var(--bs-primary-rgb));
+    border-color: rgb(var(--bs-primary-rgb));
+}
+
+.table thead tr th, .table tbody tr td {
+    border: none;
+}
+
+.custom-link {
+    color: rgb(var(--bs-primary-rgb));
+}

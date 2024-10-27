@@ -1,0 +1,18 @@
+FROM python:3.11-slim-buster
+
+ENV PYTHONUNBUFFERED 1
+
+ENV INSTALL_PATH /mite_web
+RUN mkdir -p $INSTALL_PATH
+WORKDIR $INSTALL_PATH
+
+COPY ./mite_web .
+
+RUN pip install --upgrade pip
+RUN pip install .
+
+RUN chmod +x ./entrypoint_docker.sh
+
+EXPOSE 8004
+
+CMD ["./entrypoint_docker.sh"]

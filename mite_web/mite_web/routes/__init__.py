@@ -1,6 +1,6 @@
-MIT License
+"""Provides Flask Blueprints instances.
 
-Copyright (c) 2024 to present Mitja M. Zdouc, PhD and individual contributors.
+Copyright (c) 2024-present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from flask import Blueprint
+
+bp = Blueprint("routes", __name__)
+
+from mite_web.routes import routes_main, routes_repository

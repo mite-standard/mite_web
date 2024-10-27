@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  mite_web:
+    build:
+      context: .
+      dockerfile: ./compose/mite_web/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8004:8004
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 1340:80
+    depends_on:
+      - mite_web

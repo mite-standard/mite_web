@@ -1,0 +1,7 @@
+{% macro render_return(label, url) %}
+    <a id="return" href="{{ url }}" class="btn btn-primary"><i class="bi bi-chevron-left"></i>{{ label }}</a>
+{% endmacro %}
+
+{% macro render_forward(label, url) %}
+    <a id="forward" href="{{ url }}" class="btn btn-primary">{{ label }}<i class="bi bi-chevron-right"></i></a>
+{% endmacro %}

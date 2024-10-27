@@ -1,6 +1,6 @@
-MIT License
+"""Routes for main and auxiliary pages.
 
-Copyright (c) 2024 to present Mitja M. Zdouc, PhD and individual contributors.
+Copyright (c) 2024-present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,48 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+"""
+
+from flask import current_app, render_template
+
+from mite_web.routes import bp
+
+
+@bp.route("/")
+def index() -> str:
+    """Render the index page of mite_web
+
+    Returns:
+        The index.html page as string.
+    """
+    return render_template("index.html")
+
+
+@bp.route("/submission/")
+def submission() -> str:
+    """Render the submission page of mite_web
+
+    Returns:
+        The submission.html page as string.
+    """
+    return render_template("submission.html")
+
+
+@bp.route("/about/")
+def about() -> str:
+    """Render the about page of mite_web
+
+    Returns:
+        The repository.html page as string.
+    """
+    return render_template("about.html")
+
+
+@bp.route("/contact/")
+def contact() -> str:
+    """Render the contact page of mite_web
+
+    Returns:
+        The contact.html page as string.
+    """
+    return render_template("contact.html")

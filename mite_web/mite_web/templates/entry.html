@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% import '_navigation_entry.html' as navigation_entry %}
+{% block content %}
+<div class="container-fluid mt-2">
+    <div class="row">
+        <div class="col-auto">
+            {{ navigation_entry.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+        </div>
+        <div class="col-auto text-center mx-auto">
+            <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
+        </div>
+        <div class="col-auto">
+            {{ navigation_entry.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+        </div>
+    </div>
+</div>
+{% if data.status != "active" %}
+    {% include 'retired.html' %}
+{% else %}
+    {% include 'active.html' %}
+{% endif %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
+{% endblock %}

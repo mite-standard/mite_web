@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="fw-semibold lh-2">About</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="fw-semibold lh-2">Background</h2>
+            <p class="lead mb-4 ">
+                Tailoring enzymes play an essential role in the maturation of natural products (a.k.a. specialized or secondary metabolites).
+                While the core biosynthetic enzymes of a biosynthetic gene cluster (BGC) are responsible for scaffold formation (the immature compound), tailoring enzymes modify the structure and often enhance biological properties.
+                Moreover, tailoring enzymes strongly vary in their substrate specificities, and this knowledge can be used in machine learning, <i>in silico</i> biosynthesis, or synthetic biology.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="fw-semibold lh-2">Why MITE?</h2>
+            <p class="lead mb-2">
+                Knowledge about reaction and substrate specificities of tailoring enzymes is often scattered in the literature.
+                This does not only require researchers to perform time-consuming literature review, but also hampers the application of machine learning.
+            </p>
+            <p class="lead mb-2">
+                To close this gap, the Minimum Information about a Tailoring Enzyme (MITE) data standard and the accompanying data repository were created.
+                The MITE data standard provides a framework to structure (meta)data in a both human- and machine-readable fashion, while the MITE data repository stores the actual data.
+            </p>
+            <p class="lead mb-4">
+                All data in MITE is assembled, curated, and reviewed by volunteers and can be used under a permissible open source license.
+            </p>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 100%; max-width: 200%; height: auto;" src="{{ url_for('static', filename='images/workflow.svg') }}" alt="MITE workflow" >
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="fw-semibold lh-2">What data is stored in MITE?</h2>
+            <p class="lead mb-2">
+                MITE exclusively collects experimentally verified (meta)data on tailoring enzymes.
+            </p>
+            <p class="lead mb-2">
+                Each MITE entry describes a <b>single, non-redundant enzyme-encoding gene</b> and one or more associated tailoring reactions.
+                These reactions are described as <b>reaction SMARTS</b>, which describe the substrate specificity-reaction relationship of the enzyme.
+                These reaction SMARTS are examplified by one or more substrate(s) -> product(s) pairs in <b>SMILES</b> format.
+            </p>
+            <p class="lead mb-2">
+                Taken together, the tailoring reaction is summarized in a both human- and machine-readable fashion.
+            </p>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img class="d-none d-sm-block my-3" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/reaction_example.svg') }}" alt="Example reaction of a tryptophan being halogenated in position 7.">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="fw-semibold lh-2">How to contribute?</h2>
+            <p class="lead mb-2 ">
+                MITE lives from contributions by its users (known as Contributors).
+                Contributors can create new entries using the <a class="link" href="{{ url_for('routes.submission') }}">MITE Submission Portal</a>, or modify existing entries in the MITE Repository.
+                These submissions are then reviewed by topic matter experts (Reviewers) and released as updates on a monthly basis.
+                All data on MITE is available from <a class="link" href="https://zenodo.org/records/13963495" target="_blank">Zenodo</a><b> for free, forever.</b>
+            </p>
+            <p class="lead mb-4">
+                Interested? Get in <a class="link" href="{{ url_for('routes.contact') }}">touch</a> or see the resources below.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="fw-semibold lh-2">Further reading</h2>
+            <ul class="lh-base list-unstyled my-2">
+                <li>
+                    <p class="lead my-1">
+                        TBA
+                    </p>
+                </li>
+            </ul>
+            <p class="lead mb-4 ">
+
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
