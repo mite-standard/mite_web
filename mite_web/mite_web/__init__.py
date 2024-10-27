@@ -29,7 +29,6 @@ from pathlib import Path
 
 from flask import Flask
 
-from mite_web.prepare_mite_data import main
 from mite_web.routes import bp
 
 
@@ -45,7 +44,6 @@ def create_app(test_config: dict | None = None) -> Flask:
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app, test_config)
 
-    main()
     verify_data()
     create_instance_path(app)
     register_context_processors(app)
