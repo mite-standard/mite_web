@@ -19,16 +19,6 @@
 {% else %}
     {% include 'active.html' %}
 {% endif %}
-
 <script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
-<script>
-    var clipboard = new ClipboardJS('.btn-light');
-    clipboard.on('success', function(e) {
-         alert('Copied to clipboard!');
-         e.clearSelection();
-    });
-    clipboard.on('error', function(e) {
-         alert('Failed to copy text.');
-    });
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
 {% endblock %}
