@@ -28,7 +28,8 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 - Install `python3`
 - Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
-- Download or clone this repository
-- Run `hatch -v env create`. This will download and install the appropriate Python version and any required packages
-- Run `hatch run pre-commit install`. This will set up `pre-commit`
-- Move into the `mite_web` directory and run `hatch run flask --app mite_web run --debug`
+- Download or clone this repository and change into `mite_dev` (where the `pyproject.toml` file resides)
+- Run `hatch -v env create dev`
+- Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
+- Run the script `hatch run dev:python mite_web/mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
+- Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
