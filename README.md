@@ -10,31 +10,25 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 **Nota bene: this application is only tested on Linux and not intended to be run locally. For an online version, see [here](https://mite.bioinformatics.nl/).**
 
-## Installation
+## Deploy Docker
 
-### For developers
+### Quick start
+
+- Download or clone this [repository](https://github.com/mite-standard/mite_web)
+- Create a file `mite_web/instance/config.py` containing the variable `SECRET_KEY: str = "your_secret_key"`
+- Run the script `python3.12 mite_web/mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
+- Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
+- Start the docker `docker-compose up -d` (potentially with `sudo`)
+- Open the application in any browser with the URL http://0.0.0.0:8004/
+- To stop the application, run `docker-compose stop` (potentially with `sudo`)
+
+## For developers
+
+### Quick start
 
 - Install `python3`
 - Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
 - Download or clone this repository
 - Run `hatch -v env create`. This will download and install the appropriate Python version and any required packages
 - Run `hatch run pre-commit install`. This will set up `pre-commit`
-- Create a `config.py` file with the content indicated below
-
-## Quick Start
-
-### For developers
-
-Run in dev mode:
-
 - Move into the `mite_web` directory and run `hatch run flask --app mite_web run --debug`
-
-Run as Docker application:
-
-## Config files
-
-For production, a `config.py` file must be added to a directory `instance` in the `mite_web` directory (next to the `pyproject.toml` file)
-
-```python
-SECRET_KEY: str
-```

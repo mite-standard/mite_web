@@ -77,11 +77,15 @@ def verify_data() -> None:
     """
     dirpath = Path(__file__).parent.joinpath("data/data_html")
     if not dirpath.exists() or not list(dirpath.iterdir()):
-        raise RuntimeError
+        raise RuntimeError(
+            f"Could not find folder '{dirpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        )
 
     imgpath = Path(__file__).parent.joinpath("static/img")
     if not imgpath.exists() or not list(imgpath.iterdir()):
-        raise RuntimeError
+        raise RuntimeError(
+            f"Could not find folder '{imgpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        )
 
 
 def create_instance_path(app: Flask):
