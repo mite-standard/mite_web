@@ -8,7 +8,6 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from typing import Self
 
 import requests
 from mite_extras import MiteParser
@@ -32,7 +31,7 @@ class DownloadManager(BaseModel):
     record_unzip: Path = Path(__file__).parent.joinpath("data/record")
     version: Path = Path(__file__).parent.joinpath("data/version.json")
 
-    def run(self: Self) -> None:
+    def run(self) -> None:
         """Call methods for downloading and moving data"""
         if self.location.exists():
             print(
@@ -44,7 +43,7 @@ class DownloadManager(BaseModel):
         self.download_data()
         self.organize_data()
 
-    def download_data(self: Self) -> None:
+    def download_data(self) -> None:
         """Download data from Zenodo
 
         Raises:
@@ -71,11 +70,11 @@ class DownloadManager(BaseModel):
         with open(self.version, "w") as f:
             f.write(json.dumps({"version_mite_data": f"{version}"}))
 
-    def organize_data(self: Self) -> None:
-        """Unpacks data, moves to convenient loaction, cleans up
+    def organize_data(self) -> None:
+        """Unpacks data, moves to convenient location, cleans up
 
         Raises:
-            NotADirectoryError: directory not unipped in expected location
+            NotADirectoryError: directory not unzipped in expected location
         """
         shutil.unpack_archive(
             filename=self.record, extract_dir=self.record_unzip, format="zip"
@@ -124,7 +123,7 @@ class HtmlJsonManager(BaseModel):
     src: Path = Path(__file__).parent.joinpath("data/data")
     target: Path = Path(__file__).parent.joinpath("data/data_html")
 
-    def run(self: Self) -> None:
+    def run(self) -> None:
         """Call methods for preparation of html-compatible json files"""
         if self.target.exists():
             print(
@@ -135,7 +134,7 @@ class HtmlJsonManager(BaseModel):
         self.target.mkdir(parents=True)
         self.convert_json_html()
 
-    def convert_json_html(self: Self) -> None:
+    def convert_json_html(self) -> None:
         """Convert regular mite json files to html-compatible ones"""
         for entry in self.src.iterdir():
             with open(entry) as infile:
@@ -161,11 +160,11 @@ class AuxFileManager(BaseModel):
     src: Path = Path(__file__).parent.joinpath("data/data")
     target: Path = Path(__file__).parent.joinpath("data/")
 
-    def run(self: Self) -> None:
+    def run(self) -> None:
         """Call methods for preparation of auxiliary files"""
         self.prepare_summary()
 
-    def prepare_summary(self: Self) -> None:
+    def prepare_summary(self) -> None:
         """Create a summary of mite entries for repository table"""
         summary = {"entries": {}}
 
