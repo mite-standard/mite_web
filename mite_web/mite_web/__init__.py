@@ -21,9 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import contextlib
 import json
-import os
 from importlib import metadata
 from pathlib import Path
 
@@ -32,40 +30,37 @@ from flask import Flask
 from mite_web.routes import bp
 
 
-def create_app(test_config: dict | None = None) -> Flask:
+def create_app() -> Flask:
     """Factory function for Flask app, automatically detected by Flask.
-
-    Arguments:
-        test_config: mapping of app configuration for testing purposes
 
     Returns:
         An instance of the Flask object
     """
     app = Flask(__name__, instance_relative_config=True)
-    app = configure_app(app, test_config)
-
+    app = configure_app(app)
     verify_data()
-    create_instance_path(app)
     register_context_processors(app)
     app.register_blueprint(bp)
     return app
 
 
-def configure_app(app: Flask, test_config: dict | None = None) -> Flask:
+def configure_app(app: Flask) -> Flask:
     """Configure the Flask app.
 
     Arguments:
         app: The Flask app instance
-        test_config: mapping of app configuration, can be injected for testing purposes
     """
     app.config["SECRET_KEY"] = "dev"
 
-    if test_config is None:
-        app.config.from_pyfile(
-            Path(__file__).parent.parent.joinpath("instance/config.py"), silent=True
-        )
+    config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
+
+    if config_file.exists():
+        app.config.from_pyfile(config_file)
+        print("Successfully loaded configuration from 'config.py'.")
     else:
-        app.config.from_mapping(test_config)
+        print("WARNING: No 'config.py' file found. Default to dev settings.")
+        print("WARNING: INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
+
     return app
 
 
@@ -77,21 +72,15 @@ def verify_data() -> None:
     """
     dirpath = Path(__file__).parent.joinpath("data/data_html")
     if not dirpath.exists() or not list(dirpath.iterdir()):
-        raise RuntimeError
+        raise RuntimeError(
+            f"Could not find folder '{dirpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        )
 
     imgpath = Path(__file__).parent.joinpath("static/img")
     if not imgpath.exists() or not list(imgpath.iterdir()):
-        raise RuntimeError
-
-
-def create_instance_path(app: Flask):
-    """Create the instance path for the Flask app if not available (for testing purposes).
-
-    Arguments:
-        app: The Flask app instance
-    """
-    with contextlib.suppress(OSError):
-        os.makedirs(app.instance_path)
+        raise RuntimeError(
+            f"Could not find folder '{imgpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        )
 
 
 def register_context_processors(app: Flask):
