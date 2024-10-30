@@ -28,7 +28,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "coloredlogs~=15.0.1",
+    "coloredlogs~=15.0",
     "email-validator~=2.2",
     "Flask~=3.0",
     "Flask-WTF~=1.2",
@@ -38,6 +38,7 @@ dependencies = [
     "mite_extras~=1.1",
     "pydantic~=2.5",
     "requests~=2.32",
+    "WTForms-JSON~=0.3"
 ]
 
 [project.optional-dependencies]

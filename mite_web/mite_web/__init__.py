@@ -25,6 +25,7 @@ import json
 from importlib import metadata
 from pathlib import Path
 
+import wtforms_json
 from flask import Flask
 
 from mite_web.routes import bp
@@ -52,8 +53,9 @@ def configure_app(app: Flask) -> Flask:
     """
     app.config["SECRET_KEY"] = "dev"
 
-    config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
+    wtforms_json.init()
 
+    config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
     if config_file.exists():
         app.config.from_pyfile(config_file)
         print("Successfully loaded configuration from 'config.py'.")
