@@ -29,17 +29,12 @@ classifiers = [
 
 dependencies = [
     "coloredlogs~=15.0",
-    "email-validator~=2.2",
     "Flask~=3.0",
-    "Flask-Mail~=0.9",
-    "Flask-Pydantic~=0.12",
     "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=22.0",
     "mite_extras~=1.1",
-    "pydantic~=2.5",
     "requests~=2.32",
-    "WTForms-JSON~=0.3"
 ]
 
 [project.optional-dependencies]
