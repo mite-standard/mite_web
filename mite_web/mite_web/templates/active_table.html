@@ -34,7 +34,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.databaseIds is defined %}
                             {% for key, value in data.enzyme.databaseIds.items() %}
-                            <li>{{ key }}: <a class="footer-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
+                            <li>{{ key }}: <a class="custom-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No database crosslinks available</li>
@@ -48,7 +48,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.references is defined %}
                             {% for row in data.enzyme.references %}
-                            <li><a class="footer-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
+                            <li><a class="custom-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No references available</li>

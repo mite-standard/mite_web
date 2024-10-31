@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% import '_macros_submission.html' as m_submission %}
+
+{% block content %}
+<div class="container mt-5">
+    <div>
+        <form method="post">
+            <div class="form-group">
+                {% for field_name, field in user_schema['properties'].items() %}
+                    {{ m_submission.render_field(field_name, field) }}
+                {% endfor %}
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

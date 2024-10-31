@@ -35,10 +35,6 @@ a:not(.footer a) {
     height: 20px;
 }
 
-.footer-link {
-    color: rgb(var(--bs-primary-rgb));
-}
-
 .custom-bold {
     font-weight: bold;
 }

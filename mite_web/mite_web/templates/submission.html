@@ -2,31 +2,33 @@
 
 {% block content %}
 <div class="container mt-5 bd-gutter">
-    <div class="row mb-2">
+    <div class="row my-3">
         <div class="col-auto">
             <h1 class="fw-semibold lh-2">Submission Portal</h1>
+            <p class="lead lh-2">All submissions (new entries or modified existing entries) are tracked as <a class="custom-link" href="https://github.com/mite-standard/mite_data/issues">Issues</a> on the 'mite_data' GitHub website.</p>
         </div>
     </div>
-    <div class="row mb-2">
+    <div class="row my-3">
+        <div class="col-auto">
+            <h2 class="fw-semibold lh-2">Submit a new entry</h2>
+            <p class="lead lh-2">Before submitting a new entry, please check if the enzyme in question already has an entry and/or if it is a <a class="custom-link" href="https://github.com/mite-standard/mite_data/issues">pending submission.</a></p>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-auto mx-auto d-flex justify-content-center">
+            <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission') }}">Submit a new Entry</a></div>
+        </div>
+    </div>
+    <div class="row my-3">
         <div class="col-auto">
             <h2 class="fw-semibold lh-2">Pending submissions</h2>
+            <p class="lead lh-2">Below is a list of currently pending submissions:</p>
         </div>
     </div>
-    <div class="row mb-2">
-        <div class="col-auto">
-            <p class="lead lh-2">All submissions (new entries or modified existing entries) are tracked as <a class="custom-link" href="https://github.com/mite-standard/mite_data/issues">Issues</a> on the 'mite_data' GitHub website.</p>
-            <p class="lead lh-2">Below is a list of currently pending entries.</p>
-        </div>
-    </div>
-    <div class="row mb-2">
+    <div class="row my-3">
         <div class="col-auto">
             <p class="lead lh-2">TABLE TBA</p>
         </div>
     </div>
-
-
-    <div class="d-flex flex-column flex-lg-row align-items-md-stretch justify-content-md-center gap-3 mb-3">
-                <a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission') }}">Submit an Entry</a>
-            </div>
 </div>
 {% endblock %}

@@ -25,4 +25,4 @@ from flask import Blueprint
 
 bp = Blueprint("routes", __name__)
 
-from mite_web.routes import routes_main, routes_repository
+from mite_web.routes import routes_main, routes_repository, routes_submission

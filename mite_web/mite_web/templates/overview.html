@@ -26,7 +26,7 @@
         <tbody>
             {% for key, value in entries.items() %}
                 <tr>
-                    <th width="20%" scope="row"><a class="footer-link" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
+                    <th width="20%" scope="row"><a class="custom-link" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
                     <td>{{ value.status | safe }}</td>
                     <td>{{ value.reviewed | safe }}</td>
                     <td>{{ value.name }}</td>

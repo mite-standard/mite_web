@@ -1,0 +1,9 @@
+{% macro render_field(field_name, field) %}
+<div>
+    <label for="{{ field_name }}">{{ field['title'] }}</label>
+    <input type="{{ field['type'] }}" id="{{ field_name }}" name="{{ field_name }}"
+           {% if field.get('minLength') %} minlength="{{ field['minLength'] }}" {% endif %}
+           {% if field.get('maxLength') %} maxlength="{{ field['maxLength'] }}" {% endif %}
+           required>
+</div>
+{% endmacro %}
