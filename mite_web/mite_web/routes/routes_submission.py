@@ -25,7 +25,7 @@ import json
 from pathlib import Path
 
 from flask import current_app, render_template, request
-from pydantic import BaseModel, EmailStr, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from mite_web.routes import bp
 
@@ -42,7 +42,6 @@ def submission() -> str:
 
 class UserModel(BaseModel):
     username: str = Field(default="MMM", min_length=3, max_length=50)
-    email: EmailStr
     age: int = Field(default=10, gt=0)
 
 

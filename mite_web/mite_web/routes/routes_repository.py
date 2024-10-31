@@ -22,7 +22,6 @@ SOFTWARE.
 """
 
 import json
-from pathlib import Path
 
 from flask import current_app, render_template
 
@@ -36,7 +35,7 @@ def overview() -> str:
     Returns:
         The overview.html page as string.
     """
-    with open(Path(__file__).parent.parent.joinpath("data/summary.json")) as infile:
+    with open(current_app.config["DATA_SUMMARY"]) as infile:
         summary = json.load(infile)
 
     return render_template("overview.html", entries=summary.get("entries"))
@@ -52,7 +51,7 @@ def repository(mite_acc: str) -> str:
     Returns:
         The mite entry using the entry.html page as string.
     """
-    src = Path(__file__).parent.parent.joinpath(f"data/data_html/{mite_acc}.json")
+    src = current_app.config["DATA_HTML"].joinpath(f"{mite_acc}.json")
 
     if not src.exists():
         return render_template("entry_not_found.html", mite_acc=mite_acc)

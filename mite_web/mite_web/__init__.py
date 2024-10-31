@@ -58,9 +58,11 @@ def configure_app(app: Flask) -> Flask:
     app = config_logger(app)
 
     app.config["SECRET_KEY"] = "dev"
+
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
+    app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
 
     config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
     if config_file.exists():
