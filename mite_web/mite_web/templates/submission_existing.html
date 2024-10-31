@@ -5,6 +5,7 @@
 <div class="container mt-5">
     <div>
         <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 {% for field_name, field in user_schema['properties'].items() %}
                     {{ m_submission.render_field(field_name, field) }}

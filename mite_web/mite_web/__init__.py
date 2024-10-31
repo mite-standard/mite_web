@@ -22,11 +22,15 @@ SOFTWARE.
 """
 
 import json
+import logging
+import sys
 from importlib import metadata
 from pathlib import Path
+from venv import logger
 
-import wtforms_json
+import coloredlogs
 from flask import Flask
+from flask_wtf.csrf import CSRFProtect
 
 from mite_web.routes import bp
 
@@ -39,7 +43,7 @@ def create_app() -> Flask:
     """
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
-    verify_data()
+    verify_data(app)
     register_context_processors(app)
     app.register_blueprint(bp)
     return app
@@ -51,38 +55,86 @@ def configure_app(app: Flask) -> Flask:
     Arguments:
         app: The Flask app instance
     """
-    app.config["SECRET_KEY"] = "dev"
+    app = config_logger(app)
 
-    wtforms_json.init()
+    app.config["SECRET_KEY"] = "dev"
+    app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
+    app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
+    app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
 
     config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
     if config_file.exists():
         app.config.from_pyfile(config_file)
-        print("Successfully loaded configuration from 'config.py'.")
+        app.logger.info("Successfully loaded configuration from 'config.py'.")
     else:
-        print("WARNING: No 'config.py' file found. Default to dev settings.")
-        print("WARNING: INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
+        app.logger.warning("No 'config.py' file found. Default to dev settings.")
+        app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
+
+    csrf = CSRFProtect()
+    csrf.init_app(app)
 
     return app
 
 
-def verify_data() -> None:
+def config_logger(app: Flask) -> Flask:
+    """Set up a named logger with nice formatting and attach to app
+
+    Args:
+        app: The Flask app
+
+    Returns:
+        The Flask app with attached logger
+    """
+    for handler in app.logger.handlers[:]:
+        app.logger.removeHandler(handler)
+
+    logger = logging.getLogger("mite_web")
+    logger.setLevel(logging.DEBUG)
+
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.DEBUG)
+    console_handler.setFormatter(
+        coloredlogs.ColoredFormatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
+    )
+
+    file_handler = logging.FileHandler(
+        Path(__file__).parent.joinpath("app.log"),
+        mode="w",
+    )
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(
+        logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    )
+
+    app.logger.addHandler(console_handler)
+    app.logger.addHandler(file_handler)
+    return app
+
+
+def verify_data(app: Flask):
     """Verifies that mite_data was downloaded and made available
+
+    Arguments:
+        app: The Flask app
 
     Raises:
         RuntimeError: Data directory not found or empty
     """
-    dirpath = Path(__file__).parent.joinpath("data/data_html")
-    if not dirpath.exists() or not list(dirpath.iterdir()):
-        raise RuntimeError(
-            f"Could not find folder '{dirpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
-        )
+    if not app.config["DATA_HTML"].exists() or not list(
+        app.config["DATA_HTML"].iterdir()
+    ):
+        message = f"Could not find folder '{app.config["DATA_HTML"].resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        app.logger.critical(message)
+        raise RuntimeError(message)
 
-    imgpath = Path(__file__).parent.joinpath("static/img")
-    if not imgpath.exists() or not list(imgpath.iterdir()):
-        raise RuntimeError(
-            f"Could not find folder '{imgpath.resolve()}' - did you run the 'prepare_mite_data.py' script?"
-        )
+    if not app.config["DATA_IMG"].exists() or not list(
+        app.config["DATA_IMG"].iterdir()
+    ):
+        message = f"Could not find folder '{app.config["DATA_IMG"].resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        app.logger.critical(message)
+        raise RuntimeError(message)
 
 
 def register_context_processors(app: Flask):

@@ -63,10 +63,6 @@ def submission_existing(mite_acc: str) -> str:
 
     #####
 
-    # import a subpart, e.g. changelog
-    # hard code data
-    # try to
-
     if request.method == "POST":
         print(request.form)
         data = request.form.to_dict()
