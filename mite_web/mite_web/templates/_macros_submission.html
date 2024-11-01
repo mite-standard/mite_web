@@ -1,9 +1,15 @@
-{% macro render_field(field_name, field) %}
-<div>
-    <label for="{{ field_name }}">{{ field['title'] }}</label>
-    <input type="{{ field['type'] }}" id="{{ field_name }}" name="{{ field_name }}"
-           {% if field.get('minLength') %} minlength="{{ field['minLength'] }}" {% endif %}
-           {% if field.get('maxLength') %} maxlength="{{ field['maxLength'] }}" {% endif %}
-           required>
+{% macro render_text(title, key, type, value='', required=false, help='') %}
+<div class="form-floating">
+    <input id="{{ key }}"
+           name="{{ key }}"
+           class="form-control"
+           aria-describedby="{{ title }}Help"
+           type="{{ type }}"
+           value="{{ value }}"
+           {% if required %}required{% endif %}
+    >
+    <label for="{{ key }}" class="form-label">{{ title }}</label>
+    <div id="{{ title }}Help" class="form-text">{{ help }}</div>
 </div>
 {% endmacro %}
+

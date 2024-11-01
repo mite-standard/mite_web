@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% import '_macros_submission.html' as macro %}
+
+{% block content %}
+<div class="container mt-5">
+    <div>
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div id="enzyme-fields">
+                {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value=data.enzyme.name, required=true, help="The name of the enzyme") }}
+            </div>
+            <button type="button" id="add-enzyme" class="btn btn-secondary">Add Another Enzyme Name</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('add-enzyme').addEventListener('click', function() {
+    var enzymeFieldsDiv = document.getElementById('enzyme-fields');
+    var newField = `
+        {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value='', required=true, help="The name of the enzyme") | safe }}
+    `;
+    enzymeFieldsDiv.insertAdjacentHTML('beforeend', newField);
+});
+</script>
+{% endblock %}

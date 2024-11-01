@@ -22,9 +22,10 @@ SOFTWARE.
 """
 
 import json
-from pathlib import Path
 
-from flask import current_app, render_template, request
+from flask import Response, current_app, redirect, render_template, request, url_for
+from mite_extras.processing.data_classes import EnyzmeDatabaseIds
+from mite_extras.processing.mite_parser import MiteParser
 from pydantic import BaseModel, Field, ValidationError
 
 from mite_web.routes import bp
@@ -40,13 +41,8 @@ def submission() -> str:
     return render_template("submission.html")
 
 
-class UserModel(BaseModel):
-    username: str = Field(default="MMM", min_length=3, max_length=50)
-    age: int = Field(default=10, gt=0)
-
-
 @bp.route("/submission/<mite_acc>/", methods=["GET", "POST"])
-def submission_existing(mite_acc: str) -> str:
+def submission_existing(mite_acc: str) -> str | Response:
     """Render the submission forms for an existing entry mite_acc
 
     Arguments:
@@ -55,22 +51,26 @@ def submission_existing(mite_acc: str) -> str:
     Returns:
         The submission_existing.html page as string.
     """
-
-    # check if the entry exists in the files, if not, leave
-    # load the data of the entry
-    # put it into the pydantic model
-
-    #####
-
     if request.method == "POST":
-        print(request.form)
-        data = request.form.to_dict()
-        print(data)
-        try:
-            user = UserModel(**data)
-            return "Form submitted successfully!"
-        except ValidationError as e:
-            return str(e), 400
+        user_input = request.form.to_dict(flat=False)
+        return user_input
 
-    user_schema = UserModel.model_json_schema()
-    return render_template("submission_existing.html", user_schema=user_schema)
+    src = current_app.config["DATA_JSON"].joinpath(f"{mite_acc}.json")
+
+    if not src.exists():
+        return render_template("entry_not_found.html", mite_acc=mite_acc)
+
+    with open(src) as infile:
+        data = json.load(infile)
+
+    if data["status"] != "active":
+        return redirect(url_for("routes.repository", mite_acc=mite_acc))
+
+    print(data)
+
+    # strategy: use the json directly for form creation
+    # makro: take name etc + value; can be Null to not set a default value; this way, reusable
+    # not all data is needed; better to specify manually
+    # we are not going to majorly change the schema
+
+    return render_template("submission_form.html", data=data)

@@ -26,7 +26,6 @@ import logging
 import sys
 from importlib import metadata
 from pathlib import Path
-from venv import logger
 
 import coloredlogs
 from flask import Flask
