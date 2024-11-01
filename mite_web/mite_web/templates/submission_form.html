@@ -15,22 +15,19 @@
     </div>
 </div>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/dynamic_fields.js') }}" defer></script>
 <script>
-document.getElementById('add-enzyme').addEventListener('click', function() {
-    var enzymeFieldsDiv = document.getElementById('enzyme-fields');
-    var newField = `
+    document.addEventListener('DOMContentLoaded', function() {
+    // Define the HTML for new fields
+    var fieldHtml = `
         <div class="enzyme-group">
-            {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value='', required=true, help="The name of the enzyme") | safe }}
+            {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value="", required=true, help="The name of the enzyme") }}
             <button type="button" class="btn btn-danger remove-enzyme">Remove</button>
         </div>
     `;
-    enzymeFieldsDiv.insertAdjacentHTML('beforeend', newField);
-});
 
-document.getElementById('enzyme-fields').addEventListener('click', function(event) {
-    if (event.target.classList.contains('remove-enzyme')) {
-        event.target.closest('.enzyme-group').remove();
-    }
+    // Set up dynamic fields for enzyme names
+    setupDynamicFields('#enzyme-fields', '#add-enzyme', '.remove-enzyme', '.enzyme-group', fieldHtml);
 });
 </script>
 {% endblock %}
