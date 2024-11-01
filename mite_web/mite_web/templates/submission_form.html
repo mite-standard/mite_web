@@ -19,9 +19,18 @@
 document.getElementById('add-enzyme').addEventListener('click', function() {
     var enzymeFieldsDiv = document.getElementById('enzyme-fields');
     var newField = `
-        {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value='', required=true, help="The name of the enzyme") | safe }}
+        <div class="enzyme-group">
+            {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value='', required=true, help="The name of the enzyme") | safe }}
+            <button type="button" class="btn btn-danger remove-enzyme">Remove</button>
+        </div>
     `;
     enzymeFieldsDiv.insertAdjacentHTML('beforeend', newField);
+});
+
+document.getElementById('enzyme-fields').addEventListener('click', function(event) {
+    if (event.target.classList.contains('remove-enzyme')) {
+        event.target.closest('.enzyme-group').remove();
+    }
 });
 </script>
 {% endblock %}

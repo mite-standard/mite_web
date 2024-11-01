@@ -66,8 +66,6 @@ def submission_existing(mite_acc: str) -> str | Response:
     if data["status"] != "active":
         return redirect(url_for("routes.repository", mite_acc=mite_acc))
 
-    print(data)
-
     # strategy: use the json directly for form creation
     # makro: take name etc + value; can be Null to not set a default value; this way, reusable
     # not all data is needed; better to specify manually
