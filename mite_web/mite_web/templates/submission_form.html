@@ -9,7 +9,7 @@
             <div id="enzyme-fields">
                 {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value=data.enzyme.name, required=true, help="The name of the enzyme") }}
             </div>
-            <button type="button" id="add-enzyme" class="btn btn-secondary">Add Another Enzyme Name</button>
+            {{ macro.add_button(id="add-enzyme", descr="Add Another Enzyme Name") }}
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
@@ -19,15 +19,15 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     // Define the HTML for new fields
-    var fieldHtml = `
+    var enzyme = `
         <div class="enzyme-group">
             {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value="", required=true, help="The name of the enzyme") }}
-            <button type="button" class="btn btn-danger remove-enzyme">Remove</button>
+            {{ macro.remove_button(class="remove-enzyme", descr="Remove Enzyme") }}
         </div>
     `;
 
     // Set up dynamic fields for enzyme names
-    setupDynamicFields('#enzyme-fields', '#add-enzyme', '.remove-enzyme', '.enzyme-group', fieldHtml);
+    setupDynamicFields('#enzyme-fields', '#add-enzyme', '.remove-enzyme', '.enzyme-group', enzyme);
 });
 </script>
 {% endblock %}

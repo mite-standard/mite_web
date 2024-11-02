@@ -13,3 +13,14 @@
 </div>
 {% endmacro %}
 
+<!--Adds a button to add fields to the container in which the macro is called; 'id' should follow pattern 'add-...'-->
+<!--See also 'dynamic_fields.js'-->
+{% macro add_button(id, descr) %}
+<button type="button" id="{{ id }}" class="btn btn-secondary">{{ descr }}</button>
+{% endmacro %}
+
+<!--Adds a button to remove fields again; 'class' should follow pattern 'remove-...'-->
+<!--See also 'dynamic_fields.js'-->
+{% macro remove_button(class, descr) %}
+<button type="button" class="btn btn-danger {{ class }}">{{ descr }}</button>
+{% endmacro %}
