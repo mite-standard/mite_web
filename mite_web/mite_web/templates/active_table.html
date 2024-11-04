@@ -67,7 +67,7 @@
                     <td>
                         <div>
                             <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot')[0] }}">
-                                <img style="max-width: 100%; height: auto;" class="d-none d-sm-block" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
+                                <img style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
                             </a>
                         </div>
                     </td>
