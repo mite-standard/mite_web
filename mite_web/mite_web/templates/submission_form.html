@@ -17,130 +17,98 @@
         <div class="row my-2">
             <div class="col-md-6">
                 <h2 class="fw-semibold lh-2 text-center">Enzyme Information</h2>
-                <p class="mb-2 text-center">General information on the tailoring enzyme in question</p>
-                <div id="enzyme-fields">
-                    <div class="row mb-2">
-                        <div class="col">
-                        {% if data is defined %}
-                        {{ macro.render_text(title="Enzyme Name", key="enzyme_name", type="text", value=data.enzyme.name, required=true, help="The common enzyme name (e.g. McjB)") }}
-                        {% else %}
-                        {{ macro.render_text(title="Enzyme Name", key="enzyme_name", type="text", value="", required=true, help="The common enzyme name (e.g. McjB)") }}
+                <p class="mb-2 text-center">General information on the tailoring enzyme</p>
+                <div class="row mb-2">
+                    <div class="col">
+                    {{ macro.render_text(title="Enzyme Name", id="enzyme_name", type="text", value=data.get("enzyme", {}).get("name", ""), required=true, help="The common enzyme name (e.g. McjB)") }}
+                    </div>
+                    <div class="col">
+                    {{ macro.render_text(title="Enzyme Description", id="enzyme_description", type="text", value=data.get("enzyme", {}).get("description", ""), required=true, help="A brief description of the enzyme function") }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        {{ macro.render_text(title="Enzyme UniProt ID", id="enzyme_uniprot", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("uniprot", ""), required=false, help="The UniProtKB or UniParc ID") }}
+                    </div>
+                    <div class="col">
+                        {{ macro.render_text(title="Enzyme GenPept ID", id="enzyme_genpept", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("genpept", ""), required=false, help="The NCBI GenPept ID") }}
+                    </div>
+                    <div class="col">
+                        {{ macro.render_text(title="MIBiG ID", id="enzyme_mibig", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("mibig", ""), required=false, help="The MIBiG ID of the BGC containing the enzyme") }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="enzyme-ref">
+                        {% if data.get("enzyme", {}).get("references") %}
+                            {% for ref in data.enzyme.references %}
+                            <div class="enzyme_ref">
+                                <div class="row d-flex align-items-center">
+                                    <div class="col">
+                                        {{ macro.render_text(title="Enzyme Reference DOI", id="enzyme_ref[]", type="text", value=ref, required=true) }}
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.enzyme_ref')">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         {% endif %}
                         </div>
-                        <div class="col">
-                        {% if data is defined %}
-                        {{ macro.render_text(title="Enzyme Description", key="enzyme_description", type="text", value=data.enzyme.description, required=true, help="A brief description of the enzyme function") }}
-                        {% else %}
-                        {{ macro.render_text(title="Enzyme Description", key="enzyme_description", type="text", value="", required=true, help="A brief description of the enzyme function") }}
-                        {% endif %}
-                        </div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="addEnzymeRef()">Add Reference</button>
                     </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            {% if data.get("enzyme", {}).get("databaseIds", {}).get("uniprot") %}
-                            {{ macro.render_text(title="Enzyme UniProt ID", key="enzyme_id_uniprot", type="text", value=data.enzyme.databaseIds.uniprot, required=false, help="The UniProtKB or UniParc ID") }}
-                            {% else %}
-                            {{ macro.render_text(title="Enzyme UniProt ID", key="enzyme_id_uniprot", type="text", value="", required=false, help="The UniProtKB or UniParc ID") }}
-                            {% endif %}
-                        </div>
-                        <div class="col">
-                            {% if data.get("enzyme", {}).get("databaseIds", {}).get("genpept") %}
-                            {{ macro.render_text(title="Enzyme GenPept ID", key="enzyme_id_genpept", type="text", value=data.enzyme.databaseIds.genpept, required=false, help="The NCBI GenPept ID") }}
-                            {% else %}
-                            {{ macro.render_text(title="Enzyme GenPept ID", key="enzyme_id_genpept", type="text", value="", required=false, help="The NCBI GenPept ID") }}
-                            {% endif %}
-                        </div>
-                        <div class="col">
-                            {% if data.get("enzyme", {}).get("databaseIds", {}).get("mibig") %}
-                            {{ macro.render_text(title="MIBiG ID", key="enzyme_id_mibig", type="text", value=data.enzyme.databaseIds.mibig, required=false, help="The MIBiG ID of the BGC containing the enzyme") }}
-                            {% else %}
-                            {{ macro.render_text(title="MIBiG ID", key="enzyme_id_mibig", type="text", value="", required=false, help="The MIBiG ID of the BGC containing the enzyme") }}
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <div id="fields-enzyme-ref">
-                                {% if data.get("enzyme", {}).get("references") %}
-                                    {% for ref in data.enzyme.references %}
-                                    <div class="group-enzyme-ref">
-                                        <div class="row d-flex align-items-center">
-                                            <div class="col">
-                                                {{ macro.render_text(title="Enzyme Reference DOI", key="enzyme_ref", type="text", value=ref, required=true) }}
-                                            </div>
-                                            <div class="col">
-                                                {{ macro.remove_button(class="remove-enzyme-ref", descr="Remove Reference") }}
-                                            </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="fw-semibold lh-2 text-center">Auxiliary Enzymes</h2>
+                <p class="mb-2 text-center">Enzymes required for the function of the tailoring enzyme in question</p>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="aux-enzyme">
+                        {% if data.enzyme.auxiliaryEnzymes is defined %}
+                            {% for auxenzyme in data.enzyme.auxiliaryEnzymes %}
+                            <div class="aux_enzyme">
+                                <div class="card card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h6>Auxiliary Enzyme #{{ loop.index }}</h6>
+                                        </div>
+                                        <div class="col-auto mx-auto">
+                                            <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.aux_enzyme')">Remove</button>
                                         </div>
                                     </div>
-                                    {% endfor %}
-                                {% else %}
-                                <div class="group-enzyme-ref">
-                                    <div class="row d-flex align-items-center">
+                                    <div class="row">
                                         <div class="col">
-                                            {{ macro.render_text(title="Enzyme Reference DOI", key="enzyme_ref", type="text", value="", required=true) }}
+                                        {{ macro.render_text(title="Enzyme Name", id="auxenzyme[" ~ loop.index0 ~ "]name", type="text", value=auxenzyme.name, required=true, help="The common enzyme name (e.g. McjB)") }}
                                         </div>
                                         <div class="col">
-                                            {{ macro.remove_button(class="remove-enzyme-ref", descr="Remove Reference") }}
+                                        {{ macro.render_text(title="Enzyme Description", id="auxenzyme[" ~ loop.index0 ~ "]description", type="text", value=data.enzyme.description, required=true, help="A brief description of the enzyme function") }}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col">
+                                        {{ macro.render_text(title="Enzyme UniProt ID", id="auxenzyme[" ~ loop.index0 ~ "]uniprot", type="text", value=auxenzyme.get("databaseIds", {}).get("uniprot", ""), required=false, help="The UniProtKB or UniParc ID") }}
+                                        </div>
+                                        <div class="col">
+                                        {{ macro.render_text(title="Enzyme GenPept ID", id="auxenzyme[" ~ loop.index0 ~ "]genpept", type="text", value=auxenzyme.get("databaseIds", {}).get("genpept", ""), required=false, help="The NCBI GenPept ID") }}
                                         </div>
                                     </div>
                                 </div>
-                                {% endif %}
                             </div>
-                            {{ macro.add_button(id="add-enzyme-ref", descr="Add Enzyme Reference") }}
+                            {% endfor %}
+                        {% endif %}
                         </div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="addAuxEnzyme()">Add Auxiliary Enzyme</button>
                     </div>
                 </div>
-
             </div>
-            <div class="col-md-6 text-center">
-                <h2 class="fw-semibold lh-2">Auxiliary Enzymes</h2>
-                <p class="mb-2">Enzymes required for the function of the tailoring enzyme in question</p>
-            </div>
-        </div>
-        <div class="row-auto my-2">
-<!--            must be able to add a whole new row?-->
-<!--            col reaction-->
-<!--            col one or more example reactions?-->
         </div>
         <div class="row-auto my-2">
             <div class="col-auto text-center mx-auto">
                 <button type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
         </div>
-
-
     </form>
 </div>
-
-
-
-
-<!--    <div>-->
-<!--            <div id="enzyme-fields">-->
-<!--                {{ macro.render_text(title="Enzyme Name", key="enzyme_names[]", type="text", value=data.enzyme.name, required=true, help="The name of the enzyme") }}-->
-<!--            </div>-->
-<!--            {{ macro.add_button(id="add-enzyme", descr="Add Another Enzyme Name") }}-->
-<!--    </div>-->
-
-<script type="text/javascript" src="{{ url_for('static', filename='js/dynamic_fields.js') }}" defer></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Define the HTML for new fields
-    var enzyme_ref = `
-        <div class="group-enzyme-ref">
-            <div class="row d-flex align-items-center">
-                <div class="col">
-                    {{ macro.render_text(title="Enzyme Reference DOI", key="enzyme_ref", type="text", value="", required=true) }}
-                </div>
-                <div class="col">
-                    {{ macro.remove_button(class="remove-enzyme-ref", descr="Remove Reference") }}
-                </div>
-            </div>
-        </div>
-    `;
-
-    setupDynamicFields('#fields-enzyme-ref', '#add-enzyme-ref', '.remove-enzyme-ref', '.group-enzyme-ref', enzyme_ref);
-});
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 {% endblock %}
