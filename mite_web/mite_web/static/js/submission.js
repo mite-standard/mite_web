@@ -9,14 +9,14 @@ function addEnzymeRef() {
     const container = document.getElementById('enzyme-ref');
     const entryHtml = `
         <div class="enzyme_ref">
-            <div class="row d-flex align-items-center">
+            <div class="row d-flex align-items-center mb-1">
                 <div class="col">
                     <div class="form-floating">
                         <input type="text" name="enzyme_ref[]" id="enzyme_ref[]" class="form-control" aria-describedby="Enzyme Reference DOI Help"  value="" required>
                         <label for="enzyme_ref[]" class="form-label">Enzyme Reference DOI</label>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-auto mx-auto">
                     <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.enzyme_ref')">Remove</button>
                 </div>
             </div>
@@ -31,9 +31,9 @@ function addAuxEnzyme() {
     const entryHtml = `
         <div class="aux_enzyme">
             <div class="card card-body">
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col">
-                        <h6>Auxiliary Enzyme</h6>
+                        <h6 class="fw-semibold lh-2">Auxiliary Enzyme</h6>
                     </div>
                     <div class="col-auto mx-auto">
                         <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.aux_enzyme')">Remove</button>
