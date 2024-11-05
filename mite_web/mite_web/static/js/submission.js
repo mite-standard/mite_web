@@ -128,7 +128,7 @@ function createHtmlAuxEnyzme(data = {}, index) {
                         <h6 class="fw-semibold lh-2">Auxiliary Enzyme</h6>
                     </div>
                     <div class="col-auto mx-auto">
-                        <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.aux_enzyme')">Remove</button>
+                        <button type="button" class="btn btn-danger" onclick="removeField(this, '.aux_enzyme')">Remove</button>
                     </div>
                 </div>
                 <div class="row">
@@ -166,6 +166,5 @@ function createHtmlAuxEnyzme(data = {}, index) {
             </div>
         </div>
     `;
-
-
 }
+
