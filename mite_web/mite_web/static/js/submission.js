@@ -46,6 +46,47 @@ function addReactionRef(index) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+function addReactionProd(index) {
+    const container = document.getElementById(index);
+    const entryHtml = `
+        <div class="reaction_products">
+            <div class="row d-flex align-items-center mb-1">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" name="${index}" id="${index}" class="form-control" aria-describedby="${index}Help"  value="" required>
+                        <label for="${index}" class="form-label">Product SMILES</label>
+                        <div id="${index}Help" class="form-text">A single reaction product SMILES string. Dot notation is not permitted</div>
+                    </div>
+                </div>
+                <div class="col-auto mx-auto">
+                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction_products')">Remove</button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function addForbiddenProd(index) {
+    const container = document.getElementById(index);
+    const entryHtml = `
+        <div class="forbidden_products">
+            <div class="row d-flex align-items-center mb-1">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" name="${index}" id="${index}" class="form-control" aria-describedby="${index}Help"  value="" required>
+                        <label for="${index}" class="form-label">Forbidden Product SMILES</label>
+                        <div id="${index}Help" class="form-text">A single forbidden reaction product SMILES string. Dot notation is not permitted</div>
+                    </div>
+                </div>
+                <div class="col-auto mx-auto">
+                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.forbidden_products')">Remove</button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
 
 function addAuxEnzyme() {
     const container = document.getElementById('aux-enzyme');
@@ -91,6 +132,88 @@ function addAuxEnzyme() {
                             <label for="auxenzyme[${index}]genpept" class="form-label">GenPept ID</label>
                             <div id="AuxEnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+
+function addKnownReaction(knownreaction) {
+    const container = document.getElementById(knownreaction);
+    const index = container.children.length;
+    const entryHtml = `
+        <div class="knownreaction">
+            <div class="card card-body">
+                <div class="row mb-2">
+                    <div class="col">
+                        <h6 class="lh-2">Known Reaction</h6>
+                    </div>
+                    <div class="col-auto mx-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.knownreaction')">Remove</button>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" name="${knownreaction}substrate" id="${knownreaction}substrate" class="form-control" aria-describedby="KnownreactionSubstrateHelp"  value="" required>
+                            <label for="${knownreaction}substrate" class="form-label">Substrate SMILES</label>
+                            <div id="KnownreactionSubstrateHelp" class="form-text">The reaction substrate SMILES string. Multiple substrates must be specified with dot notation ('substrate1.substrate2')</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" name="${knownreaction}description" id="${knownreaction}description" class="form-control" aria-describedby="KnownreactionDescriptionHelp"  value="">
+                            <label for="${knownreaction}description" class="form-label">Description</label>
+                            <div id="KnownreactionDescriptionHelp" class="form-text">Description of the reaction example</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-auto">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" value="True" type="radio" name='${knownreaction}intermediate' id='${knownreaction}intermediate1'>
+                            <label class="form-check-label" for='${knownreaction}intermediate1'>True</label>
+                        </div>
+                        <div class="form-check-inline">
+                            <input class="form-check-input" value="False" type="radio" name='${knownreaction}intermediate' id='${knownreaction}intermediate2' checked>
+                            <label class="form-check-label" for='${knownreaction}intermediate2'>False</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-text">Intermediate product?</div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id='${knownreaction}products[]'>
+                        </div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="addReactionProd('${knownreaction}products[]')">Add Product SMILES</button>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]forbiddenproducts[]" }}'>
+                        {% if knownreaction.get("forbidden_products") %}
+                        {% for product in knownreaction.forbidden_products %}
+                        <div class="forbidden_products">
+                            <div class="row d-flex align-items-center mb-1">
+                                <div class="col">
+                                    {{ macro.render_text(title="Forbidden Product SMILES", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]forbiddenproducts[]", type="text", value=product, required=true, help="A single forbidden reaction product SMILES string. Dot notation is not permitted") }}
+                                </div>
+                                <div class="col-auto mx-auto">
+                                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.forbidden_products')">Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="addForbiddenProd('{{ 'reaction[' ~ reaction_outer_idx ~ ']knownreaction[' ~ reaction_example_idx ~ ']forbiddenproducts[]' }}')">Add Forbidden Product SMILES</button>
                     </div>
                 </div>
             </div>
