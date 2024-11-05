@@ -49,11 +49,35 @@
                 </div>
             </div>
             <div class="col-md-6" id="col-auxenzyme">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="fw-semibold lh-2 text-center">Auxiliary Enzymes</h2>
+                        <p class="mb-2 text-center">Enzymes required for the function of the tailoring enzyme in question</p>
+                    </div>
+                </div>
+                <div class="card card-body">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div id="aux-enzymes"></div>
+                            <button type="button" class="btn btn-secondary my-2" onclick="insertAuxEnzymeForm(document.getElementById('aux-enzymes'))">Add Auxiliary Enzyme</button>
+                        </div>
+                    </div>
 
+
+                </div>
             </div>
         </div>
         <div class="row my-2" id="row-reaction">
-
+            <div class="row my-2">
+                <div class="col">
+                    <h2 class="fw-semibold lh-2 text-center">Reaction Information</h2>
+                    <p class="mb-2 text-center">Reaction information for this tailoring enzyme</p>
+                </div>
+            </div>
+            <div class="card card-body">
+                <div id="reactions"> function populate </div>
+                insert button to reaction
+            </div>
         </div>
         <div class="row-auto my-2" id=row-form-submission>
             <div class="col-auto text-center mx-auto">
@@ -73,7 +97,7 @@
         populateTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
 
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
-
+        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
     });
 </script>
 {% endblock %}

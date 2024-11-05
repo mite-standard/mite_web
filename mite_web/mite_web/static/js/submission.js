@@ -23,6 +23,16 @@ function populateEnzymeRefForm(container, data) {
     }
 }
 
+function populateAuxEnzymeForm(container, data) {
+    if (data.enzyme?.auxiliaryEnzymes) {
+        data.enzyme.auxiliaryEnzymes.forEach(entry => {
+            const index = container.children.length;
+            const entryHtml = createHtmlAuxEnyzme(entry, index)
+            container.insertAdjacentHTML('beforeend', entryHtml);
+        });
+    }
+}
+
 // On-demand scripts (insert forms)
 
 function insertEnzymeRefForm(container) {
@@ -30,9 +40,15 @@ function insertEnzymeRefForm(container) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+function insertAuxEnzymeForm(container) {
+    const index = container.children.length;
+    const entryHtml = createHtmlAuxEnyzme({}, index)
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
 
 
 // All HTML generation scripts
+
 
 function createHtmlEnzymeName(data = {}) {
     return `
@@ -41,7 +57,7 @@ function createHtmlEnzymeName(data = {}) {
             <label for="enzyme_name" class="form-label">Enzyme Name</label>
             <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjB)</div>
         </div>
-    `
+    `;
 }
 
 function createHtmlEnzymeDescription(data = {}) {
@@ -51,7 +67,7 @@ function createHtmlEnzymeDescription(data = {}) {
             <label for="enzyme_description" class="form-label">Enzyme Description</label>
             <div id="EnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
         </div>
-    `
+    `;
 }
 
 function createHtmlEnzymeUniprot(data = {}) {
@@ -61,7 +77,7 @@ function createHtmlEnzymeUniprot(data = {}) {
             <label for="enzyme_description" class="form-label">Enzyme UniProt ID</label>
             <div id="EnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
         </div>
-    `
+    `;
 }
 
 function createHtmlEnzymeGenpept(data = {}) {
@@ -71,7 +87,7 @@ function createHtmlEnzymeGenpept(data = {}) {
             <label for="enzyme_genpept" class="form-label">Enzyme GenPept ID</label>
             <div id="EnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
         </div>
-    `
+    `;
 }
 
 function createHtmlEnzymeMibig(data = {}) {
@@ -81,7 +97,7 @@ function createHtmlEnzymeMibig(data = {}) {
             <label for="enzyme_mibig" class="form-label">MIBiG ID</label>
             <div id="EnzymeMibigHelp" class="form-text">The MIBiG ID of the BGC containing the enzyme</div>
         </div>
-    `
+    `;
 }
 
 function createHtmlRef(data, className, jsonID) {
@@ -100,5 +116,56 @@ function createHtmlRef(data, className, jsonID) {
                 </div>
             </div>
         </div>
-    `
+    `;
+}
+
+function createHtmlAuxEnyzme(data = {}, index) {
+    return `
+        <div class="aux_enzyme">
+            <div class="card card-body">
+                <div class="row mb-2">
+                    <div class="col">
+                        <h6 class="fw-semibold lh-2">Auxiliary Enzyme</h6>
+                    </div>
+                    <div class="col-auto mx-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.aux_enzyme')">Remove</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                         <div class="form-floating">
+                            <input type="text" name="auxenzyme[${index}]name" id="auxenzyme[${index}]name" class="form-control" aria-describedby="AuxEnzymeNameHelp"  value='${data?.name ?? ""}' required>
+                            <label for="auxenzyme[${index}]name" class="form-label">Auxiliary Enyzme Name</label>
+                            <div id="AuxEnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjC)</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control" aria-describedby="AuxEnzymeDescriptionHelp"  value='${data?.description ?? ""}' required>
+                            <label for="auxenzyme[${index}]description" class="form-label">Auxiliary Enzyme Description</label>
+                            <div id="AuxEnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control" aria-describedby="AuxEnzymeUniprotHelp"  value='${data?.databaseIds?.uniprot ?? ""}'>
+                            <label for="auxenzyme[${index}]uniprot" class="form-label">UniProt/UniParc ID</label>
+                            <div id="AuxEnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control" aria-describedby="AuxEnzymeGenpeptHelp"  value='${data?.databaseIds?.genpept ?? ""}'>
+                            <label for="auxenzyme[${index}]genpept" class="form-label">GenPept ID</label>
+                            <div id="AuxEnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+
 }
