@@ -135,22 +135,254 @@
                                             </div>
                                             <div class="row mb-2">
                                                 <div class="col">
+                                                    {{ macro.render_text(title="Reaction SMARTS", id="reaction[" ~ loop.index0 ~ "]smarts", type="text", value=reaction.get("reactionSMARTS", {}).get("reactionSMARTS", ""), required=true, help="The reaction SMARTS depicting the reaction") }}
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col">
                                                     {{ macro.render_text(title="Reaction Description", id="reaction[" ~ loop.index0 ~ "]description", type="text", value=reaction.get("description"), required=false, help="A brief description of the reaction") }}
                                                 </div>
                                             </div>
                                             <div class="row mb-2">
                                                 <div class="col">
                                                     <div class="form-group">
-                                                        <label>Select one or more tailoring terms</label>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="Acetylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Acetylation" {% if 'Acetylation' in reaction.tailoring %}checked{% endif %}>
-                                                            <label class="form-check-label" for="Acetylation">Acetylation</label>
+                                                        <div class="card card-body">
+                                                            <div class="row">
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Acetylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Acetylation" {% if 'Acetylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Acetylation">Acetylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Acylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Acylation" {% if 'Acylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Acylation">Acylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Amination" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Amination" {% if 'Amination' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Amination">Amination</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Biaryl bond formation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Biaryl bond formation" {% if 'Biaryl bond formation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Biaryl bond formation">Biaryl bond formation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Carboxylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Carboxylation" {% if 'Carboxylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Carboxylation">Carboxylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Cyclization" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Cyclization" {% if 'Cyclization' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Cyclization">Cyclization</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Decarboxylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Decarboxylation" {% if 'Decarboxylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Decarboxylation">Decarboxylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Dehydration" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Dehydration" {% if 'Dehydration' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Dehydration">Dehydration</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Dehydrogenation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Dehydrogenation" {% if 'Dehydrogenation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Dehydrogenation">Dehydrogenation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Demethylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Demethylation" {% if 'Demethylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Demethylation">Demethylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Dioxygenation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Dioxygenation" {% if 'Dioxygenation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Dioxygenation">Dioxygenation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Epimerization" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Epimerization" {% if 'Epimerization' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Epimerization">Epimerization</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Glycosylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Glycosylation" {% if 'Glycosylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Glycosylation">Glycosylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Halogenation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Halogenation" {% if 'Halogenation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Halogenation">Halogenation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Heterocyclization" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Heterocyclization" {% if 'Heterocyclization' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Heterocyclization">Heterocyclization</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Hydrolysis" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Hydrolysis" {% if 'Hydrolysis' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Hydrolysis">Hydrolysis</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Hydroxylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Hydroxylation" {% if 'Hydroxylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Hydroxylation">Hydroxylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Macrolactam formation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Macrolactam formation" {% if 'Macrolactam formation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Macrolactam formation">Macrolactam formation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Methylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Methylation" {% if 'Methylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Methylation">Methylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Monooxygenation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Monooxygenation" {% if 'Monooxygenation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Monooxygenation">Monooxygenation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Oxidation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Oxidation" {% if 'Oxidation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Oxidation">Oxidation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Phosphorylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Phosphorylation" {% if 'Phosphorylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Phosphorylation">Phosphorylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Prenylation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Prenylation" {% if 'Prenylation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Prenylation">Prenylation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Reduction" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Reduction" {% if 'Reduction' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Reduction">Reduction</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Sulfation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Sulfation" {% if 'Sulfation' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Sulfation">Sulfation</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Other" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Other" {% if 'Other' in reaction.tailoring %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Other">Other</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="checkbox" id="Macrolactam formation" name='{{ "reaction[" ~ loop.index0 ~ "]tailoring[]" }}' value="Macrolactam formation" {% if 'Macrolactam formation' in reaction.tailoring %}checked{% endif %}>
-                                                            <label class="form-check-label" for="Macrolactam formation">Macrolactam formation</label>
-                                                        </div>
+                                                        <div class="form-text">Select one or more tailoring terms</div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <div class="card card-body">
+                                                            <div class="row">
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Heterologous expression" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Heterologous expression" {% if 'Heterologous expression' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Heterologous expression">Heterologous expression</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Inference from genomic data and chemical structure" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Inference from genomic data and chemical structure" {% if 'Inference from genomic data and chemical structure' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Inference from genomic data and chemical structure">Inference from genomic data and chemical structure</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="In vitro assay" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="In vitro assay" {% if 'In vitro assay' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="In vitro assay">In vitro assay</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Isothermal titration calorimetry" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Isothermal titration calorimetry" {% if 'Isothermal titration calorimetry' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Isothermal titration calorimetry">Isothermal titration calorimetry</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Knock-out studies" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Knock-out studies" {% if 'Knock-out studies' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Knock-out studies">Knock-out studies</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Site-directed mutagenesis" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Site-directed mutagenesis" {% if 'Site-directed mutagenesis' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Site-directed mutagenesis">Site-directed mutagenesis</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-auto">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" id="Surface plasmon resonance" name='{{ "reaction[" ~ loop.index0 ~ "]evidence[]" }}' value="Surface plasmon resonance" {% if 'Surface plasmon resonance' in reaction.evidence.evidenceCode %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="Surface plasmon resonance">Surface plasmon resonance</label>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-text">Select one or more evidence types</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col">
+                                                    <div id='{{ "reaction[" ~ loop.index0 ~ "]ref[]" }}'>
+                                                    {% if reaction.get("evidence", {}).get("references") %}
+                                                        {% for ref in reaction.evidence.references %}
+                                                        <div class="reaction_ref">
+                                                            <div class="row d-flex align-items-center mb-1">
+                                                                <div class="col">
+                                                                    {{ macro.render_text(title="Reaction Reference DOI", id="reaction[" ~ loop.index0 ~ "]ref[]", type="text", value=ref, required=true) }}
+                                                                </div>
+                                                                <div class="col-auto mx-auto">
+                                                                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction_ref')">Remove</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary my-2" onclick="addReactionRef('{{ 'reaction[' ~ loop.index0 ~ ']ref[]' }}')">Add Reference</button>
                                                 </div>
                                             </div>
                                         </div>

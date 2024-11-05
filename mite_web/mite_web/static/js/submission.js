@@ -25,6 +25,28 @@ function addEnzymeRef() {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+
+function addReactionRef(index) {
+    const container = document.getElementById(index);
+    const entryHtml = `
+        <div class="reaction_ref">
+            <div class="row d-flex align-items-center mb-1">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" name="${index}" id="${index}" class="form-control" aria-describedby="Reaction Reference DOI Help"  value="" required>
+                        <label for="${index}" class="form-label">Reaction Reference DOI</label>
+                    </div>
+                </div>
+                <div class="col-auto mx-auto">
+                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction_ref')">Remove</button>
+                </div>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+
 function addAuxEnzyme() {
     const container = document.getElementById('aux-enzyme');
     const index = container.children.length;
@@ -58,14 +80,14 @@ function addAuxEnzyme() {
                 <div class="row mb-2">
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control" aria-describedby="AuxEnzymeUniprotHelp"  value="" required>
+                            <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control" aria-describedby="AuxEnzymeUniprotHelp"  value="">
                             <label for="auxenzyme[${index}]uniprot" class="form-label">UniProt/UniParc ID</label>
                             <div id="AuxEnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control" aria-describedby="AuxEnzymeGenpeptHelp"  value="" required>
+                            <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control" aria-describedby="AuxEnzymeGenpeptHelp"  value="">
                             <label for="auxenzyme[${index}]genpept" class="form-label">GenPept ID</label>
                             <div id="AuxEnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
                         </div>

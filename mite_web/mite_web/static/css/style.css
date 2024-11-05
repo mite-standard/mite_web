@@ -1,6 +1,7 @@
 /* Defines custom vars to be used in document */
 :root {
     --bs-primary-rgb: 17,103,137;  /* FERMO blue */
+    --bs-tertiary-rgb: 177,182,149;  /* Sage green */
 }
 
 body {
@@ -42,6 +43,11 @@ a:not(.footer a) {
 .btn-primary {
     background-color: rgb(var(--bs-primary-rgb));
     border-color: rgb(var(--bs-primary-rgb));
+}
+
+.btn-danger {
+    background-color: rgb(var(--bs-tertiary-rgb));
+    border-color: rgb(var(--bs-tertiary-rgb));
 }
 
 .table thead tr th, .table tbody tr td {
