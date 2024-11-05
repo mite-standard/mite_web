@@ -33,6 +33,15 @@ function populateAuxEnzymeForm(container, data) {
     }
 }
 
+function populateReactionForm(container, data) {
+    if (data.reactions) {
+        data.reactions.forEach(entry => {
+            const index = container.children.length;
+            createHtmlReaction(entry, index)
+        });
+    }
+}
+
 // On-demand scripts (insert forms)
 
 function insertEnzymeRefForm(container) {
@@ -44,6 +53,11 @@ function insertAuxEnzymeForm(container) {
     const index = container.children.length;
     const entryHtml = createHtmlAuxEnyzme({}, index)
     container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function insertReactionForm(container) {
+    const index = container.children.length;
+    createHtmlReaction({}, index)
 }
 
 
@@ -168,3 +182,98 @@ function createHtmlAuxEnyzme(data = {}, index) {
     `;
 }
 
+
+
+
+function createHtmlReaction(data = {}, index) {
+    const reactionEntry = document.createElement('div')
+    reactionEntry.classList.add('reaction')
+    reactionEntry.innerHTML = `
+        <div class="reaction">
+            <div class="card card-body">
+                <div class="row mb-2">
+                    <div class="col">
+                        <h5 class="fw-semibold lh-2">Reaction</h5>
+                    </div>
+                    <div class="col-auto mx-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeField(this, '.reaction')">Remove</button>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div class="card card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <h6 class="fw-semibold lh-2">General Information</h6>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id="reaction[${index}]smarts-field"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id="reaction[${index}]description-field"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id="reaction[${index}]rhea-field"></div>
+                                </div>
+                                <div class="col">
+                                    <div id="reaction[${index}]ec-field"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id='"reaction[${index}]tailoring-field"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id="reaction[${index}]evidencecode-field"></div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <div id="reaction[${index}]ref-field"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card card-body">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <h6 class="fw-semibold lh-2">Known Reactions</h6>
+                                </div>
+                            </div>
+                            <div id="reaction[${index}]knownreaction-field"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const container = document.getElementById('reactions');
+    container.appendChild(reactionEntry);
+
+    const smartsHtml = addHtmlSmarts(data, index);
+    const containerSmarts = document.getElementById(`reaction[${index}]smarts-field`);
+    containerSmarts.insertAdjacentHTML('beforeend', smartsHtml);
+
+//    TODO(MMZ 5.11.) Continue here: append html to the places where they should be
+
+}
+
+function addHtmlSmarts(data, index) {
+    return `
+        <div class="form-floating">
+            <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control" aria-describedby="ReactionSmartsHelp" type="text" value='${data?.reactionSMARTS ?? ""}' required>
+            <label for="enzyme_name" class="form-label">Reaction SMARTS</label>
+            <div id="ReactionSmartsHelp" class="form-text">The reaction SMARTS depicting the reaction</div>
+        </div>
+    `;
+}

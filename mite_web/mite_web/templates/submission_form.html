@@ -73,8 +73,17 @@
                 </div>
             </div>
             <div class="card card-body">
-                <div id="reactions"> function populate </div>
-                insert button to reaction
+                <div class="row mb-2">
+                    <div class="col">
+                        <h5 class="fw-semibold lh-2">Reaction Entries</h5>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="reactions"></div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="insertReactionForm(document.getElementById('reactions'))">Add Reaction</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row-auto my-2" id=row-form-submission>
@@ -87,15 +96,14 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
         populateTextForm(document.getElementById('enzyme-name'), createHtmlEnzymeName, {{ data | tojson }})
         populateTextForm(document.getElementById('enzyme-description'), createHtmlEnzymeDescription, {{ data | tojson }})
         populateTextForm(document.getElementById('enzyme-uniprot'), createHtmlEnzymeUniprot, {{ data | tojson }})
         populateTextForm(document.getElementById('enzyme-genpept'), createHtmlEnzymeGenpept, {{ data | tojson }})
         populateTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
-
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
+        populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
     });
 </script>
 {% endblock %}
