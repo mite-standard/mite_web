@@ -14,497 +14,48 @@
     </div>
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="row my-2">
-            <div class="col-md-6">
-                <h2 class="fw-semibold lh-2 text-center">Enzyme Information</h2>
-                <p class="mb-2 text-center">General information on the tailoring enzyme</p>
-                <div class="card card-body">
-                    <div class="row mb-2">
-                        <div class="col">
-                        {{ macro.render_text(title="Enzyme Name", id="enzyme_name", type="text", value=data.get("enzyme", {}).get("name", ""), required=true, help="The common enzyme name (e.g. McjB)") }}
-                        </div>
-                        <div class="col">
-                        {{ macro.render_text(title="Enzyme Description", id="enzyme_description", type="text", value=data.get("enzyme", {}).get("description", ""), required=true, help="A brief description of the enzyme function") }}
-                        </div>
+        <div class="row my-2" id="row-enzyme">
+            <div class="col-md-6" id="col-enzyme">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="fw-semibold lh-2 text-center">Enzyme Information</h2>
+                        <p class="mb-2 text-center">General information on the tailoring enzyme</p>
                     </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            {{ macro.render_text(title="Enzyme UniProt ID", id="enzyme_uniprot", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("uniprot", ""), required=false, help="The UniProtKB or UniParc ID") }}
-                        </div>
-                        <div class="col">
-                            {{ macro.render_text(title="Enzyme GenPept ID", id="enzyme_genpept", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("genpept", ""), required=false, help="The NCBI GenPept ID") }}
-                        </div>
-                        <div class="col">
-                            {{ macro.render_text(title="MIBiG ID", id="enzyme_mibig", type="text", value=data.get("enzyme", {}).get("databaseIds", {}).get("mibig", ""), required=false, help="The MIBiG ID of the BGC containing the enzyme") }}
-                        </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="enzyme-name"></div>
                     </div>
-                    <div class="row mb-2">
-                        <div class="col">
-                            <div id="enzyme-ref">
-                            {% if data.get("enzyme", {}).get("references") %}
-                                {% for ref in data.enzyme.references %}
-                                <div class="enzyme_ref">
-                                    <div class="row d-flex align-items-center mb-1">
-                                        <div class="col">
-                                            {{ macro.render_text(title="Enzyme Reference DOI", id="enzyme_ref[]", type="text", value=ref, required=true) }}
-                                        </div>
-                                        <div class="col-auto mx-auto">
-                                            <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.enzyme_ref')">Remove</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            {% endif %}
-                            </div>
-                            <button type="button" class="btn btn-secondary my-2" onclick="addEnzymeRef()">Add Reference</button>
-                        </div>
+                    <div class="col">
+                        <div id="enzyme-description"></div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="enzyme-uniprot"></div>
+                    </div>
+                    <div class="col">
+                        <div id="enzyme-genpept"></div>
+                    </div>
+                    <div class="col">
+                        <div id="enzyme-mibig"></div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="enzyme-ref"></div>
+                        <button type="button" class="btn btn-secondary my-2" onclick="insertRefForm('enzyme-ref', 'enzyme_ref', 'enzyme_ref[]')">Add Reference</button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <h2 class="fw-semibold lh-2 text-center">Auxiliary Enzymes</h2>
-                <p class="mb-2 text-center">Enzymes required for the function of the tailoring enzyme in question</p>
-                <div class="card card-body">
-                    <div class="row mb-2">
-                        <div class="col">
-                            <div id="aux-enzyme">
-                            {% if data.get("enzyme", {}).get("auxiliaryEnzymes") %}
-                                {% for auxenzyme in data.enzyme.auxiliaryEnzymes %}
-                                <div class="aux_enzyme">
-                                    <div class="card card-body">
-                                        <div class="row mb-2">
-                                            <div class="col">
-                                                <h6 class="fw-semibold lh-2">Auxiliary Enzyme</h6>
-                                            </div>
-                                            <div class="col-auto mx-auto">
-                                                <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.aux_enzyme')">Remove</button>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                            {{ macro.render_text(title="Enzyme Name", id="auxenzyme[" ~ loop.index0 ~ "]name", type="text", value=auxenzyme.name, required=true, help="The common enzyme name (e.g. McjB)") }}
-                                            </div>
-                                            <div class="col">
-                                            {{ macro.render_text(title="Enzyme Description", id="auxenzyme[" ~ loop.index0 ~ "]description", type="text", value=data.enzyme.description, required=true, help="A brief description of the enzyme function") }}
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                            {{ macro.render_text(title="Enzyme UniProt ID", id="auxenzyme[" ~ loop.index0 ~ "]uniprot", type="text", value=auxenzyme.get("databaseIds", {}).get("uniprot", ""), required=false, help="The UniProtKB or UniParc ID") }}
-                                            </div>
-                                            <div class="col">
-                                            {{ macro.render_text(title="Enzyme GenPept ID", id="auxenzyme[" ~ loop.index0 ~ "]genpept", type="text", value=auxenzyme.get("databaseIds", {}).get("genpept", ""), required=false, help="The NCBI GenPept ID") }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            {% endif %}
-                            </div>
-                            <button type="button" class="btn btn-secondary my-2" onclick="addAuxEnzyme()">Add Auxiliary Enzyme</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row my-2">
-            <div class="col">
-                <h2 class="fw-semibold lh-2 text-center">Reaction Information</h2>
-                <p class="mb-2 text-center">Reaction information for this tailoring enzyme</p>
-                <div class="card card-body">
-                    {% if data.get("reactions") %}
-                    {% set reaction_outer_idx = 0 %}
-                    {% for reaction in data.reactions %}
-                    <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]" }}'>
-                        <div class="reaction">
-                            <div class="card card-body">
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <h5 class="fw-semibold lh-2">Reaction</h5>
-                                    </div>
-                                    <div class="col-auto mx-auto">
-                                        <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction')">Remove</button>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col">
-                                        <div class="card card-body">
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    <h6 class="fw-semibold lh-2">General Information</h6>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    {{ macro.render_text(title="Reaction SMARTS", id="reaction[" ~ reaction_outer_idx ~ "]smarts", type="text", value=reaction.get("reactionSMARTS", {}).get("reactionSMARTS", ""), required=true, help="The reaction SMARTS depicting the reaction") }}
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    {{ macro.render_text(title="Reaction Description", id="reaction[" ~ reaction_outer_idx ~ "]description", type="text", value=reaction.get("description"), required=false, help="A brief description of the reaction") }}
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    {{ macro.render_text(title="RHEA ID", id="reaction[" ~ reaction_outer_idx ~ "]rhea", type="text", value=reaction.get("databaseIds", {}).get("rhea", ""), required=false, help="The RHEA Knowledgebase ID") }}
-                                                </div>
-                                                <div class="col">
-                                                    {{ macro.render_text(title="EC Number", id="reaction[" ~ reaction_outer_idx ~ "]ec", type="text", value=reaction.get("databaseIds", {}).get("ec", ""), required=false, help="The EC (Enzyme Commission) Number (e.g. '1.14.19.59')") }}
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    <div class="form-group">
-                                                        <div class="card card-body">
-                                                            <div class="row">
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Acetylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Acetylation" {% if 'Acetylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Acetylation">Acetylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Acylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Acylation" {% if 'Acylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Acylation">Acylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Amination" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Amination" {% if 'Amination' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Amination">Amination</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Biaryl bond formation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Biaryl bond formation" {% if 'Biaryl bond formation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Biaryl bond formation">Biaryl bond formation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Carboxylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Carboxylation" {% if 'Carboxylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Carboxylation">Carboxylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Cyclization" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Cyclization" {% if 'Cyclization' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Cyclization">Cyclization</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Decarboxylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Decarboxylation" {% if 'Decarboxylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Decarboxylation">Decarboxylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Dehydration" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Dehydration" {% if 'Dehydration' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Dehydration">Dehydration</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Dehydrogenation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Dehydrogenation" {% if 'Dehydrogenation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Dehydrogenation">Dehydrogenation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Demethylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Demethylation" {% if 'Demethylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Demethylation">Demethylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Dioxygenation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Dioxygenation" {% if 'Dioxygenation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Dioxygenation">Dioxygenation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Epimerization" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Epimerization" {% if 'Epimerization' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Epimerization">Epimerization</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Glycosylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Glycosylation" {% if 'Glycosylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Glycosylation">Glycosylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Halogenation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Halogenation" {% if 'Halogenation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Halogenation">Halogenation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Heterocyclization" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Heterocyclization" {% if 'Heterocyclization' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Heterocyclization">Heterocyclization</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Hydrolysis" name='{{ "reaction[" ~ reaction_outer_idx0 ~ "]tailoring[]" }}' value="Hydrolysis" {% if 'Hydrolysis' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Hydrolysis">Hydrolysis</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Hydroxylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Hydroxylation" {% if 'Hydroxylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Hydroxylation">Hydroxylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Macrolactam formation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Macrolactam formation" {% if 'Macrolactam formation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Macrolactam formation">Macrolactam formation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Methylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Methylation" {% if 'Methylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Methylation">Methylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Monooxygenation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Monooxygenation" {% if 'Monooxygenation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Monooxygenation">Monooxygenation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Oxidation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Oxidation" {% if 'Oxidation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Oxidation">Oxidation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Phosphorylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Phosphorylation" {% if 'Phosphorylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Phosphorylation">Phosphorylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Prenylation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Prenylation" {% if 'Prenylation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Prenylation">Prenylation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Reduction" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Reduction" {% if 'Reduction' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Reduction">Reduction</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Sulfation" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Sulfation" {% if 'Sulfation' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Sulfation">Sulfation</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Other" name='{{ "reaction[" ~ reaction_outer_idx ~ "]tailoring[]" }}' value="Other" {% if 'Other' in reaction.tailoring %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Other">Other</label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-text">Select one or more tailoring terms</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    <div class="form-group">
-                                                        <div class="card card-body">
-                                                            <div class="row">
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Heterologous expression" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Heterologous expression" {% if 'Heterologous expression' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Heterologous expression">Heterologous expression</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Inference from genomic data and chemical structure" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Inference from genomic data and chemical structure" {% if 'Inference from genomic data and chemical structure' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Inference from genomic data and chemical structure">Inference from genomic data and chemical structure</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="In vitro assay" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="In vitro assay" {% if 'In vitro assay' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="In vitro assay">In vitro assay</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Isothermal titration calorimetry" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Isothermal titration calorimetry" {% if 'Isothermal titration calorimetry' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Isothermal titration calorimetry">Isothermal titration calorimetry</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Knock-out studies" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Knock-out studies" {% if 'Knock-out studies' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Knock-out studies">Knock-out studies</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Site-directed mutagenesis" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Site-directed mutagenesis" {% if 'Site-directed mutagenesis' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Site-directed mutagenesis">Site-directed mutagenesis</label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-auto">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="checkbox" id="Surface plasmon resonance" name='{{ "reaction[" ~ reaction_outer_idx ~ "]evidence[]" }}' value="Surface plasmon resonance" {% if 'Surface plasmon resonance' in reaction.evidence.evidenceCode %}checked{% endif %}>
-                                                                        <label class="form-check-label" for="Surface plasmon resonance">Surface plasmon resonance</label>
-                                                                    </div>
-                                                                </div>
+            <div class="col-md-6" id="col-auxenzyme">
 
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-text">Select one or more evidence types</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]ref[]" }}'>
-                                                    {% if reaction.get("evidence", {}).get("references") %}
-                                                        {% for ref in reaction.evidence.references %}
-                                                        <div class="reaction_ref">
-                                                            <div class="row d-flex align-items-center mb-1">
-                                                                <div class="col">
-                                                                    {{ macro.render_text(title="Reaction Reference DOI", id="reaction[" ~ reaction_outer_idx ~ "]ref[]", type="text", value=ref, required=true) }}
-                                                                </div>
-                                                                <div class="col-auto mx-auto">
-                                                                    <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction_ref')">Remove</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        {% endfor %}
-                                                    {% endif %}
-                                                    </div>
-                                                    <button type="button" class="btn btn-secondary my-2" onclick="addReactionRef('{{ 'reaction[' ~ reaction_outer_idx ~ ']ref[]' }}')">Add Reference</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="card card-body">
-                                            <div class="row mb-2">
-                                                <div class="col">
-                                                    <h6 class="fw-semibold lh-2">Known Reactions</h6>
-                                                </div>
-                                            </div>
-                                            {% set reaction_example_idx = 0 %}
-                                            {% for knownreaction in reaction.get("reactions") %}
-                                            <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]" }}'>
-                                                <div class="knownreaction">
-                                                    <div class="card card-body">
-                                                        <div class="row mb-2">
-                                                            <div class="col">
-                                                                <h6 class="lh-2">Known Reaction</h6>
-                                                            </div>
-                                                            <div class="col-auto mx-auto">
-                                                                <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.knownreaction')">Remove</button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <div class="col">
-                                                                {{ macro.render_text(title="Substrate SMILES", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]substrate", type="text", value=knownreaction.get("substrate", ""), required=true, help="The reaction substrate SMILES string. Multiple substrates must be specified with dot notation ('substrate1.substrate2')") }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <div class="col">
-                                                                {{ macro.render_text(title="Description", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]description", type="text", value=knownreaction.get("description", ""), required=false, help="Description of the reaction example") }}
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <div class="col-auto">
-                                                                <div class="form-check-inline">
-                                                                    <input class="form-check-input" value="True" type="radio" name='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}' id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}1'>
-                                                                    <label class="form-check-label" for='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}1'>True</label>
-                                                                </div>
-                                                                <div class="form-check-inline">
-                                                                    <input class="form-check-input" value="False" type="radio" name='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}' id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}2' checked>
-                                                                    <label class="form-check-label" for='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]intermediate" }}2'>False</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col">
-                                                                <div class="form-text">Intermediate product?</div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <div class="col">
-                                                                <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]products[]" }}'>
-                                                                {% if knownreaction.get("products") %}
-                                                                {% for product in knownreaction.products %}
-                                                                <div class="reaction_products">
-                                                                    <div class="row d-flex align-items-center mb-1">
-                                                                        <div class="col">
-                                                                            {{ macro.render_text(title="Product SMILES", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]products[]", type="text", value=product, required=true, help="A single reaction product SMILES string. Dot notation is not permitted") }}
-                                                                        </div>
-                                                                        <div class="col-auto mx-auto">
-                                                                            <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.reaction_products')">Remove</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                {% endfor %}
-                                                                {% endif %}
-                                                                </div>
-                                                                <button type="button" class="btn btn-secondary my-2" onclick="addReactionProd('{{ 'reaction[' ~ reaction_outer_idx ~ ']knownreaction[' ~ reaction_example_idx ~ ']products[]' }}')">Add Product SMILES</button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row mb-2">
-                                                            <div class="col">
-                                                                <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]forbiddenproducts[]" }}'>
-                                                                {% if knownreaction.get("forbidden_products") %}
-                                                                {% for product in knownreaction.forbidden_products %}
-                                                                <div class="forbidden_products">
-                                                                    <div class="row d-flex align-items-center mb-1">
-                                                                        <div class="col">
-                                                                            {{ macro.render_text(title="Forbidden Product SMILES", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]forbiddenproducts[]", type="text", value=product, required=true, help="A single forbidden reaction product SMILES string. Dot notation is not permitted") }}
-                                                                        </div>
-                                                                        <div class="col-auto mx-auto">
-                                                                            <button type="button" class="btn btn-danger" onclick="removeEntry(this, '.forbidden_products')">Remove</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                {% endfor %}
-                                                                {% endif %}
-                                                                </div>
-                                                                <button type="button" class="btn btn-secondary my-2" onclick="addForbiddenProd('{{ 'reaction[' ~ reaction_outer_idx ~ ']knownreaction[' ~ reaction_example_idx ~ ']forbiddenproducts[]' }}')">Add Forbidden Product SMILES</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            {% set reaction_example_idx = reaction_example_idx + 1 %}
-                                            {% endfor %}
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <button type="button" class="btn btn-secondary my-2" onclick="addKnownReaction('{{ 'reaction[' ~ reaction_outer_idx ~ ']knownreaction[' ~ reaction_example_idx ~ ']' }}')">Add Known Reaction</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% set reaction_outer_idx = reaction_outer_idx + 1 %}
-                    {% endfor %}
-                    {% endif %}
-                </div>
             </div>
         </div>
-        <div class="row-auto my-2">
+        <div class="row my-2" id="row-reaction">
+
+        </div>
+        <div class="row-auto my-2" id=row-form-submission>
             <div class="col-auto text-center mx-auto">
                 <button type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
@@ -512,4 +63,17 @@
     </form>
 </div>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        createTextForm(document.getElementById('enzyme-name'), createHtmlEnzymeName, {{ data | tojson }})
+        createTextForm(document.getElementById('enzyme-description'), createHtmlEnzymeDescription, {{ data | tojson }})
+        createTextForm(document.getElementById('enzyme-uniprot'), createHtmlEnzymeUniprot, {{ data | tojson }})
+        createTextForm(document.getElementById('enzyme-genpept'), createHtmlEnzymeGenpept, {{ data | tojson }})
+        createTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
+
+        createEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
+
+    });
+</script>
 {% endblock %}
