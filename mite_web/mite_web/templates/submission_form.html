@@ -44,7 +44,7 @@
                 <div class="row mb-2">
                     <div class="col">
                         <div id="enzyme-ref"></div>
-                        <button type="button" class="btn btn-secondary my-2" onclick="insertRefForm('enzyme-ref', 'enzyme_ref', 'enzyme_ref[]')">Add Reference</button>
+                        <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
                     </div>
                 </div>
             </div>
@@ -66,13 +66,13 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        createTextForm(document.getElementById('enzyme-name'), createHtmlEnzymeName, {{ data | tojson }})
-        createTextForm(document.getElementById('enzyme-description'), createHtmlEnzymeDescription, {{ data | tojson }})
-        createTextForm(document.getElementById('enzyme-uniprot'), createHtmlEnzymeUniprot, {{ data | tojson }})
-        createTextForm(document.getElementById('enzyme-genpept'), createHtmlEnzymeGenpept, {{ data | tojson }})
-        createTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
+        populateTextForm(document.getElementById('enzyme-name'), createHtmlEnzymeName, {{ data | tojson }})
+        populateTextForm(document.getElementById('enzyme-description'), createHtmlEnzymeDescription, {{ data | tojson }})
+        populateTextForm(document.getElementById('enzyme-uniprot'), createHtmlEnzymeUniprot, {{ data | tojson }})
+        populateTextForm(document.getElementById('enzyme-genpept'), createHtmlEnzymeGenpept, {{ data | tojson }})
+        populateTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
 
-        createEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
+        populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
 
     });
 </script>

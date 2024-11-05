@@ -7,29 +7,29 @@ function removeField(button, class_ref) {
     }
 }
 
-// Startup scripts (DOM)
+// DOM Scripts (populate fields using input data)
 
-function createTextForm(container, htmlFunction, data) {
+function populateTextForm(container, htmlFunction, data) {
     const entryHtml = htmlFunction(data);
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
-function createEnzymeRefForm(container, data) {
+function populateEnzymeRefForm(container, data) {
     if (data.enzyme?.references) {
-        data.enzyme.references.forEach(ref => {
-            const entryHtml = createHtmlRef(ref, "enzyme_ref", "enzyme_ref[]");
+        data.enzyme.references.forEach(entry => {
+            const entryHtml = createHtmlRef(entry, "enzyme_ref", "enzyme_ref[]");
             container.insertAdjacentHTML('beforeend', entryHtml);
         });
     }
 }
 
-// Button-insert html scripts
+// On-demand scripts (insert forms)
 
-function insertRefForm(idName, className, jsonID) {
-    const container = document.getElementById(idName);
-    const entryHtml = createHtmlRef("", className, jsonID)
+function insertEnzymeRefForm(container) {
+    const entryHtml = createHtmlRef("", "enzyme_ref", "enzyme_ref[]")
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
+
 
 
 // All HTML generation scripts
