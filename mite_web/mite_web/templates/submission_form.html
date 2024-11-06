@@ -96,13 +96,15 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        populateTextForm(document.getElementById('enzyme-name'), createHtmlEnzymeName, {{ data | tojson }})
-        populateTextForm(document.getElementById('enzyme-description'), createHtmlEnzymeDescription, {{ data | tojson }})
-        populateTextForm(document.getElementById('enzyme-uniprot'), createHtmlEnzymeUniprot, {{ data | tojson }})
-        populateTextForm(document.getElementById('enzyme-genpept'), createHtmlEnzymeGenpept, {{ data | tojson }})
-        populateTextForm(document.getElementById('enzyme-mibig'), createHtmlEnzymeMibig, {{ data | tojson }})
+        createHtmlEnzymeName(document.getElementById('enzyme-name'), {{ data | tojson }})
+        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), {{ data | tojson }})
+        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), {{ data | tojson }})
+        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), {{ data | tojson }})
+        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), {{ data | tojson }})
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
+
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
+
         populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
     });
 </script>

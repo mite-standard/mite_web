@@ -451,7 +451,7 @@
                                                                 <div id='{{ "reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]products[]" }}'>
                                                                 {% if knownreaction.get("products") %}
                                                                 {% for product in knownreaction.products %}
-                                                                <div class="reaction_products">
+                                                                <div class="reactionproducts">
                                                                     <div class="row d-flex align-items-center mb-1">
                                                                         <div class="col">
                                                                             {{ macro.render_text(title="Product SMILES", id="reaction[" ~ reaction_outer_idx ~ "]knownreaction[" ~ reaction_example_idx ~ "]products[]", type="text", value=product, required=true, help="A single reaction product SMILES string. Dot notation is not permitted") }}

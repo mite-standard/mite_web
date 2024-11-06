@@ -9,8 +9,58 @@ function removeField(button, class_ref) {
 
 // DOM Scripts (insert forms populated from input data)
 
-function populateTextForm(container, htmlFunction, data) {
-    const entryHtml = htmlFunction(data);
+function createHtmlEnzymeName(container, data = {}) {
+    const entryHtml = `
+        <div class="form-floating">
+            <input id="enzyme_name" name="enzyme_name" class="form-control" aria-describedby="EnzymeNameHelp" type="text" value='${data?.enzyme?.name ?? ""}' required>
+            <label for="enzyme_name" class="form-label">Enzyme Name</label>
+            <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjB)</div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function createHtmlEnzymeDescription(container, data = {}) {
+    const entryHtml = `
+        <div class="form-floating">
+            <input id="enzyme_description" name="enzyme_description" class="form-control" aria-describedby="EnzymeDescriptionHelp" type="text" value='${data?.enzyme?.description ?? ""}' required>
+            <label for="enzyme_description" class="form-label">Enzyme Description</label>
+            <div id="EnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function createHtmlEnzymeUniprot(container, data = {}) {
+    const entryHtml = `
+        <div class="form-floating">
+            <input id="enzyme_uniprot" name="enzyme_uniprot" class="form-control" aria-describedby="EnzymeUniprotHelp" type="text" value='${data?.enzyme?.databaseIds?.uniprot ?? ""}'>
+            <label for="enzyme_description" class="form-label">Enzyme UniProt ID</label>
+            <div id="EnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function createHtmlEnzymeGenpept(container, data = {}) {
+    const entryHtml = `
+        <div class="form-floating">
+            <input id="enzyme_genpept" name="enzyme_genpept" class="form-control" aria-describedby="EnzymeGenpeptHelp" type="text" value='${data?.enzyme?.databaseIds?.genpept ?? ""}'>
+            <label for="enzyme_genpept" class="form-label">Enzyme GenPept ID</label>
+            <div id="EnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
+function createHtmlEnzymeMibig(container, data = {}) {
+    const entryHtml = `
+        <div class="form-floating">
+            <input id="enzyme_mibig" name="enzyme_mibig" class="form-control" aria-describedby="EnzymeMibigHelp" type="text" value='${data?.enzyme?.databaseIds?.mibig ?? ""}'>
+            <label for="enzyme_mibig" class="form-label">MIBiG ID</label>
+            <div id="EnzymeMibigHelp" class="form-text">The MIBiG ID of the BGC containing the enzyme</div>
+        </div>
+    `;
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
@@ -60,59 +110,14 @@ function insertReactionForm(container) {
     createHtmlReaction({}, index)
 }
 
+function insertKnownReactionForm(index) {
+    const knownReactionElements = document.querySelectorAll('.knownreaction');
+    const containerReaction = document.getElementById(`reaction[${index}]knownreaction-field`);
+    const index_inner = containerReaction.children.length;
+    addHtmlKnownReaction({}, index, index_inner);
+}
 
 // All HTML generation scripts
-
-
-function createHtmlEnzymeName(data = {}) {
-    return `
-        <div class="form-floating">
-            <input id="enzyme_name" name="enzyme_name" class="form-control" aria-describedby="EnzymeNameHelp" type="text" value='${data?.enzyme?.name ?? ""}' required>
-            <label for="enzyme_name" class="form-label">Enzyme Name</label>
-            <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjB)</div>
-        </div>
-    `;
-}
-
-function createHtmlEnzymeDescription(data = {}) {
-    return `
-        <div class="form-floating">
-            <input id="enzyme_description" name="enzyme_description" class="form-control" aria-describedby="EnzymeDescriptionHelp" type="text" value='${data?.enzyme?.description ?? ""}' required>
-            <label for="enzyme_description" class="form-label">Enzyme Description</label>
-            <div id="EnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
-        </div>
-    `;
-}
-
-function createHtmlEnzymeUniprot(data = {}) {
-    return `
-        <div class="form-floating">
-            <input id="enzyme_uniprot" name="enzyme_uniprot" class="form-control" aria-describedby="EnzymeUniprotHelp" type="text" value='${data?.enzyme?.databaseIds?.uniprot ?? ""}'>
-            <label for="enzyme_description" class="form-label">Enzyme UniProt ID</label>
-            <div id="EnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
-        </div>
-    `;
-}
-
-function createHtmlEnzymeGenpept(data = {}) {
-    return `
-        <div class="form-floating">
-            <input id="enzyme_genpept" name="enzyme_genpept" class="form-control" aria-describedby="EnzymeGenpeptHelp" type="text" value='${data?.enzyme?.databaseIds?.genpept ?? ""}'>
-            <label for="enzyme_genpept" class="form-label">Enzyme GenPept ID</label>
-            <div id="EnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
-        </div>
-    `;
-}
-
-function createHtmlEnzymeMibig(data = {}) {
-    return `
-        <div class="form-floating">
-            <input id="enzyme_mibig" name="enzyme_mibig" class="form-control" aria-describedby="EnzymeMibigHelp" type="text" value='${data?.enzyme?.databaseIds?.mibig ?? ""}'>
-            <label for="enzyme_mibig" class="form-label">MIBiG ID</label>
-            <div id="EnzymeMibigHelp" class="form-text">The MIBiG ID of the BGC containing the enzyme</div>
-        </div>
-    `;
-}
 
 function createHtmlRef(data, className, jsonID) {
     return `
@@ -181,9 +186,6 @@ function createHtmlAuxEnyzme(data = {}, index) {
         </div>
     `;
 }
-
-
-
 
 function createHtmlReaction(data = {}, index) {
     const reactionEntry = document.createElement('div')
@@ -255,7 +257,7 @@ function createHtmlReaction(data = {}, index) {
                         <div id="reaction[${index}]knownreaction-field"></div>
                         <div class="row">
                             <div class="col">
-                                <button type="button" class="btn btn-secondary my-2" onclick="addKnownReaction(${index})">Add Known Reaction</button>
+                                <button type="button" class="btn btn-secondary my-2" onclick="insertKnownReactionForm(${index})">Add Known Reaction</button>
                             </div>
                         </div>
                     </div>
@@ -273,21 +275,11 @@ function createHtmlReaction(data = {}, index) {
             const indexKnownReaction = containerKR.children.length;
             addHtmlKnownReaction(data_reaction, index, indexKnownReaction);
         });
-    }
-
-//    TODO(MMZ 5.11.) Continue here: append html to the places where they should be
-
+    };
 }
 
-function addKnownReaction(index) {
-    const knownReactionElements = document.querySelectorAll('.knownreaction');
-    const containerReaction = document.getElementById(`reaction[${index}]knownreaction-field`);
-    const index_inner = containerReaction.children.length;
-    addHtmlKnownReaction({}, index, index_inner);
-}
 
 function addHtmlKnownReaction(data, index_outer, index_inner) {
-    console.log(index_outer)
     const knownReactionEntry = document.createElement('div');
     knownReactionEntry.classList.add('knownreaction');
     knownReactionEntry.innerHTML = `
@@ -309,8 +301,109 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                     </div>
                 </div>
             </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]description" id="reaction[${index_outer}]knownreaction[${index_inner}]description" class="form-control" aria-describedby="KnownReactionDescriptionHelp"  value='${data?.description ?? ""}'>
+                        <label for="reaction[${index_outer}]knownreaction[${index_inner}]description" class="form-label">Description</label>
+                        <div id="KnownReactionSubstrateHelp" class="form-text">Description of the reaction example</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-auto">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" value="True" type="radio" name="reaction[${index_outer}]knownreaction[${index_inner}]intermediate" id="reaction[${index_outer}]knownreaction[${index_inner}]intermediate1">
+                        <label class="form-check-label" for="reaction[${index_outer}]knownreaction[${index_inner}]intermediate1">True</label>
+                    </div>
+                    <div class="form-check-inline">
+                        <input class="form-check-input" value="False" type="radio" name="reaction[${index_outer}]knownreaction[${index_inner}]intermediate" id="reaction[${index_outer}]knownreaction[${index_inner}]intermediate2" checked>
+                        <label class="form-check-label" for="reaction[${index_outer}]knownreaction[${index_inner}]intermediate2">False</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-text">Intermediate product?</div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <div id="reaction[${index_outer}]knownreaction[${index_inner}]products[]"></div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary my-2" onclick="insertProductForm('reaction[${index_outer}]knownreaction[${index_inner}]products[]')">Add Product</button>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <div id="reaction[${index_outer}]knownreaction[${index_inner}]forbiddenproducts[]"></div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <button type="button" class="btn btn-secondary my-2" onclick="insertForbiddenProductForm('reaction[${index_outer}]knownreaction[${index_inner}]forbiddenproducts[]')">Add Forbidden Product</button>
+                </div>
+            </div>
         </div>
     `;
     const containerReaction = document.getElementById(`reaction[${index_outer}]knownreaction-field`);
     containerReaction.appendChild(knownReactionEntry);
+
+    //    populates product fields based on input data
+    if (data.products) {
+        data.products.forEach(product => {
+            insertProductForm(`reaction[${index_outer}]knownreaction[${index_inner}]products[]`, product);
+        });
+    };
+
+    //    populates forbidden product fields based on input data
+    if (data.forbidden_products) {
+        data.forbidden_products.forEach(product => {
+            insertForbiddenProductForm(`reaction[${index_outer}]knownreaction[${index_inner}]forbiddenproducts[]`, product);
+        });
+    };
+
+}
+
+function insertProductForm(container_id, data = "") {
+    const reactionProductEntry = document.createElement('div');
+    reactionProductEntry.classList.add('reactionproducts');
+    reactionProductEntry.innerHTML = `
+        <div class="row d-flex align-items-center mb-1">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ReactionProductsHelp" value='${data}' required>
+                    <label for="${container_id}" class="form-label">Product SMILES</label>
+                    <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string. Dot notation is not permitted</div>
+                </div>
+            </div>
+            <div class="col-auto mx-auto">
+                <button type="button" class="btn btn-danger" onclick="removeField(this, '.reactionproducts')">Remove</button>
+            </div>
+        </div>
+    `;
+    const container = document.getElementById(container_id);
+    container.appendChild(reactionProductEntry);
+}
+
+function insertForbiddenProductForm(container_id, data = "") {
+    const forbiddenProductEntry = document.createElement('div');
+    forbiddenProductEntry.classList.add('forbiddenproducts');
+    forbiddenProductEntry.innerHTML = `
+        <div class="row d-flex align-items-center mb-1">
+            <div class="col">
+                <div class="form-floating">
+                    <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ForbiddenProductsHelp" value='${data}' required>
+                    <label for="${container_id}" class="form-label">Forbidden Product SMILES</label>
+                    <div id="ForbiddenProductsHelp" class="form-text">A single forbidden reaction product SMILES string. Dot notation is not permitted</div>
+                </div>
+            </div>
+            <div class="col-auto mx-auto">
+                <button type="button" class="btn btn-danger" onclick="removeField(this, '.forbiddenproducts')">Remove</button>
+            </div>
+        </div>
+    `;
+    const container = document.getElementById(container_id);
+    container.appendChild(forbiddenProductEntry);
 }
