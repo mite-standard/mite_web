@@ -49,7 +49,7 @@ def submission_existing(mite_acc: str) -> str | Response:
         mite_acc: the mite accession, provided by the URL variable
 
     Returns:
-        The submission_existing.html page as string.
+        The submission_existing.html page as string or a redirect to the repository if the entry is retired
     """
     if request.method == "POST":
         user_input = request.form.to_dict(flat=False)
@@ -63,12 +63,24 @@ def submission_existing(mite_acc: str) -> str | Response:
     with open(src) as infile:
         data = json.load(infile)
 
-    if data["status"] != "active":
+    if data.get("status") != "active":
         return redirect(url_for("routes.repository", mite_acc=mite_acc))
 
-    # strategy: use the json directly for form creation
-    # makro: take name etc + value; can be Null to not set a default value; this way, reusable
-    # not all data is needed; better to specify manually
-    # we are not going to majorly change the schema
+    return render_template("submission_form.html", data=data)
+
+
+@bp.route("/submission/new/", methods=["GET", "POST"])
+def submission_new() -> str:
+    """Render the submission forms for a new entry
+
+    Returns:
+        The submission_existing.html page as string.
+    """
+    if request.method == "POST":
+        user_input = request.form.to_dict(flat=False)
+        return user_input
+
+    # TODO(MMZ 6.11.): construct a minimal empty mite entry to have the fields opened
+    data = {}
 
     return render_template("submission_form.html", data=data)

@@ -138,9 +138,9 @@ function createHtmlRef(data, className, jsonID) {
             <div class="row d-flex align-items-center mb-1">
                 <div class="col">
                     <div class="form-floating">
-                        <input type="text" name="${jsonID}" id="${jsonID}" class="form-control" aria-describedby="${jsonID}Help"  value="${data}" required>
+                        <input type="text" name="${jsonID}" pattern="^doi:10.+" id="${jsonID}" class="form-control" aria-describedby="${jsonID}Help"  value="${data}" required>
                         <label for="${jsonID}" class="form-label">Reference DOI</label>
-                        <div id="${jsonID}Help" class="form-text">A Digital Object Identifier (DOI), should begin with 'doi:'</div>
+                        <div id="${jsonID}Help" class="form-text">A Digital Object Identifier (DOI), must begin with 'doi:10.'</div>
                     </div>
                 </div>
                 <div class="col-auto mx-auto">
@@ -376,7 +376,7 @@ function createHtmlReaction(data = {}, index) {
     ]
     const containerEvidenceCode = document.getElementById(`reaction[${index}]evidencecode-field`);
     for (let evidence of evidenceCodeArray) {
-        if (data.evidence.evidenceCode && data.evidence.evidenceCode.includes(evidence) ) {
+        if (data.evidence?.evidenceCode && data.evidence.evidenceCode.includes(evidence) ) {
             const entryHtml = document.createElement('div');
             entryHtml.classList.add('col');
             entryHtml.innerHTML = addTickedCheckbox(`reaction[${index}]evidencecode[]`, evidence);
