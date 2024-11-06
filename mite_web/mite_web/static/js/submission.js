@@ -212,22 +212,34 @@ function createHtmlReaction(data = {}, index) {
                             <div class="col">
                                 <div class="form-floating">
                                     <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control" aria-describedby="ReactionSmartsHelp" type="text" value='${data?.reactionSMARTS ?? ""}' required>
-                                    <label for="enzyme_name" class="form-label">Reaction SMARTS</label>
+                                    <label for="reaction[${index}]smart" class="form-label">Reaction SMARTS</label>
                                     <div id="ReactionSmartsHelp" class="form-text">The reaction SMARTS depicting the reaction</div>
                                 </div>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col">
-                                <div id="reaction[${index}]description-field"></div>
+                                <div class="form-floating">
+                                    <input id="reaction[${index}]description" name="reaction[${index}]description" class="form-control" aria-describedby="ReactionDescriptionHelp" type="text" value='${data?.description ?? ""}' required>
+                                    <label for="reaction[${index}]description" class="form-label">Description</label>
+                                    <div id="ReactionDescriptionHelp" class="form-text">Brief description of the reaction</div>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col">
-                                <div id="reaction[${index}]rhea-field"></div>
+                                <div class="form-floating">
+                                    <input id="reaction[${index}]rhea" name="reaction[${index}]rhea" class="form-control" aria-describedby="ReactionRheaHelp" type="text" value='${data?.databaseIds?.rhea ?? ""}'>
+                                    <label for="reaction[${index}]rhea" class="form-label">RHEA ID</label>
+                                    <div id="ReactionRheaHelp" class="form-text">The RHEA Knowledgebase ID</div>
+                                </div>
                             </div>
                             <div class="col">
-                                <div id="reaction[${index}]ec-field"></div>
+                                <div class="form-floating">
+                                    <input id="reaction[${index}]ec" name="reaction[${index}]ec" class="form-control" aria-describedby="ReactionEcHelp" type="text" value='${data?.databaseIds?.ec ?? ""}'>
+                                    <label for="reaction[${index}]ec" class="form-label">EC Number</label>
+                                    <div id="ReactionEcHelp" class="form-text">The EC (Enzyme Commission) Number (e.g. '1.14.19.59')</div>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-2">
