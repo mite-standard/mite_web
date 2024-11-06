@@ -1,5 +1,4 @@
-// Removal function
-
+// Removes a Div of a specified class closest to the button; used by all elements that can be added/removed by user-input
 function removeField(button, class_ref) {
     const targetDiv = button.closest(class_ref);
     if (targetDiv) {
@@ -7,8 +6,7 @@ function removeField(button, class_ref) {
     }
 }
 
-// DOM Scripts (insert forms populated from input data)
-
+// Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeName(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
@@ -20,6 +18,7 @@ function createHtmlEnzymeName(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeDescription(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
@@ -31,6 +30,7 @@ function createHtmlEnzymeDescription(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeUniprot(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
@@ -42,6 +42,7 @@ function createHtmlEnzymeUniprot(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeGenpept(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
@@ -53,6 +54,7 @@ function createHtmlEnzymeGenpept(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeMibig(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
@@ -64,6 +66,7 @@ function createHtmlEnzymeMibig(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate the enzyme reference forms, triggered by DOMContentLoaded event
 function populateEnzymeRefForm(container, data) {
     if (data.enzyme?.references) {
         data.enzyme.references.forEach(entry => {
@@ -73,6 +76,7 @@ function populateEnzymeRefForm(container, data) {
     }
 }
 
+// Populate the auxiliary Enzyme forms, triggered by DOMContentLoaded event
 function populateAuxEnzymeForm(container, data) {
     if (data.enzyme?.auxiliaryEnzymes) {
         data.enzyme.auxiliaryEnzymes.forEach(entry => {
@@ -83,6 +87,7 @@ function populateAuxEnzymeForm(container, data) {
     }
 }
 
+// Populate the Reaction forms, triggered by DOMContentLoaded event
 function populateReactionForm(container, data) {
     if (data.reactions) {
         data.reactions.forEach(entry => {
@@ -92,30 +97,33 @@ function populateReactionForm(container, data) {
     }
 }
 
-// On-demand scripts (insert empty forms)
-
+// Triggered by button to add an empty reference form
 function insertEnzymeRefForm(container) {
     const entryHtml = createHtmlRef("", "enzyme_ref", "enzyme_ref[]")
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Triggered by button to add an empty AuxEnzyme
 function insertAuxEnzymeForm(container) {
     const index = container.children.length;
     const entryHtml = createHtmlAuxEnyzme({}, index);
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Triggered by button to add an empty ReactionForm
 function insertReactionForm(container) {
     const index = container.children.length;
     createHtmlReaction({}, index)
 }
 
+// Triggred by button to add an empty ReactionReferenceForm
 function insertReactionRefForm(index) {
     const container = document.getElementById(`reaction[${index}]ref-field`);
     const entryHtml = createHtmlRef("", "reaction_ref", `reaction[${index}]ref[]`);
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Triggred by button to add an empty KnownReactionForm
 function insertKnownReactionForm(index) {
     const knownReactionElements = document.querySelectorAll('.knownreaction');
     const containerReaction = document.getElementById(`reaction[${index}]knownreaction-field`);
@@ -123,8 +131,7 @@ function insertKnownReactionForm(index) {
     addHtmlKnownReaction({}, index, index_inner);
 }
 
-// All HTML generation scripts
-
+// Creates an reference field, used by enzyme information and Reaction fields
 function createHtmlRef(data, className, jsonID) {
     return `
         <div class="${className}">
@@ -144,6 +151,7 @@ function createHtmlRef(data, className, jsonID) {
     `;
 }
 
+// Creates the auxilary enzyme field; index is used to keep track of the instance that is opened
 function createHtmlAuxEnyzme(data = {}, index) {
     return `
         <div class="aux_enzyme">
@@ -193,6 +201,7 @@ function createHtmlAuxEnyzme(data = {}, index) {
     `;
 }
 
+// Creates the reaction field; index is used to keep track of the instance that is opened
 function createHtmlReaction(data = {}, index) {
     const reactionEntry = document.createElement('div')
     reactionEntry.classList.add('reaction')
@@ -398,6 +407,7 @@ function createHtmlReaction(data = {}, index) {
     };
 }
 
+// Adds a ticked checkbox with the appropriate value
 function addTickedCheckbox(container_id, qualifier) {
     return `
         <div class="form-check">
@@ -407,6 +417,7 @@ function addTickedCheckbox(container_id, qualifier) {
     `;
 }
 
+// Adds an unticked checkbox with the appropriate value
 function addUntickedCheckbox(container_id, qualifier) {
     return `
         <div class="form-check">
@@ -416,6 +427,7 @@ function addUntickedCheckbox(container_id, qualifier) {
     `;
 }
 
+// Inserts a KnownReaction Form into an existing Reaction form; outer index tracks the instance of the Reaction, the inner index the instance of the Known reaction inside the Reaction
 function addHtmlKnownReaction(data, index_outer, index_inner) {
     const knownReactionEntry = document.createElement('div');
     knownReactionEntry.classList.add('knownreaction');
@@ -503,6 +515,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
 
 }
 
+// Inserts a knownProduct form inside the Known Reactions field
 function insertProductForm(container_id, data = "") {
     const reactionProductEntry = document.createElement('div');
     reactionProductEntry.classList.add('reactionproducts');
@@ -524,6 +537,7 @@ function insertProductForm(container_id, data = "") {
     container.appendChild(reactionProductEntry);
 }
 
+// Inserts a ForbiddenProduct form inside the Known Reactions field
 function insertForbiddenProductForm(container_id, data = "") {
     const forbiddenProductEntry = document.createElement('div');
     forbiddenProductEntry.classList.add('forbiddenproducts');
