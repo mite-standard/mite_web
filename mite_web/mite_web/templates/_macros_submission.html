@@ -1,7 +1,0 @@
-{% macro render_text(id, title, type, value='', required=false, help='') %}
-<div class="form-floating">
-    <input id="{{ id }}" name="{{ id }}" class="form-control" aria-describedby="{{ title }}Help" type="{{ type }}" value="{{ value }}" {% if required %}required{% endif %}>
-    <label for="{{ id }}" class="form-label">{{ title }}</label>
-    <div id="{{ title }}Help" class="form-text">{{ help }}</div>
-</div>
-{% endmacro %}

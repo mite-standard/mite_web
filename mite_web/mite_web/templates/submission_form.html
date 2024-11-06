@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% import '_macros_submission.html' as macro %}
 
 {% block content %}
 <div class="container my-5">
@@ -102,9 +101,7 @@
         createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), {{ data | tojson }})
         createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), {{ data | tojson }})
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
-
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
-
         populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
     });
 </script>

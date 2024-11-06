@@ -110,6 +110,12 @@ function insertReactionForm(container) {
     createHtmlReaction({}, index)
 }
 
+function insertReactionRefForm(index) {
+    const container = document.getElementById(`reaction[${index}]ref-field`);
+    const entryHtml = createHtmlRef("", "reaction_ref", `reaction[${index}]ref[]`);
+    container.insertAdjacentHTML('beforeend', entryHtml);
+}
+
 function insertKnownReactionForm(index) {
     const knownReactionElements = document.querySelectorAll('.knownreaction');
     const containerReaction = document.getElementById(`reaction[${index}]knownreaction-field`);
@@ -242,19 +248,44 @@ function createHtmlReaction(data = {}, index) {
                                 </div>
                             </div>
                         </div>
-                        <div class="row mb-2">
+                        <div class="row">
                             <div class="col">
-                                <div id="reaction[${index}]tailoring-field"></div>
+                                <h6 class="lh-2">Tailoring Reaction Controlled Vocabulary</h6>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col">
-                                <div id="reaction[${index}]evidencecode-field"></div>
+                                <div class="form-group">
+                                    <div class="card card-body">
+                                        <div class="row" id="reaction[${index}]tailoring-field">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h6 class="lh-2">Experimental Evidence Qualifiers</h6>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <div class="form-group">
+                                    <div class="card card-body">
+                                        <div class="row" id="reaction[${index}]evidencecode-field">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row mb-2">
                             <div class="col">
                                 <div id="reaction[${index}]ref-field"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <button type="button" class="btn btn-secondary my-2" onclick="insertReactionRefForm('${index}')">Add Reaction Reference</button>
                             </div>
                         </div>
                     </div>
@@ -280,7 +311,84 @@ function createHtmlReaction(data = {}, index) {
     const container = document.getElementById('reactions');
     container.appendChild(reactionEntry);
 
-//    populates knownreaction fields based on input data
+    let tailoringArray = [
+        "Acetylation",
+        "Acylation",
+        "Amination",
+        "Biaryl bond formation",
+        "Carboxylation",
+        "Cyclization",
+        "Deamination",
+        "Decarboxylation",
+        "Dehydration",
+        "Dehydrogenation",
+        "Demethylation",
+        "Dioxygenation",
+        "Epimerization",
+        "FADH2 supply for chlorination",
+        "Glycosylation",
+        "Halogenation",
+        "Heterocyclization",
+        "Hydrolysis",
+        "Hydroxylation",
+        "Macrolactam formation",
+        "Methylation",
+        "Monooxygenation",
+        "Oxidation",
+        "Phosphorylation",
+        "Prenylation",
+        "Reduction",
+        "Sulfation",
+        "Other"
+    ];
+    const containerTailoring = document.getElementById(`reaction[${index}]tailoring-field`);
+    for (let tailoring of tailoringArray) {
+        if (data.tailoring && data.tailoring.includes(tailoring) ) {
+            const entryHtml = document.createElement('div');
+            entryHtml.classList.add('col');
+            entryHtml.innerHTML = addTickedCheckbox(`reaction[${index}]tailoring[]`, tailoring);
+            containerTailoring.appendChild(entryHtml)
+        } else {
+            const entryHtml = document.createElement('div');
+            entryHtml.classList.add('col');
+            entryHtml.innerHTML =  addUntickedCheckbox(`reaction[${index}]tailoring[]`, tailoring);
+            containerTailoring.appendChild(entryHtml)
+        }
+    }
+
+    let evidenceCodeArray = [
+        "Heterologous expression",
+        "Inference from genomic data and chemical structure",
+        "In vitro assay",
+        "Isothermal titration calorimetry",
+        "Knock-out studies",
+        "Site-directed mutagenesis",
+        "Surface plasmon resonance"
+    ]
+    const containerEvidenceCode = document.getElementById(`reaction[${index}]evidencecode-field`);
+    for (let evidence of evidenceCodeArray) {
+        if (data.evidence.evidenceCode && data.evidence.evidenceCode.includes(evidence) ) {
+            const entryHtml = document.createElement('div');
+            entryHtml.classList.add('col');
+            entryHtml.innerHTML = addTickedCheckbox(`reaction[${index}]evidencecode[]`, evidence);
+            containerEvidenceCode.appendChild(entryHtml);
+        } else {
+            const entryHtml = document.createElement('div');
+            entryHtml.classList.add('col');
+            entryHtml.innerHTML =  addUntickedCheckbox(`reaction[${index}]evidencecode[]`, evidence);
+            containerEvidenceCode.appendChild(entryHtml);
+        }
+    };
+
+    const containerEvidenceRef = document.getElementById(`reaction[${index}]ref-field`);
+    if (data.evidence?.references) {
+        data.evidence.references.forEach(ref => {
+            const entryHtml = document.createElement('div');
+            entryHtml.innerHTML =  createHtmlRef(ref, "reaction_ref", `reaction[${index}]ref[]`);
+            containerEvidenceRef.appendChild(entryHtml);
+        });
+    };
+
     if (data.reactions) {
         data.reactions.forEach(data_reaction => {
             const containerKR = document.getElementById(`reaction[${index}]knownreaction-field`);
@@ -290,6 +398,23 @@ function createHtmlReaction(data = {}, index) {
     };
 }
 
+function addTickedCheckbox(container_id, qualifier) {
+    return `
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="${qualifier}" name='${container_id}' value="${qualifier}" checked>
+            <label class="form-check-label" for="${qualifier}">${qualifier}</label>
+        </div>
+    `;
+}
+
+function addUntickedCheckbox(container_id, qualifier) {
+    return `
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="${qualifier}" name='${container_id}' value="${qualifier}">
+            <label class="form-check-label" for="${qualifier}">${qualifier}</label>
+        </div>
+    `;
+}
 
 function addHtmlKnownReaction(data, index_outer, index_inner) {
     const knownReactionEntry = document.createElement('div');
