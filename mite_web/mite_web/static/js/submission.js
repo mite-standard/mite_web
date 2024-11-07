@@ -1,17 +1,17 @@
 // Validates a simple addition on form submission, block submission if invalid
 function validateSumInput(event, x, y) {
-    const userSum = parseInt(document.getElementById('user-sum').value, 10);
+    const userSum = parseInt(document.getElementById('usersum').value, 10);
     const correctSum = +x + +y;
 
-    const sumInputForm = document.getElementById('user-sum');
+    const sumInputForm = document.getElementById('usersum');
 
     if (userSum !== correctSum) {
         sumInputForm.style.borderColor = 'red';
-        document.getElementById('error-message').textContent = "Incorrect sum! Please check your answer.";
+        document.getElementById('usersum-error-message').textContent = "Incorrect sum! Please check your answer.";
         event.preventDefault();
     } else {
         sumInputForm.style.borderColor = '';
-        document.getElementById('error-message').textContent = "";
+        document.getElementById('usersum-error-message').textContent = "";
     }
 }
 
@@ -77,7 +77,7 @@ function createHtmlEnzymeGenpept(container, data = {}) {
 function createHtmlEnzymeMibig(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_mibig" name="enzyme_mibig" class="form-control" aria-describedby="EnzymeMibigHelp" type="text" value='${data?.enzyme?.databaseIds?.mibig ?? ""}'>
+            <input id="enzyme_mibig" name="enzyme_mibig" pattern="^BGC.+" minlength="10" maxlength="10" class="form-control" aria-describedby="EnzymeMibigHelp" type="text" value='${data?.enzyme?.databaseIds?.mibig ?? ""}'>
             <label for="enzyme_mibig" class="form-label">MIBiG ID</label>
             <div id="EnzymeMibigHelp" class="form-text">The MIBiG ID of the BGC containing the enzyme</div>
         </div>
@@ -270,7 +270,7 @@ function createHtmlReaction(data = {}, index) {
                             </div>
                             <div class="col">
                                 <div class="form-floating">
-                                    <input id="reaction[${index}]ec" name="reaction[${index}]ec" class="form-control" aria-describedby="ReactionEcHelp" type="text" value='${data?.databaseIds?.ec ?? ""}'>
+                                    <input id="reaction[${index}]ec" name="reaction[${index}]ec" pattern="^[0-9]+\..+" class="form-control" aria-describedby="ReactionEcHelp" type="text" value='${data?.databaseIds?.ec ?? ""}'>
                                     <label for="reaction[${index}]ec" class="form-label">EC Number</label>
                                     <div id="ReactionEcHelp" class="form-text">The EC (Enzyme Commission) Number (e.g. '1.14.19.59')</div>
                                 </div>

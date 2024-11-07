@@ -4,10 +4,10 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-auto text-center mx-auto">
-            {% if data is defined %}
+            {% if data.get("accession") %}
             <h1 class="fw-semibold lh-2">Modify {{ data.accession }}</h1>
             {% else %}
-            <h1 class="fw-semibold lh-2">New entry</h1>
+            <h1 class="fw-semibold lh-2">Create New Entry</h1>
             {% endif %}
         </div>
     </div>
@@ -86,17 +86,36 @@
             </div>
         </div>
         <div class="row mb-2">
-            <div class="col-auto text-center mx-auto">
-                <div class="form-floating">
-                    <input id="user-sum" name="user-sum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
-                    <label for="user-sum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
-                    <div id="UserSumHelp" class="form-text">Validation form to prevent automated submissions</div>
-                </div>
+            <div class="row">
+                <h4 class="fw-semibold lh-2">Submitter Information</h4>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col-auto text-center mx-auto">
-                <p class="lead" id="error-message" style="color: red;"></p>
+        <div class="card card-body mb-2">
+            <div class="row">
+                <div class="col">
+                    <h6 class="fw-semibold lh-2">ORCID</h6>
+                    <div class="form-floating">
+                        <input id="orcid" minlength="19" maxlength="19" pattern="\d{4}-\d{4}-\d{4}-\d{4}" name="orcid" class="form-control" aria-describedby="OrcidHelp" type="text">
+                        <label for="orcid" class="form-label">ORCID</label>
+                        <div id="OrcidHelp" class="form-text">Enter your ORCID or leave empty for an anonymous submission. If you enter your ORCID, be aware of the <a class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>.</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <h6 class="fw-semibold lh-2">Math Challenge</h6>
+                    <div class="form-floating">
+                        <input id="usersum" name="usersum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
+                        <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
+                        <div id="UserSumHelp" class="form-text">Validation form to prevent automated submissions</div>
+                    </div>
+                    <p class="lead" id="usersum-error-message" style="color: red;"></p>
+                </div>
+                <div class="col">
+                    <h6 class="fw-semibold lh-2">Terms of Use</h6>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
+                      <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row mb-2">

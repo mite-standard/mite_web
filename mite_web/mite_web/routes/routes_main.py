@@ -54,3 +54,13 @@ def contact() -> str:
         The contact.html page as string.
     """
     return render_template("contact.html")
+
+
+@bp.route("/terms/")
+def termsofuse() -> str:
+    """Render the terms of use page of mite_web
+
+    Returns:
+        The submission_terms_of_use.html page as string.
+    """
+    return render_template("submission_terms_of_use.html")
