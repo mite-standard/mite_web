@@ -8,7 +8,7 @@ function validateSumInput(event, x, y) {
     if (userSum !== correctSum) {
         sumInputForm.style.borderColor = 'red';
         document.getElementById('usersum-error-message').textContent = "Incorrect sum! Please check your answer.";
-        event.preventDefault();
+//        event.preventDefault();
     } else {
         sumInputForm.style.borderColor = '';
         document.getElementById('usersum-error-message').textContent = "";
