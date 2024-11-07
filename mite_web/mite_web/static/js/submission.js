@@ -1,3 +1,22 @@
+// Validates a simple addition on form submission, block submission if invalid
+function validateSumInput(event, x, y) {
+    const userSum = parseInt(document.getElementById('user-sum').value, 10);
+    const correctSum = +x + +y;
+
+    const sumInputForm = document.getElementById('user-sum');
+
+    if (userSum !== correctSum) {
+        sumInputForm.style.borderColor = 'red';
+        document.getElementById('error-message').textContent = "Incorrect sum! Please check your answer.";
+        event.preventDefault();
+    } else {
+        sumInputForm.style.borderColor = '';
+        document.getElementById('error-message').textContent = "";
+    }
+}
+
+
+
 // Removes a Div of a specified class closest to the button; used by all elements that can be added/removed by user-input
 function removeField(button, class_ref) {
     const targetDiv = button.closest(class_ref);

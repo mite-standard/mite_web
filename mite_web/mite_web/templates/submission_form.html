@@ -85,7 +85,21 @@
                 </div>
             </div>
         </div>
-        <div class="row-auto my-2" id=row-form-submission>
+        <div class="row mb-2">
+            <div class="col-auto text-center mx-auto">
+                <div class="form-floating">
+                    <input id="user-sum" name="user-sum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
+                    <label for="user-sum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
+                    <div id="UserSumHelp" class="form-text">Validation form to prevent automated submissions</div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-auto text-center mx-auto">
+                <p class="lead" id="error-message" style="color: red;"></p>
+            </div>
+        </div>
+        <div class="row mb-2">
             <div class="col-auto text-center mx-auto">
                 <button type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
@@ -93,6 +107,11 @@
     </form>
 </div>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        validateSumInput(event, {{ x }}, {{ y }});
+    });
+</script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         createHtmlEnzymeName(document.getElementById('enzyme-name'), {{ data | tojson }})

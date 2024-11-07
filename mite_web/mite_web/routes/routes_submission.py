@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import json
+import random
 
 from flask import Response, current_app, redirect, render_template, request, url_for
 from mite_extras.processing.data_classes import EnyzmeDatabaseIds
@@ -29,6 +30,18 @@ from mite_extras.processing.mite_parser import MiteParser
 from pydantic import BaseModel, Field, ValidationError
 
 from mite_web.routes import bp
+
+
+class ProcessingHelper(BaseModel):
+    """Contains methods to help processing the data"""
+
+    def random_numbers(self) -> tuple[int, int]:
+        """Generate two random numbers and return them
+
+        Returns:
+            A tuple of two single-digit numbers
+        """
+        return random.randint(1, 9), random.randint(1, 9)
 
 
 @bp.route("/submission/")
@@ -66,7 +79,9 @@ def submission_existing(mite_acc: str) -> str | Response:
     if data.get("status") != "active":
         return redirect(url_for("routes.repository", mite_acc=mite_acc))
 
-    return render_template("submission_form.html", data=data)
+    x, y = ProcessingHelper().random_numbers()
+
+    return render_template("submission_form.html", data=data, x=x, y=y)
 
 
 @bp.route("/submission/new/", methods=["GET", "POST"])
@@ -81,6 +96,9 @@ def submission_new() -> str:
         return user_input
 
     # TODO(MMZ 6.11.): construct a minimal empty mite entry to have the fields opened
+
+    x, y = ProcessingHelper().random_numbers()
+
     data = {}
 
-    return render_template("submission_form.html", data=data)
+    return render_template("submission_form.html", data=data, x=x, y=y)
