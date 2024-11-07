@@ -101,7 +101,15 @@ def submission_new() -> str | Response:
 
     x, y = ProcessingHelper().random_numbers()
 
-    data = {}
+    data = {
+        "enzyme": {"references": ["doi:"]},
+        "reactions": [
+            {
+                "evidence": {"evidenceCode": [], "references": ["doi:"]},
+                "reactions": [{"products": [""]}],
+            }
+        ],
+    }
 
     return render_template("submission_form.html", data=data, x=x, y=y)
 
