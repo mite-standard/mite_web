@@ -64,3 +64,13 @@ def termsofuse() -> str:
         The submission_terms_of_use.html page as string.
     """
     return render_template("submission_terms_of_use.html")
+
+
+@bp.route("/downloads/")
+def downloads() -> str:
+    """Render the downloads page of mite_web
+
+    Returns:
+        The downloads.html page as string.
+    """
+    return render_template("downloads.html")
