@@ -91,7 +91,7 @@ class ProcessingHelper(BaseModel):
             "accession": data["mite_accession"][0]
             if data["mite_accession"][0] != ""
             else "MITE9999999",
-            "status": "active",
+            "status": "pending",
             "changelog": [],
             "enzyme": {
                 "name": data.get("enzyme_name", [""])[0],
