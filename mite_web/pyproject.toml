@@ -94,4 +94,6 @@ ignore = [
     "E203",
     # unneccesary True False
     "SIM210",
+    # combine nested if conditionals
+    "SIM102"
 ]
