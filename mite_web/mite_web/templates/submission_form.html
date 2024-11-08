@@ -104,7 +104,7 @@
                 <div class="col">
                     <h6 class="fw-semibold lh-2">Changelog</h6>
                     <div class="form-floating">
-                        <input id="changelog" name="changelog" class="form-control" aria-describedby="ChangeLogHelp" type="text">
+                        <input id="changelog" name="changelog" class="form-control" aria-describedby="ChangeLogHelp" type="text" required>
                         <label for="changelog" class="form-label">Changelog</label>
                         <div id="ChangeLogHelp" class="form-text">Briefly describe your changes. If you submit a new entry, simply state 'New entry'.</div>
                     </div>
@@ -114,7 +114,7 @@
                 <div class="col">
                     <h6 class="fw-semibold lh-2">Math Challenge</h6>
                     <div class="form-floating">
-                        <input id="usersum" name="usersum" class="form-control" aria-describedby="UserSumHelp" type="number">
+                        <input id="usersum" name="usersum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
                         <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
                         <div id="UserSumHelp" class="form-text">Validation form to prevent automated submissions</div>
                     </div>
@@ -123,8 +123,8 @@
                 <div class="col">
                     <h6 class="fw-semibold lh-2">Terms of Use</h6>
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check">
-                      <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
+                      <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
+                      <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
                     </div>
                 </div>
             </div>

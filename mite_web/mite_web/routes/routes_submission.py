@@ -232,7 +232,11 @@ def submission_existing(mite_acc: str) -> str | Response:
         user_input = request.form.to_dict(flat=False)
 
         processing_helper = ProcessingHelper()
-        processing_helper.parse_user_input(data=user_input, original_data=data)
+
+        try:
+            processing_helper.parse_user_input(data=user_input, original_data=data)
+        except Exception as e:
+            return render_template("submission_failure.html", error=str(e))
 
         try:
             processing_helper.validate_user_input()
@@ -264,9 +268,11 @@ def submission_new() -> str | Response:
         user_input = request.form.to_dict(flat=False)
 
         processing_helper = ProcessingHelper()
-        processing_helper.parse_user_input(data=user_input, original_data={})
 
-        # TODO(MMZ): rework as in example above
+        try:
+            processing_helper.parse_user_input(data=user_input, original_data={})
+        except Exception as e:
+            return render_template("submission_failure.html", error=str(e))
 
         try:
             processing_helper.validate_user_input()
