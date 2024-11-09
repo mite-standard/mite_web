@@ -39,7 +39,8 @@ from flask import (
     url_for,
 )
 from mite_extras.processing.mite_parser import MiteParser
-from pydantic import BaseModel, Field, ValidationError
+from mite_schema import SchemaManager
+from pydantic import BaseModel
 
 from mite_web.routes import bp
 
@@ -68,8 +69,10 @@ class ProcessingHelper(BaseModel):
         Arguments:
             data: the user-input
             original_data: the currently established version of the entry/data
-        """
 
+        Raises:
+            RuntimeError: input validation does not pass
+        """
         nr_auxenzymes = set()
         reactions = {}
 
@@ -96,11 +99,17 @@ class ProcessingHelper(BaseModel):
             "enzyme": {
                 "name": data.get("enzyme_name", [""])[0],
                 "description": data.get("enzyme_description", [""])[0],
-                "references": data["enzyme_ref[]"],
+                "references": data.get("enzyme_ref[]", []),
                 "databaseIds": {
-                    "uniprot": data.get("enzyme_uniprot", [""])[0],
-                    "genpept": data.get("enzyme_genpept", [""])[0],
-                    "mibig": data.get("enzyme_mibig", [""])[0],
+                    "uniprot": data.get("enzyme_uniprot", [""])[0]
+                    if data.get("enzyme_uniprot", [""])[0] != ""
+                    else None,
+                    "genpept": data.get("enzyme_genpept", [""])[0]
+                    if data.get("enzyme_genpept", [""])[0] != ""
+                    else None,
+                    "mibig": data.get("enzyme_mibig", [""])[0]
+                    if data.get("enzyme_mibig", [""])[0] != ""
+                    else None,
                 },
             },
             "reactions": [],
@@ -151,8 +160,7 @@ class ProcessingHelper(BaseModel):
                             f"reaction[{key}]knownreaction[{index}]products[]", [""]
                         ),
                         "forbidden_products": data.get(
-                            f"reaction[{key}]knownreaction[{index}]forbiddenproducts[]",
-                            [""],
+                            f"reaction[{key}]knownreaction[{index}]forbiddenproducts[]"
                         ),
                         "isIntermediate": data.get(
                             f"reaction[{key}]knownreaction[{index}]intermediate", [""]
@@ -169,7 +177,7 @@ class ProcessingHelper(BaseModel):
 
         self.data["changelog"].append(
             {
-                "version": f"{len(self.data["changelog"]) + 1}.0",
+                "version": f"{len(self.data["changelog"]) + 1}",
                 "date": date.today().strftime("%Y-%m-%d"),
                 "contributors": [
                     data["orcid"][0]
@@ -182,9 +190,53 @@ class ProcessingHelper(BaseModel):
         )
 
     def validate_user_input(self: Self):
-        pass
-        #     raises all the errors
-        #     catch errors with a try: except in the route, use flash to alert user, return template with the user-data so that it is not necessary to redo the whole page
+        """Validates the incoming user-submitted and formatted data
+
+        Raises:
+            RuntimeError: input validation does not pass
+        """
+        if self.data.get("reaction[0]smarts", [""]) == [""]:
+            raise RuntimeError("Please provide at least one reaction entry!")
+
+        enzyme_db_ids = [
+            self.data["enzyme"]["databaseIds"]["uniprot"],
+            self.data["enzyme"]["databaseIds"]["genpept"],
+        ]
+        if all(item is None for item in enzyme_db_ids):
+            raise RuntimeError(
+                "No enzyme database cross-references specified. Please provide at least an UniProt or GenPept ID."
+            )
+
+        if len(self.data.get("enzyme").get("references")) == 0 or all(
+            item == "" for item in self.data.get("enzyme").get("references")
+        ):
+            raise RuntimeError(
+                "No enzyme references specified. Please provide at least one reference. Please contact the Developers if you cannot provide a reference but still want to submit your data to MITE (e.g. because the work is not published yet)."
+            )
+
+        for reaction in self.data.get("reactions"):
+            if len(reaction.get("evidence", {}).get("references")) == 0 or all(
+                item == "" for item in reaction.get("evidence", {}).get("references")
+            ):
+                raise RuntimeError(
+                    "No reaction references specified. Please provide at least one reference. Please contact the Developers if you cannot provide a reference but still want to submit your data to MITE (e.g. because the work is not published yet)."
+                )
+            if reaction.get("evidence", {}).get("evidenceCode") == [""]:
+                raise RuntimeError(
+                    "At least one of the checkboxes in 'Experimental Evidence Qualifiers' must be checked."
+                )
+            if reaction.get("tailoring") == [""]:
+                raise RuntimeError(
+                    "At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked."
+                )
+
+        parser = MiteParser()
+        parser.parse_mite_json(data=self.data)
+
+        schema_manager = SchemaManager()
+        schema_manager.validate_mite(instance=parser.to_json())
+
+        self.data = parser.to_json()
 
     def dump_json(self: Self):
         """Dumps dict as JSON to disk"""
@@ -241,7 +293,6 @@ def submission_existing(mite_acc: str) -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            # TODO(MMZ 8.11.24): add validation step
             # TODO(MMZ 8.11.24): add emailing step
             return redirect(url_for("routes.submission_success"))
         except Exception as e:

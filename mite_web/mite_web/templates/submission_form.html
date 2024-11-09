@@ -4,13 +4,29 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-auto text-center mx-auto">
-            {% if data.get("accession") %}
+            {% if data.get("accession") and data.get("accession") != "MITE9999999" %}
             <h1 class="fw-semibold lh-2">Modify {{ data.accession }}</h1>
             {% else %}
             <h1 class="fw-semibold lh-2">Create New Entry</h1>
             {% endif %}
         </div>
     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="row">
+        <div class="card card-body">
+            <div class="col-auto text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during automated validation!</h4>
+                <ul class="lh-base list-unstyled">
+                {% for message in messages %}
+                    <li><p class="lead mb-1">{{ message }}</p></li>
+                {% endfor %}
+               </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
