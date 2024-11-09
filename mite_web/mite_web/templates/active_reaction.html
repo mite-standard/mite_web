@@ -63,9 +63,14 @@
                                     {% if reaction.get("databaseIds") is not none %}
                                         <ul class="list-unstyled mb-0">
                                         {% for key, value in reaction.databaseIds.items() %}
-                                            {% for member in value %}
-                                            <li><a target="_blank" href="{{ member[1] }}">{{ key }}: {{ member[0] }}</a></li>
-                                            {% endfor %}
+                                            {% if key == "rhea" %}
+                                            <li><a target="_blank" href="{{ value[1] }}">{{ key }}: {{ value[0] }}</a></li>
+                                            {% elif key == "ec" %}
+                                            <li><a target="_blank" href="{{ value[1] }}">BRENDA {{ key }}: {{ value[0] }}</a></li>
+                                            <li><a target="_blank" href="{{ value[2] }}">Expasy ENZYME {{ key }}: {{ value[0] }}</a></li>
+                                            {% else %}
+                                            <li>Unsupported format</li>
+                                            {% endif %}
                                         {% endfor %}
                                         </ul>
                                     {% else %}

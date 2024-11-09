@@ -102,7 +102,11 @@
                                     <td>
                                         <ul class="list-unstyled mb-0">
                                             {% for reviewer in entry.reviewers %}
+                                            {% if reviewer == "BBBBBBBBBBBBBBBBBBBBBBBB" %}
+                                            <li>Entry not reviewed (but all automated validation checks passed)</li>
+                                            {% else %}
                                             <li>{{ reviewer }}</li>
+                                            {% endif %}
                                             {% endfor %}
                                         </ul>
                                     </td>
