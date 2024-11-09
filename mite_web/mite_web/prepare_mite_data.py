@@ -173,9 +173,8 @@ class AuxFileManager(BaseModel):
                 mite_data = json.load(infile)
 
             reviewer = set()
-            for log in mite_data.get("changelog", {}).get("releases"):
-                for row in log.get("entries"):
-                    reviewer.update(row.get("reviewers"))
+            for log in mite_data.get("changelog"):
+                reviewer.update(log.get("reviewers"))
 
             summary["entries"][mite_data.get("accession")] = {
                 "status": '<i class="bi bi-check-circle-fill"></i>'

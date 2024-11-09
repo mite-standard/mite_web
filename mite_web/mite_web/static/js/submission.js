@@ -353,7 +353,6 @@ function createHtmlReaction(data = {}, index) {
         "Demethylation",
         "Dioxygenation",
         "Epimerization",
-        "FADH2 supply for chlorination",
         "Glycosylation",
         "Halogenation",
         "Heterocyclization",

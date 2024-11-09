@@ -83,9 +83,7 @@
         <div class="my-2"><p><b>Version {{ entry.version }} ({{ entry.date }})</b></p></div>
         <table class="table table-striped my-3">
             <tbody>
-                {% for row in entry.entries %}
                 <tr>
-                    <td width="25%"><b>Change {{ loop.index }} ({{ row.date }})</b></td>
                     <td>
                         <table class="table table-striped">
                             <tbody>
@@ -93,7 +91,7 @@
                                     <td width="20%"><b>Contributor(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
-                                            {% for curator in row.contributors %}
+                                            {% for curator in entry.contributors %}
                                             <li>{{ curator }}</li>
                                             {% endfor %}
                                         </ul>
@@ -103,7 +101,7 @@
                                     <td width="20%"><b>Reviewer(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
-                                            {% for reviewer in row.reviewers %}
+                                            {% for reviewer in entry.reviewers %}
                                             <li>{{ reviewer }}</li>
                                             {% endfor %}
                                         </ul>
@@ -111,13 +109,12 @@
                                 </tr>
                                 <tr>
                                     <td width="20%"><b>Comment</b></td>
-                                    <td>"{{ row.comment }}"</td>
+                                    <td>"{{ entry.comment }}"</td>
                                 </tr>
                             </tbody>
                         </table>
                     </td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
         {% endfor %}

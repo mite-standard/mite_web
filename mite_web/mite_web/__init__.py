@@ -121,8 +121,13 @@ def verify_data(app: Flask):
         app: The Flask app
 
     Raises:
-        RuntimeError: Data directory not found or empty
+        RuntimeError: Data not found or empty
     """
+    if not app.config["DATA_SUMMARY"].exists():
+        message = f"Could not find file '{app.config["DATA_SUMMARY"].resolve()}' - did you run the 'prepare_mite_data.py' script?"
+        app.logger.critical(message)
+        raise RuntimeError(message)
+
     if not app.config["DATA_HTML"].exists() or not list(
         app.config["DATA_HTML"].iterdir()
     ):

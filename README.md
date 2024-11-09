@@ -15,7 +15,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 ### Quick start
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Create a file `mite_web/instance/config.py` containing the variable `SECRET_KEY: str = "your_secret_key"`
+- Create a file `mite_web/instance/config.py` as indicated below
 - Run the script `python3.12 mite_web/mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
 - Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
 - Start the docker `docker-compose up -d` (potentially with `sudo`)
@@ -31,5 +31,11 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Download or clone this repository and change into `mite_dev` (where the `pyproject.toml` file resides)
 - Run `hatch -v env create dev`
 - Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
-- Run the script `hatch run dev:python mite_web/mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
+- Run the script `hatch run dev:python mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
 - Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
+
+## Config-file
+
+```python
+SECRET_KEY: str = "your_secret_key"
+```
