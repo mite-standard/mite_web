@@ -26,6 +26,7 @@ import random
 import re
 import uuid
 from datetime import date
+from io import BytesIO
 from pathlib import Path
 from typing import Self
 
@@ -38,10 +39,12 @@ from flask import (
     request,
     url_for,
 )
+from flask_mail import Message
 from mite_extras.processing.mite_parser import MiteParser
 from mite_schema import SchemaManager
 from pydantic import BaseModel
 
+from mite_web.config.extensions import mail
 from mite_web.routes import bp
 
 
@@ -49,9 +52,11 @@ class ProcessingHelper(BaseModel):
     """Contains methods to help processing the data
 
     Attributes:
+        dump_name: a name under which the file is dumped
         data: the user-submitted data
     """
 
+    dump_name: str
     data: dict | None = None
 
     @staticmethod
@@ -195,7 +200,7 @@ class ProcessingHelper(BaseModel):
         Raises:
             RuntimeError: input validation does not pass
         """
-        if self.data.get("reaction[0]smarts", [""]) == [""]:
+        if not self.data["reactions"]:
             raise RuntimeError("Please provide at least one reaction entry!")
 
         enzyme_db_ids = [
@@ -243,10 +248,31 @@ class ProcessingHelper(BaseModel):
         target = Path(__file__).parent.parent.joinpath("dumps")
         target.mkdir(parents=True, exist_ok=True)
 
-        with open(
-            target.joinpath(f"{uuid.uuid1()}.json"), "w", encoding="utf-8"
-        ) as outfile:
+        with open(target.joinpath(self.dump_name), "w", encoding="utf-8") as outfile:
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
+
+    def send_email(self: Self):
+        """Sends data per email to data processer"""
+
+        if current_app.config.get("ONLINE", False):
+            msg = Message()
+            msg.recipients = [current_app.config.get("MAIL_TARGET")]
+            msg.subject = self.dump_name
+            msg.body = "A new file was submitted: see attached."
+
+            json_content = json.dumps(self.data, indent=4)
+            json_attachment = BytesIO(json_content.encode("utf-8"))
+            msg.attach(self.dump_name, "application/json", json_attachment.read())
+
+            try:
+                mail.send(msg)
+                current_app.logger.info(
+                    f"Data of file {self.dump_name} was emailed successfully"
+                )
+            except Exception as e:
+                current_app.logger.error(
+                    f"An error occurred during sending of data of file {self.dump_name}: {e}."
+                )
 
 
 @bp.route("/submission/")
@@ -283,7 +309,7 @@ def submission_existing(mite_acc: str) -> str | Response:
     if request.method == "POST":
         user_input = request.form.to_dict(flat=False)
 
-        processing_helper = ProcessingHelper()
+        processing_helper = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json")
 
         try:
             processing_helper.parse_user_input(data=user_input, original_data=data)
@@ -293,7 +319,7 @@ def submission_existing(mite_acc: str) -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            # TODO(MMZ 8.11.24): add emailing step
+            processing_helper.send_email()
             return redirect(url_for("routes.submission_success"))
         except Exception as e:
             current_app.logger.critical(e)
@@ -303,7 +329,7 @@ def submission_existing(mite_acc: str) -> str | Response:
                 "submission_form.html", data=processing_helper.data, x=x, y=y
             )
 
-    x, y = ProcessingHelper().random_numbers()
+    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
 
     return render_template("submission_form.html", data=data, x=x, y=y)
 
@@ -318,7 +344,7 @@ def submission_new() -> str | Response:
     if request.method == "POST":
         user_input = request.form.to_dict(flat=False)
 
-        processing_helper = ProcessingHelper()
+        processing_helper = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json")
 
         try:
             processing_helper.parse_user_input(data=user_input, original_data={})
@@ -328,7 +354,7 @@ def submission_new() -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            # TODO(MMZ 7.11): send data via email and/or dump for testing
+            processing_helper.send_email()
             return redirect(url_for("routes.submission_success"))
         except Exception as e:
             current_app.logger.critical(e)
@@ -338,7 +364,7 @@ def submission_new() -> str | Response:
                 "submission_form.html", data=processing_helper.data, x=x, y=y
             )
 
-    x, y = ProcessingHelper().random_numbers()
+    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
     data = {
         "enzyme": {"references": ["doi:"]},
         "reactions": [

@@ -31,6 +31,7 @@ import coloredlogs
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 
+from mite_web.config.extensions import mail
 from mite_web.routes import bp
 
 
@@ -43,6 +44,9 @@ def create_app() -> Flask:
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
     verify_data(app)
+
+    mail.init_app(app)
+
     register_context_processors(app)
     app.register_blueprint(bp)
     return app

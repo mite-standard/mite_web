@@ -38,4 +38,11 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 ```python
 SECRET_KEY: str = "your_secret_key"
+ONLINE: bool = False
+MAIL_TARGET: str = "email_target"
+MAIL_DEFAULT_SENDER: str = "sender"
+MAIL_SERVER: str = "server"
+MAIL_PORT: int = "port"
+MAIL_USE_TLS: bool = False
+MAIL_USE_SSL: bool = False
 ```

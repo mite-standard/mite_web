@@ -30,6 +30,7 @@ classifiers = [
 dependencies = [
     "coloredlogs~=15.0",
     "Flask~=3.0",
+    "Flask-Mail~=0.9",
     "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=22.0",
