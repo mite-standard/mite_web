@@ -36,16 +36,6 @@ def index() -> str:
     return render_template("index.html")
 
 
-@bp.route("/submission/")
-def submission() -> str:
-    """Render the submission page of mite_web
-
-    Returns:
-        The submission.html page as string.
-    """
-    return render_template("submission.html")
-
-
 @bp.route("/about/")
 def about() -> str:
     """Render the about page of mite_web
@@ -64,3 +54,23 @@ def contact() -> str:
         The contact.html page as string.
     """
     return render_template("contact.html")
+
+
+@bp.route("/terms/")
+def termsofuse() -> str:
+    """Render the terms of use page of mite_web
+
+    Returns:
+        The submission_terms_of_use.html page as string.
+    """
+    return render_template("submission_terms_of_use.html")
+
+
+@bp.route("/downloads/")
+def downloads() -> str:
+    """Render the downloads page of mite_web
+
+    Returns:
+        The downloads.html page as string.
+    """
+    return render_template("downloads.html")

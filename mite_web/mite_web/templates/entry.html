@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
-{% import '_navigation_entry.html' as navigation_entry %}
+{% import '_macro_navigation.html' as macro %}
 {% block content %}
 <div class="container-fluid mt-2">
-    <div class="row">
+    <div class="row mb-2">
         <div class="col-auto">
-            {{ navigation_entry.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+            {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
         <div class="col-auto text-center mx-auto">
             <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
         </div>
         <div class="col-auto">
-            {{ navigation_entry.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+            {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+        </div>
+    </div>
+    <div class="row mb-2 text-center">
+        <div class="col-auto mx-auto">
+            <div><a class="btn btn-secondary" href="{{ url_for('routes.submission_existing', mite_acc=data.accession) }}">Modify {{ data.accession }}</a></div>
         </div>
     </div>
 </div>

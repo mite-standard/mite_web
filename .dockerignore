@@ -1,5 +1,6 @@
 mite_web/.venv
 .git
 mite_web/tests
+mite_web/mite_web/dumps
 mite_web/.pre-commit-config.yaml
 .idea/

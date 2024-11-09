@@ -1,6 +1,6 @@
-<h2 class="mb-3">Reaction Information</h2>
+<h3 class="mb-3">Reaction Information</h3>
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h3>Known Reactions: <b>{{ data.reactions|length }}</b></h3>
+    <h4>Number of Known Reactions: <b>{{ data.reactions|length }}</b></h4>
     <div class="dropdown">
         <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Select a reaction:</button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -14,7 +14,7 @@
     <div class="card card-body">
     {% for reaction in data.reactions %}
         <div class="collapse {% if loop.index == 1 %}show{% endif %}" id="reaction-{{ loop.index }}" data-bs-parent="#reactions-group">
-            <h4 class="mb-2">Reaction {{ loop.index }}</h4>
+            <h5 class="mb-2">Reaction {{ loop.index }}</h5>
             <ul class="nav nav-tabs" id="reactionNavTab-{{ loop.index }}" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active custom-link" id="reaction-tab-{{ loop.index }}" data-bs-toggle="tab" data-bs-target="#reaction-content-{{ loop.index }}" type="button" role="tab" aria-controls="reaction-content-{{ loop.index }}" aria-selected="true"><b>Reaction SMARTS</b></button>
@@ -29,9 +29,9 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ reaction.reactionSMARTS.reactionSMARTS[1] }}" alt="reaction SMARTS">
+                                    <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ reaction.reactionSMARTS[1] }}" alt="reaction SMARTS">
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <button class="btn btn-light btn-sm" data-clipboard-text="{{ reaction.reactionSMARTS.reactionSMARTS[0] }}">Copy reaction SMARTS</button>
+                                        <button class="btn btn-light btn-sm" data-clipboard-text="{{ reaction.reactionSMARTS[0] }}">Copy reaction SMARTS</button>
                                     </div>
                                 </td>
                             </tr>
@@ -63,9 +63,14 @@
                                     {% if reaction.get("databaseIds") is not none %}
                                         <ul class="list-unstyled mb-0">
                                         {% for key, value in reaction.databaseIds.items() %}
-                                            {% for member in value %}
-                                            <li><a target="_blank" href="{{ member[1] }}">{{ key }}: {{ member[0] }}</a></li>
-                                            {% endfor %}
+                                            {% if key == "rhea" %}
+                                            <li><a target="_blank" href="{{ value[1] }}">{{ key }}: {{ value[0] }}</a></li>
+                                            {% elif key == "ec" %}
+                                            <li><a target="_blank" href="{{ value[1] }}">BRENDA {{ key }}: {{ value[0] }}</a></li>
+                                            <li><a target="_blank" href="{{ value[2] }}">Expasy ENZYME {{ key }}: {{ value[0] }}</a></li>
+                                            {% else %}
+                                            <li>Unsupported format</li>
+                                            {% endif %}
                                         {% endfor %}
                                         </ul>
                                     {% else %}
@@ -102,57 +107,59 @@
                 </div>
             </div>
             {% for exp_react in reaction.reactions %}
-            <h5>Example {{ loop.index }}</h5>
-            <table class="table table-striped">
-                <tbody>
-                    <tr>
-                        <td width="15%"><b>Metadata</b></td>
-                        <td>
-                            <ul class="list-unstyled mb-0">
-                                {% if exp_react.description %}
-                                <li><b>Description:</b> {{ exp_react.description }}</li>
-                                {% else %}
-                                <li><b>Description:</b> No description available</li>
-                                {% endif %}
-                                <li><b>Intermediate:</b> {{ exp_react.isIntermediate }}</li>
-                            </ul>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="15%"><b>Substrate</b></td>
-                        <td>
-                            <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ exp_react.substrate[1] }}" alt="substrate SMILES">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button class="btn btn-light btn-sm" data-clipboard-text="{{ exp_react.substrate[0] }}">Copy SMILES</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% for product in exp_react.products %}
-                    <tr>
-                        <td width="15%"><b>Product {{ loop.index }}</b></td>
-                        <td>
-                            <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ product[1] }}" alt="product SMILES">
-                            <div class="d-flex justify-content-center align-items-center">
-                                <button class="btn btn-light btn-sm" data-clipboard-text="{{ product[0] }}">Copy SMILES</button>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% if exp_react.forbidden_products %}
-                        {% for forb_prod in exp_react.forbidden_products %}
+            <div class="card card-body">
+                <h5>Example {{ loop.index }}</h5>
+                <table class="table table-striped">
+                    <tbody>
                         <tr>
-                            <td width="15%"><b>Forbidden Product {{ loop.index }}</b></td>
+                            <td width="15%"><b>Metadata</b></td>
                             <td>
-                                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ forb_prod[1] }}" alt="forbidden product SMILES">
+                                <ul class="list-unstyled mb-0">
+                                    {% if exp_react.description %}
+                                    <li><b>Description:</b> {{ exp_react.description }}</li>
+                                    {% else %}
+                                    <li><b>Description:</b> No description available</li>
+                                    {% endif %}
+                                    <li><b>Intermediate:</b> {{ exp_react.isIntermediate }}</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="15%"><b>Substrate</b></td>
+                            <td>
+                                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ exp_react.substrate[1] }}" alt="substrate SMILES">
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <button class="btn btn-light btn-sm" data-clipboard-text="{{ forb_prod[0] }}">Copy SMILES</button>
+                                    <button class="btn btn-light btn-sm" data-clipboard-text="{{ exp_react.substrate[0] }}">Copy SMILES</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% for product in exp_react.products %}
+                        <tr>
+                            <td width="15%"><b>Product {{ loop.index }}</b></td>
+                            <td>
+                                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ product[1] }}" alt="product SMILES">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <button class="btn btn-light btn-sm" data-clipboard-text="{{ product[0] }}">Copy SMILES</button>
                                 </div>
                             </td>
                         </tr>
                         {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
+                        {% if exp_react.forbidden_products %}
+                            {% for forb_prod in exp_react.forbidden_products %}
+                            <tr>
+                                <td width="15%"><b>Forbidden Product {{ loop.index }}</b></td>
+                                <td>
+                                    <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ forb_prod[1] }}" alt="forbidden product SMILES">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <button class="btn btn-light btn-sm" data-clipboard-text="{{ forb_prod[0] }}">Copy SMILES</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
             {% endfor %}
         </div>
     {% endfor %}

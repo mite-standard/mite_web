@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "0.1.1"
+version = "0.2.0"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
 license-files = { paths = ["LICENSE"] }
@@ -28,15 +28,13 @@ classifiers = [
 ]
 
 dependencies = [
-    "coloredlogs~=15.0.1",
-    "email-validator~=2.2",
+    "coloredlogs~=15.0",
     "Flask~=3.0",
-    "Flask-WTF~=1.2",
     "Flask-Mail~=0.9",
+    "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=22.0",
-    "mite_extras~=1.1",
-    "pydantic~=2.5",
+    "mite_extras",
     "requests~=2.32",
 ]
 
@@ -97,4 +95,6 @@ ignore = [
     "E203",
     # unneccesary True False
     "SIM210",
+    # combine nested if conditionals
+    "SIM102"
 ]

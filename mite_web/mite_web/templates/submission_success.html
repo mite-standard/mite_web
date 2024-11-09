@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">Submission Successful!</h1>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <h2 class="fw-semibold lh-2">What happens next?</h2>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <p class="lead lh-2">
+                After a quick screening by one of the MITE staff members, your submission will be converted in the MITE file format and posted as an Issue on the <a class="custom-link" target="_blank" href="https://github.com/mite-standard/mite_data/labels/review"><b>MITE Data GitHub webpage</b>.</a>
+                We try to do this quickly, but it may take a few days until it appears online.
+            </p>
+            <p class="lead lh-2">
+                Next, one or more of our volunteer Reviewers will inspect your submission in detail, correct fixable errors, or flag any issues that cannot be resolved.
+                You are invited to participate in this discussion.
+            </p>
+            <p class="lead lh-2">
+                Once review is completed and the submission is approved, it will be added to the newest pending release of the MITE Data repository.
+                Once the release in published, your submission can be accessed on the MITE Webpage.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

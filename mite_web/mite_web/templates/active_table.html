@@ -1,4 +1,4 @@
-<h2 class="mb-3">Enzyme Information</h2>
+<h3 class="mb-3">Enzyme Information</h3>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active custom-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="home" aria-selected="true"><b>General Information</b></button>
@@ -34,7 +34,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.databaseIds is defined %}
                             {% for key, value in data.enzyme.databaseIds.items() %}
-                            <li>{{ key }}: <a class="footer-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
+                            <li>{{ key }}: <a class="custom-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No database crosslinks available</li>
@@ -48,7 +48,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.references is defined %}
                             {% for row in data.enzyme.references %}
-                            <li><a class="footer-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
+                            <li><a class="custom-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No references available</li>
@@ -67,7 +67,7 @@
                     <td>
                         <div>
                             <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot')[0] }}">
-                                <img style="max-width: 100%; height: auto;" class="d-none d-sm-block" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
+                                <img style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
                             </a>
                         </div>
                     </td>
@@ -83,9 +83,7 @@
         <div class="my-2"><p><b>Version {{ entry.version }} ({{ entry.date }})</b></p></div>
         <table class="table table-striped my-3">
             <tbody>
-                {% for row in entry.entries %}
                 <tr>
-                    <td width="25%"><b>Change {{ loop.index }} ({{ row.date }})</b></td>
                     <td>
                         <table class="table table-striped">
                             <tbody>
@@ -93,7 +91,7 @@
                                     <td width="20%"><b>Contributor(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
-                                            {% for curator in row.contributors %}
+                                            {% for curator in entry.contributors %}
                                             <li>{{ curator }}</li>
                                             {% endfor %}
                                         </ul>
@@ -103,21 +101,24 @@
                                     <td width="20%"><b>Reviewer(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
-                                            {% for reviewer in row.reviewers %}
+                                            {% for reviewer in entry.reviewers %}
+                                            {% if reviewer == "BBBBBBBBBBBBBBBBBBBBBBBB" %}
+                                            <li>Entry not reviewed (but all automated validation checks passed)</li>
+                                            {% else %}
                                             <li>{{ reviewer }}</li>
+                                            {% endif %}
                                             {% endfor %}
                                         </ul>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td width="20%"><b>Comment</b></td>
-                                    <td>"{{ row.comment }}"</td>
+                                    <td>"{{ entry.comment }}"</td>
                                 </tr>
                             </tbody>
                         </table>
                     </td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
         {% endfor %}

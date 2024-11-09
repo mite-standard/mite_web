@@ -1,4 +1,5 @@
 # Config
+mite_web/mite_web/dumps
 mite_web/mite_web/data
 mite_web/mite_web/static/img
 config.py
