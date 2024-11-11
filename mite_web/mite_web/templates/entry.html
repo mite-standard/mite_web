@@ -3,18 +3,18 @@
 {% block content %}
 <div class="container-fluid mt-2">
     <div class="row mb-2">
-        <div class="col-auto">
+        <div class="col d-flex justify-content-start align-items-center">
             {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
-        <div class="col-auto text-center mx-auto">
+        <div class="col d-flex justify-content-center align-items-center">
             <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
         </div>
-        <div class="col-auto">
+        <div class="col d-flex justify-content-end align-items-center">
             {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
         </div>
     </div>
-    <div class="row mb-2 text-center">
-        <div class="col-auto mx-auto">
+    <div class="row">
+        <div class="col d-flex justify-content-center">
             <div><a class="btn btn-secondary" href="{{ url_for('routes.submission_existing', mite_acc=data.accession) }}">Modify {{ data.accession }}</a></div>
         </div>
     </div>
