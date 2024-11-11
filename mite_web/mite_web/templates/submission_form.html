@@ -168,6 +168,7 @@
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
         populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
+        testFirefoxMobile()
     });
 </script>
 {% endblock %}
