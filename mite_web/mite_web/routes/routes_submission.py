@@ -324,7 +324,9 @@ def submission_existing(mite_acc: str) -> str | Response:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
             processing_helper.send_email(sub_type="MODIFIED")
-            return redirect(url_for("routes.submission_success"))
+            return render_template(
+                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            )
         except Exception as e:
             current_app.logger.critical(e)
             flash(str(e))
@@ -359,7 +361,9 @@ def submission_new() -> str | Response:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
             processing_helper.send_email(sub_type="NEW")
-            return redirect(url_for("routes.submission_success"))
+            return render_template(
+                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            )
         except Exception as e:
             current_app.logger.critical(e)
             flash(str(e))
@@ -380,13 +384,3 @@ def submission_new() -> str | Response:
     }
 
     return render_template("submission_form.html", data=data, x=x, y=y)
-
-
-@bp.route("/submission/success/")
-def submission_success() -> str:
-    """Render the successful submission page
-
-    Returns:
-        The submission_success.html page as string.
-    """
-    return render_template("submission_success.html")

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="fw-semibold lh-2">Help</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <h2 class="fw-semibold lh-2 my-3">Background</h2>
+            <p class="lead mb-2">The following sections provide information to help interpreting MITE entries and creating new submissions.</p>
+            <ul class="lh-base my-3">
+                <li><p class="lead my-1">Overview of the MITE entry page</p></li>
+                <li><p class="lead my-1">Creating MITE-compatible reaction SMARTS and SMILES strings</p></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="fw-semibold lh-2 my-3">Overview of the MITE entry page</h3>
+            <p class="lead my-2">The MITE entry page can be separated in three blocks: the navigation header, the Reaction Information, and the Enzyme Information.</p>
+            <p class="lead my-2">The naviation header allows to browse through the MITE entries. The navigation buttons can also be triggered using the 'left' and 'right' keys on a keyboard to move to the previous or the next entry, respectively. A click on the "Modify ..." button allows to propose changes.</p>
+            <img class="d-none d-sm-block my-3" style="min-width: 50%; max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/help0.png') }}" alt="MITE entry overview">
+            <p class="lead my-2">The Enzyme Information column shows general information about the tailoring enzyme the MITE entry is about. It also shows information about Auxiliary Enyzmes (any enzymes needed for the tailoring enzyme to work properly), and a Changelog, which describes the changes this entry has undergone.</p>
+            <p class="lead my-2">The Reaction Information column displays the known tailoring reaction of this enzyme. The Reaction SMARTS tab shows the generic reaction as expressed by the reaction SMARTS, while the Example cards below show examples of substrate-product pairs. Multiple tailoring reactions/substrat specificities can be known, and these can be selected clicking on the "Select a reaction" button.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="fw-semibold lh-2 my-3">Creating MITE-compatible reaction SMARTS and SMILES strings</h3>
+            <p class="lead my-2">Reaction SMARTS and SMILES are the core information of any MITE entry, summarizing and exemplifying the reaction and substrate specificity of the described tailoring enzyme This step-by-step guide demonstrates a convenient way to create MITE-compatible reaction SMARTS and SMILES, using freely available online tools.</p>
+            <h4 class="fw-semibold lh-2 my-3">What are SMILES, SMARTS, and reaction SMARTS?</h4>
+            <p class="lead my-2">SMILES and SMARTS are line notations describing chemical structures. While a SMILES string <b>describes a molecule</b> by specifying its atoms and their connectivity, a SMARTS string <b>describes a search pattern</b> of atoms and bonds. The SMILES string “C=C” describes ethylene, while the SMARTS string “[C]=[C]” matches the SMILES string of ethylene and also the SMILES string describing propylene “C=CC”. Reaction SMARTS are a powerful extension which includes both pattern-matching of substrate(s) and their modification to product(s) (“substrate>>product”). This system allows modeling chemical reactions and applying them to SMILES strings.</p>
+            <p class="lead my-2">In MITE, reaction SMARTS are used to describe the substrate specificities and reactions of tailoring enzymes, while SMILES are used to describe the actual substrate and product of characterized reactions.</p>
+            <h4 class="fw-semibold lh-2 my-3">How to create reaction SMARTS and SMILES?</h4>
+            <p class="lead my-2">Writing SMILES and reaction SMARTS by hand is complicated and error-prone. Instead, we recommend to first draw the chemical structures, and then export them in their string notation.</p>
+            <p class="lead my-2">While there are many chemistry drawing programs available, we recommend the free open-source tool <a class="custom-link" target="_blank" href="https://github.com/epam/ketcher">Ketcher</a>, which has an <a class="custom-link" target="_blank" href="https://github.com/epam/ketcher"><b>online demo version</b></a> available and which will be used in this tutorial.</p>
+
+        </div>
+    </div>
+
+
+
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="fw-semibold lh-2">Why MITE?</h2>
+            <p class="lead mb-2">
+                Knowledge about reaction and substrate specificities of tailoring enzymes is often scattered in the literature.
+                This does not only require researchers to perform time-consuming literature review, but also hampers the application of machine learning.
+            </p>
+            <p class="lead mb-2">
+                To close this gap, the Minimum Information about a Tailoring Enzyme (MITE) data standard and the accompanying data repository were created.
+                The MITE data standard provides a framework to structure (meta)data in a both human- and machine-readable fashion, while the MITE data repository stores the actual data.
+            </p>
+            <p class="lead mb-4">
+                All data in MITE is assembled, curated, and reviewed by volunteers and can be used under a permissible open source license.
+            </p>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 100%; max-width: 200%; height: auto;" src="{{ url_for('static', filename='images/workflow.svg') }}" alt="MITE workflow" >
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="fw-semibold lh-2">What data is stored in MITE?</h2>
+            <p class="lead mb-2">
+                MITE exclusively collects experimentally verified (meta)data on tailoring enzymes.
+            </p>
+            <p class="lead mb-2">
+                Each MITE entry describes a <b>single, non-redundant enzyme-encoding gene</b> and one or more associated tailoring reactions.
+                These reactions are described as <b>reaction SMARTS</b>, which describe the substrate specificity-reaction relationship of the enzyme.
+                These reaction SMARTS are examplified by one or more substrate(s) -> product(s) pairs in <b>SMILES</b> format.
+            </p>
+            <p class="lead mb-2">
+                Taken together, the tailoring reaction is summarized in a both human- and machine-readable fashion.
+            </p>
+        </div>
+        <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <img class="d-none d-sm-block my-3" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/reaction_example.svg') }}" alt="Example reaction of a tryptophan being halogenated in position 7.">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <h2 class="fw-semibold lh-2">How to contribute?</h2>
+            <p class="lead mb-2 ">
+                MITE lives from contributions by its users (known as Contributors).
+                Contributors can create new entries using the <a class="link" href="{{ url_for('routes.submission') }}">MITE Submission Portal</a>, or modify existing entries in the MITE Repository.
+                These submissions are then reviewed by topic matter experts (Reviewers) and released as updates on a monthly basis.
+                All data on MITE is available from <a class="link" href="https://doi.org/10.5281/zenodo.13294303" target="_blank">Zenodo</a><b> for free, forever.</b>
+            </p>
+            <p class="lead mb-4">
+                Interested? <a class="link" href="{{ url_for('routes.contact') }}">Get in touch</a> or see the resources below.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <h2 class="fw-semibold lh-2">How to cite MITE?</h2>
+            <p class="lead mb-4 ">If you have found the data/software useful, please consider citing us. We are currently preparing a new manuscript, and until it is published, please cite <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">our preprint.</a></p>
+            <pre><code><b>
+                Mitja M. Zdouc, David Meijer, Friederike Biermann, Jonathan Holme, Aleksandra
+                Korenskaia, Annette Lien, Nico L. L. Louwen, Jorge C. Navarro-Muñoz, Giang-Son Nguyen,
+                Adriano Rutz, Anastasia Sveshnikova, Judith Szenei, Barbara Terlouw, Rosina Torres
+                Ortega, Marc Feuermann, Alan J. Bridge, Justin J.J. van der Hooft, Tilmann Weber,
+                Nadine Ziemert, Kai Blin and Marnix H. Medema
+
+                The Minimum Information about a Tailoring Enzyme/Maturase data standard for capturing natural product biosynthesis.
+
+                ChemRxiv. 2024; doi:10.26434/chemrxiv-2024-78mtl
+            </b></code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}
