@@ -15,8 +15,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 ### Quick start
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Create a file `mite_web/instance/config.py` as indicated below
-- Run the script `python3.12 mite_web/mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
+- Create a file `mite_web/instance/config.py` with the content indicated below
 - Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
 - Start the docker `docker-compose up -d` (potentially with `sudo`)
 - Open the application in any browser with the URL http://0.0.0.0:8004/
@@ -24,11 +23,11 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 ## For developers
 
-### Quick start
+### Install and quick start
 
 - Install `python3`
 - Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
-- Download or clone this repository and change into `mite_dev` (where the `pyproject.toml` file resides)
+- Download or clone this [repository](https://github.com/mite-standard/mite_web) and change into `mite_dev` (where the `pyproject.toml` file resides)
 - Run `hatch -v env create dev`
 - Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
 - Run the script `hatch run dev:python mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
