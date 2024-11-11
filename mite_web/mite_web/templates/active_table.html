@@ -14,22 +14,23 @@
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
-        <table class="table table-striped mt-3">
+        <div class="table-responsive">
+            <table class="table table-striped mt-3">
             <tbody>
                 <tr>
-                    <td width="25%"><b>Accession ID</b></td><td>{{ data.accession }}</td>
+                    <td><b>Accession ID</b></td><td>{{ data.accession }}</td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Entry Status</b></td><td>Status: {{ data.status }}</td>
+                    <td><b>Entry Status</b></td><td>Status: {{ data.status }}</td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Enzyme Name</b></td><td>{{ data.enzyme.get("name") }}</td>
+                    <td><b>Enzyme Name</b></td><td>{{ data.enzyme.get("name") }}</td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Enzyme Description</b></td><td>{{ data.enzyme.get("description") }}</td>
+                    <td><b>Enzyme Description</b></td><td>{{ data.enzyme.get("description") }}</td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>Database References</b></td>
+                    <td><b>Database References</b></td>
                     <td>
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.databaseIds is defined %}
@@ -43,7 +44,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="25%"><b>References</b></td>
+                    <td><b>References</b></td>
                     <td>
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.references is defined %}
@@ -58,11 +59,11 @@
                 </tr>
                 {% if data.comment is defined %}
                 <tr>
-                    <td width="25%"><b>Comment</b></td><td>{{ data.comment }}</td>
+                    <td><b>Comment</b></td><td>{{ data.comment }}</td>
                 </tr>
                 {% endif %}
                 <tr>
-                    <td width="25%"><b>Enzyme Visualization (AlphaFold-predicted)</b></td>
+                    <td><b>Enzyme Visualization (AlphaFold-predicted)</b></td>
                     {% if data.enzyme.databaseIds.uniprot is defined %}
                     <td>
                         <div>
@@ -77,18 +78,20 @@
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
     <div class="tab-pane fade" id="changelog" role="tabpanel" aria-labelledby="changelog-tab">
         {% for entry in data.changelog %}
         <div class="my-2"><p><b>Version {{ entry.version }} ({{ entry.date }})</b></p></div>
-        <table class="table table-striped my-3">
+        <div class="table-responsive">
+            <table class="table table-striped my-3">
             <tbody>
                 <tr>
                     <td>
                         <table class="table table-striped">
                             <tbody>
                                 <tr>
-                                    <td width="20%"><b>Contributor(s)</b></td>
+                                    <td><b>Contributor(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
                                             {% for curator in entry.contributors %}
@@ -98,7 +101,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td width="20%"><b>Reviewer(s)</b></td>
+                                    <td><b>Reviewer(s)</b></td>
                                     <td>
                                         <ul class="list-unstyled mb-0">
                                             {% for reviewer in entry.reviewers %}
@@ -112,7 +115,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td width="20%"><b>Comment</b></td>
+                                    <td><b>Comment</b></td>
                                     <td>"{{ entry.comment }}"</td>
                                 </tr>
                             </tbody>
@@ -121,26 +124,28 @@
                 </tr>
             </tbody>
         </table>
+        </div>
         {% endfor %}
     </div>
     {% if data.enzyme.auxiliaryEnzymes is defined %}
     <div class="tab-pane fade" id="auxenz" role="tabpanel" aria-labelledby="auxenz-tab">
         {% for auxenzyme in data.enzyme.auxiliaryEnzymes %}
         <div class="my-2"><p><b>Auxiliary Enzyme #{{ loop.index }}</b></p></div>
-        <table class="table table-striped my-3">
+        <div class="table-responsive">
+            <table class="table table-striped my-3">
             <tbody>
                 <tr>
-                    <td width="25%"><b>Enzyme Name</b></td>
+                    <td><b>Enzyme Name</b></td>
                     <td>{{ auxenzyme.name }}</td>
                 </tr>
                 {% if auxenzyme.description is defined %}
                 <tr>
-                    <td width="25%"><b>Description</b></td>
+                    <td><b>Description</b></td>
                     <td>{{ auxenzyme.description }}</td>
                 </tr>
                 {% endif %}
                 <tr>
-                    <td width="25%"><b>Database References</b></td>
+                    <td><b>Database References</b></td>
                     <td>
                         <ul class="list-unstyled mb-0">
                         {% if auxenzyme.databaseIds is defined %}
@@ -155,6 +160,7 @@
                 </tr>
             </tbody>
         </table>
+        </div>
         {% endfor %}
     </div>
     {% endif %}
