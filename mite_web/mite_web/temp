@@ -1,0 +1,130 @@
+
+A submission was performed via the MITE Submission portal.
+Please find the file in the code block below.
+
+### Labels
+https://github.com/mite-standard/mite_data/labels/review
+
+### Review requested
+@mmzdouc, @adafede
+
+## TODO Reviewers
+
+- [x] Automated validation using `mite_extras` performed
+- [ ] Factual correctness of submission checked
+- [ ] Database ID crosslinks verified, added where possible
+- [ ] References properly formatted
+- [ ] Automated validation check ID "BBBBBB..." replaced with real reviewer ID
+
+## Submitted Data
+
+```
+{
+    "accession": "MITE0000010",
+    "status": "active",
+    "changelog": [
+        {
+            "version": "1",
+            "date": "2024-07-30",
+            "contributors": [
+                "MGLE5JJ3S32DQA3YR5WPYH4W",
+                "P75FRHHCFPTCPYSP65VDVPHW",
+                "2QMTKRHHEW7SVXJII2W6QJDH"
+            ],
+            "reviewers": [
+                "NJ6R5LEVTYWQEKC4XASTKZBC",
+                "C62OJVVH7XOTOTFZSJT727YU"
+            ],
+            "comment": "Initial entry. Reviewer 1 partially fixed reactionSMARTS:reactionSMARTS, validation still not passing. Reviewer 1 partially fixed reactions:substrate, validation still not passing. Reviewer 1 partially fixed reactions:products, validation still not passing. Reviewer 2 improved description and reworked reaction SMARTS and substrate/product SMILES, reaction passes."
+        }
+    ],
+    "enzyme": {
+        "name": "meiE",
+        "description": "Cytochrome P450",
+        "references": [
+            "doi:10.1128/AEM.02262-09"
+        ],
+        "databaseIds": {
+            "uniprot": "Q6YL50",
+            "genpept": "AAM97314.1",
+            "mibig": "BGC0000093"
+        }
+    },
+    "reactions": [
+        {
+            "tailoring": [
+                "Hydroxylation"
+            ],
+            "reactionSMARTS": "[#6:1]-[#8:2]-[#6:3]1-[#6:9](-[#6:10])=[#6:8]-[#6:7]2-[#6:11](-[#8:13]-[#6:14]3-[#6:39]-[#6:31]4(-[#8:38]-[#6:36](-[#6:37])-[#6:34](-[#6:35])-[#6:33]-[#6:32]-4)-[#8:30]-[#6:16](-[#6:17]-[#6:18]=[#6:19](-[#6:21]-[#6:22](-[#6:24]=[#6:25]-[#6:26]=[#6:27](-[#6:28]-[#8:29])-[#6:5]-2(-[#8:6])-[#6:4]-1)-[#6:23])-[#6:20])-[#6:15]-3)=[#8:12]>>[#6:1]-[#8:2]-[#6:3]1-[#6:9](-[#6:10])=[#6:8]-[#6:7]2-[#6:11](-[#8:13]-[#6:14]3-[#6:39]-[#6:31]4(-[#8:38]-[#6:36](-[#6:37])-[#6:34](-[#6:35])-[#6:33]-[#6:32]-4)-[#8:30]-[#6:16](-[#6:17]-[#6:18]=[#6:19](-[#6:21]-[#6:22](-[#6:24]=[#6:25]-[#6:26]=[#6:27](-[#6:28]-[#8:29])-[#6:5]-2(-[#8:6])-[#6:4]-1-[#8])-[#6:23])-[#6:20])-[#6:15]-3)=[#8:12]",
+            "reactions": [
+                {
+                    "substrate": "COC1CC2(O)C(CO)=CC=CC(C)CC(C)=CCC3CC(CC4(CCC(C)C(C)O4)O3)OC(=O)C2C=C1C",
+                    "products": [
+                        "COC1C(C)=CC2C(=O)OC3CC(CC=C(C)CC(C)C=CC=C(CO)C2(O)C1O)OC1(CCC(C)C(C)O1)C3"
+                    ],
+                    "isIntermediate": false,
+                    "description": "Minor component"
+                }
+            ],
+            "evidence": {
+                "evidenceCode": [
+                    "Knock-out studies"
+                ],
+                "references": [
+                    "doi:10.1128/AEM.02262-09"
+                ]
+            }
+        },
+        {
+            "tailoring": [
+                "Hydroxylation"
+            ],
+            "reactionSMARTS": "[#6:1]-[#8:2]-[#6:3]1-[#6:9](-[#6:10])=[#6:8]-[#6:7]2-[#6:11](-[#8:13]-[#6:14]3-[#6:38]-[#6:30]4(-[#8:37]-[#6:35](-[#6:36])-[#6:33](-[#6:34])-[#6:32]-[#6:31]-4)-[#8:29]-[#6:16](-[#6:17]-[#6:18]=[#6:19](-[#6:21]-[#6:22](-[#6:24]=[#6:25]-[#6:26]=[#6:27](-[#6:28])-[#6:5]-2(-[#8:6])-[#6:4]-1)-[#6:23])-[#6:20])-[#6:15]-3)=[#8:12]>>[#6:1]-[#8:2]-[#6:3]1-[#6:4]-[#6:5]2(-[#8:6])-[#6:7](-[#6:11](=[#8:12])-[#8:13]-[#6:14]3-[#6:15]-[#6:16](-[#6:17]-[#6:18]=[#6:19](-[#6:20])-[#6:21]-[#6:22](-[#6:23])-[#6:24]=[#6:25]-[#6:26]=[#6:27]-2-[#6:28]-[#8])-[#8:29]-[#6:30]2(-[#6:31]-[#6:32]-[#6:33](-[#6:34])-[#6:35](-[#6:36])-[#8:37]-2)-[#6:38]-3)-[#6:8]=[#6:9]-1-[#6:10]",
+            "reactions": [
+                {
+                    "substrate": "COC1CC2(O)C(C)=CC=CC(C)CC(C)=CCC3CC(CC4(CCC(C)C(C)O4)O3)OC(=O)C2C=C1C",
+                    "products": [
+                        "COC1CC2(O)C(CO)=CC=CC(C)CC(C)=CCC3CC(CC4(CCC(C)C(C)O4)O3)OC(=O)C2C=C1C"
+                    ],
+                    "isIntermediate": false,
+                    "description": "Minor component"
+                }
+            ],
+            "evidence": {
+                "evidenceCode": [
+                    "Knock-out studies"
+                ],
+                "references": [
+                    "doi:10.1128/AEM.02262-09"
+                ]
+            }
+        },
+        {
+            "tailoring": [
+                "Heterocyclization"
+            ],
+            "reactionSMARTS": "[#6:1]-[#6:2]1-[#6:36](-[#6:37])-[#8:35]-[#6:5]2(-[#8:34]-[#6:9]3-[#6:10]-[#6:11]=[#6:12](-[#6:14]-[#6:15](-[#6:17]=[#6:18]-[#6:19]=[#6:20](-[#6:22]4(-[#6:30](-[#6:31](-[#8:33]-[#6:7](-[#6:8]-3)-[#6:6]-2)=[#8:32])-[#6:29]=[#6:27](-[#6:28])-[#6:25](-[#8:26])-[#6:24]-4)-[#8:23])-[#6:21])-[#6:16])-[#6:13])-[#6:4]-[#6:3]-1>>[#6:1]-[#6:2]1-[#6:36](-[#6:37])-[#8:35]-[#6:5]2(-[#8:34]-[#6:9]3-[#6:10]-[#6:11]=[#6:12](-[#6:14]-[#6:15](-[#6:17]=[#6:18]-[#6:19]=[#6:20]4-[#6:22]5(-[#8:23])-[#6:24](-[#6:25](-[#6:27](=[#6:29]-[#6:30]-5-[#6:31](-[#8:33]-[#6:7](-[#6:8]-3)-[#6:6]-2)=[#8:32])-[#6:28])-[#8:26])-[#8]-[#6:21]-4)-[#6:16])-[#6:13])-[#6:4]-[#6:3]-1",
+            "reactions": [
+                {
+                    "substrate": "CC1=CCC2CC(CC3(CCC(C)C(C)O3)O2)OC(=O)C2C=C(C)C(O)CC2(O)C(C)=CC=CC(C)C1",
+                    "products": [
+                        "CC1=CCC2CC(CC3(CCC(C)C(C)O3)O2)OC(=O)C2C=C(C)C(O)C3OCC(=CC=CC(C)C1)C23O"
+                    ],
+                    "isIntermediate": false,
+                    "description": "Meilingmycin intermediate product"
+                }
+            ],
+            "evidence": {
+                "evidenceCode": [
+                    "Knock-out studies"
+                ],
+                "references": [
+                    "doi:10.1128/AEM.02262-09"
+                ]
+            }
+        }
+    ]
+}
+```
+
+*This action was performed by `mite-bot`*

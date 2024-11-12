@@ -41,7 +41,7 @@ class IssueManager(BaseModel):
     """
 
     src: DirectoryPath
-    reviewers: list
+    reviewers: list = ["@mmzdouc", "@adafede"]
 
     def run(self):
         """Parses files in the source directory and pushes them to GitHub"""
@@ -60,6 +60,12 @@ class IssueManager(BaseModel):
 A submission was performed via the MITE Submission portal.
 Please find the file in the code block below.
 
+### Labels
+https://github.com/mite-standard/mite_data/labels/review
+
+### Review requested
+{", ".join(self.reviewers)}
+
 ## TODO Reviewers
 
 - [x] Automated validation using `mite_extras` performed
@@ -68,30 +74,33 @@ Please find the file in the code block below.
 - [ ] References properly formatted
 - [ ] Automated validation check ID "BBBBBB..." replaced with real reviewer ID
 
+Please propose and discuss changes in the comments.
+
 ## Submitted Data
 
 ```
 {json.dumps(json_dict, indent=4)}
 ```
-"""
 
-            with open(self.src.parent.joinpath("temp").resolve(), "w") as outfile:
+*This action was performed by `mite-bot`*
+"""
+            print(self.src.joinpath("temp"))
+
+            with open(self.src.joinpath("temp.txt"), "w") as outfile:
                 outfile.write(body)
 
             try:
-                result = subprocess.run(
+                subprocess.run(
                     [
                         "gh",
                         "issue",
                         "create",
                         "--repo",
                         "mite-standard/mite_data",
-                        "--assignee",
-                        f'{",".join(self.reviewers)}',
                         "--title",
                         f"{title}",
                         "--body-file",
-                        f"{self.src.parent.joinpath("temp").resolve()}",
+                        f"{self.src.joinpath("temp.txt")}",
                         "--label",
                         "review",
                     ],
@@ -123,15 +132,6 @@ def setup_cli(args: list) -> argparse.Namespace:
         help="Specifies a directory containing submitted files for processing.",
     )
 
-    parser.add_argument(
-        "-r",
-        "--reviewers",
-        type=str,
-        nargs="+",
-        required=True,
-        help="Specifies one or more reviewers to assign to issue (separated by whitespace).",
-    )
-
     return parser.parse_args(args)
 
 
@@ -140,7 +140,7 @@ def main() -> None | SystemExit:
     args = setup_cli(sys.argv[1:])
 
     try:
-        issue_manager = IssueManager(src=Path(args.input_dir), reviewers=args.reviewers)
+        issue_manager = IssueManager(src=Path(args.input_dir).resolve())
         issue_manager.run()
     except Exception as e:
         print(f"An exception has occurred: {e}")
