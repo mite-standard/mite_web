@@ -95,7 +95,7 @@
                                     <td>
                                         <ul class="list-unstyled mb-0">
                                             {% for curator in entry.contributors %}
-                                            <li>{{ curator }}</li>
+                                            <li><a target="_blank" class="custom-link" href="https://orcid.org/{{ curator }}">{{ curator }}</a></li>
                                             {% endfor %}
                                         </ul>
                                     </td>
@@ -108,7 +108,7 @@
                                             {% if reviewer == "BBBBBBBBBBBBBBBBBBBBBBBB" %}
                                             <li>Entry not reviewed (but all automated validation checks passed)</li>
                                             {% else %}
-                                            <li>{{ reviewer }}</li>
+                                            <li><a target="_blank" class="custom-link" href="https://orcid.org/{{ reviewer }}">{{ reviewer }}</a></li>
                                             {% endif %}
                                             {% endfor %}
                                         </ul>
@@ -150,7 +150,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if auxenzyme.databaseIds is defined %}
                             {% for key, value in auxenzyme.databaseIds.items() %}
-                            <li>{{ key }}: <a target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
+                            <li>{{ key }}: <a target="_blank" class="custom-link" href="{{ value[1] }}">{{ value[0] }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No database crosslinks available</li>
