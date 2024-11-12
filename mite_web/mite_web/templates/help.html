@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="fw-semibold lh-2">Help</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <h2 class="fw-semibold lh-2 my-3">Background</h2>
+            <p class="lead mb-2">The following sections provide information to help interpreting MITE entries and creating new submissions.</p>
+            <ul class="lh-base my-3">
+                <li><p class="lead my-1">Overview of the MITE entry page</p></li>
+                <li><p class="lead my-1">Creating MITE-compatible reaction SMARTS and SMILES strings, including Troubleshooting</p></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="fw-semibold lh-2 my-3">Overview of the MITE entry page</h3>
+            <div class="row">
+                <div class="col">
+                    <p class="lead my-2">The <b>Navigation Header</b> allows to browse through the MITE entries (the 'left' and 'right' arrow keys on a keyboard can also be used).</p>
+                    <p class="lead my-2">The <b>Enzyme Information</b> section provides <b>general information</b> about the tailoring enzyme, including information on <b>Auxiliary Enyzmes</b> (if any are needed for the enzyme to function properly). The <b>Changelog</b> outlines the updates made to this entry.</p>
+                    <p class="lead my-2">The <b>Reaction Information</b> column displays the known tailoring reaction of this enzyme. The <b>Reaction SMARTS</b> tab shows the generic reaction as expressed by the reaction SMARTS, while the <b>Reaction Information</b> tab gives additional information.The <b>Example</b> cards below show examples of substrate-product pairs. Multiple tailoring reactions/substrate specificities can be known, and these can be selected clicking on the <b>"Select a reaction"</b> button.</p>
+                </div>
+                <div class="col">
+                    <img class="d-none d-sm-block my-3" style="min-width: 50%; max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/help/help0.png') }}" alt="MITE entry overview">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="fw-semibold lh-2 my-3">Creating MITE-compatible reaction SMARTS and SMILES strings</h3>
+            <p class="lead my-2">Reaction SMARTS and SMILES are the core data in any MITE entry, summarizing the reaction and substrate specificity of the tailoring enzyme. This step-by-step guide shows how to create MITE-compatible SMARTS and SMILES.</p>
+            <h4 class="fw-semibold lh-2 my-3">What are SMILES, SMARTS, and reaction SMARTS?</h4>
+            <p class="lead my-2">SMILES and SMARTS are line notations used to describe chemical structures. SMILES string represents a <b>molecule</b> by specifying its atoms and their connectivity, while a SMARTS string defines a <b>search pattern of atoms and bonds</b>. For example, the SMILES string “C=C” represents ethylene, while the SMARTS string “[C]=[C]” matches both ethylene and propylene (“C=CC”).</p>
+            <p class="lead my-2">Reaction SMARTS extend this concept by modeling chemical reactions, encapsulating the <b>pattern matching of substrates</b> and their <b>conversion to products</b> (“substrate(s)>>product(s)”). This system allows for the modeling of reactions and their application to SMILES strings.</p>
+            <p class="lead my-2">In MITE, reaction SMARTS describe the substrate specificity and reactions of tailoring enzymes, while SMILES are used to represent the actual substrates and products of characterized reactions.</p>
+            <h4 class="fw-semibold lh-2 my-3">How to create reaction SMARTS and SMILES?</h4>
+            <p class="lead my-2">Writing SMILES and reaction SMARTS by hand can be complex and error-prone. Instead, we recommend drawing the chemical structures first and then exporting them as string notations.</p>
+            <p class="lead my-2">Although there are many chemistry drawing tools available, we recommend the free, open-source tool <a class="custom-link" target="_blank" href="https://github.com/epam/ketcher">Ketcher</a>, which offers an <a class="custom-link" target="_blank" href="https://lifescience.opensource.epam.com/KetcherDemo/index.html?api_path=/v2"><b>online demo version</b></a> and will be used in this tutorial.</p>
+            <h4 class="fw-semibold lh-2 my-3">Step-by-step guide</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5 class="fw-semibold lh-2 my-3">Example 1: phenol halogenase PltM - specific reaction</h5>
+            <p class="lead my-2">In this example, we will characterize the reaction of the enzyme PltM, a <a class="custom-link" target="_blank" href="https://doi.org/10.1038/s41467-019-09215-9">phenol halogenase</a>. We will draw the reaction in its easiest form and export the SMILES and reaction SMARTS.</p>
+            <p class="lead my-2">In the publication, PltM is described to halogenate the phloroglucinol substrate, resulting in a mono- or di-halogenated product, with either chloride, bromide, or iodide substituents. Here, we will model the mono-chlorination reaction.</p>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">1. In Ketcher, draw phloroglucinol and convert it into its aromatic form by pressing <b>ALT+A</b>. As a rule of thumb, all molecules must be turned into their <b>aromatic</b> (not kekulized) form to be MITE-compatible.</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help1.png') }}" alt="Example 1 Figure 1" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">2. Select phloroglucinol by drawing a rectangle (or pressing <b>CTRL+A</b>) and export it as a Daylight SMILES string using the Save Structure menu (pressing <b>CTRL+S</b>). <b>“c1c(O)cc(O)cc1O”</b> is the SMILES string of the substrate.</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help2.png') }}" alt="Example 1 Figure 2" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">3. In another Ketcher window, draw the chloro-phloroglucinol product. You can draw the structure from scratch or copy-paste phloroglucinol from the first Ketcher window (<b>CTRL+C/CTRL+V</b>) and add a chloride substituent. Do not forget to aromatize as before with <b>ALT+A</b>. As before, select the molecule by drawing a rectangle (or pressing <b>CTRL+A</b>) and export it as a Daylight SMILES string using the Save Structure menu (pressing <b>CTRL+S</b>). <b>“c1c(O)cc(O)c(Cl)c1O”</b> is the SMILES string of the product.</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help3.png') }}" alt="Example 1 Figure 3" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">4. Select the chloro-phloroglucinol and copy it (<b>CTRL+C</b>). Go back to the first window containing phloroglucinol, add a reaction arrow, and paste the chloro-phloroglucinol on the right-hand side of the arrow. This is your reaction.</p>
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+            <img class="d-none d-sm-block my-3" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help4.png') }}" alt="Example 1 Figure 4" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">5. Next, select the reaction (<b>CTRL+A</b>), and select the <b>Reaction Auto Mapping Tool</b>, using the “Discard” mode. This will add paired atom indices to all atoms that are both on the substrate and the product side. Since the chloride atom is only present on the product side, it does not receive an index.</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help5.png') }}" alt="Example 1 Figure 5" >
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help6.png') }}" alt="Example 1 Figure 6" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">6. Select the reaction again (<b>CTRL+A</b>) and export it as a Daylight SMARTS (<b>CTRL+S</b>). <b>“[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2]:[#6:3]:1-[#8:7]>>[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2](-Cl):[#6:3]:1-[#8:7]”</b> is the reaction SMARTS string. With substrate and product SMILES and reaction SMARTS prepared, the MITE entry can be filled in and submitted.</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help7.png') }}" alt="Example 1 Figure 7" >
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5 class="fw-semibold lh-2 my-3">Example 2: phenol halogenase PltM - balanced reaction</h5>
+            <p class="lead my-2">In this example, we will characterize the reaction of the enzyme PltM, a <a class="custom-link" target="_blank" href="https://doi.org/10.1038/s41467-019-09215-9">phenol halogenase</a>. This time, we will draw a balanced reaction, including multiple reactants.</p>
+            <p class="lead my-2">In the publication, PltM is described to halogenate the phloroglucinol substrate, resulting in a mono- or di-halogenated product, with either chloride, bromide, or iodide substituents. Here, we will model the balanced mono-chlorination reaction.</p>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">1. As before, we first draw phloroglucinol. This time, we also add HCl which provides chlorine for the halogenation. We export the drawing as a SMILES string, which results in the string <b>“c1c(O)cc(O)cc1O.Cl”</b>. Notice the dot inside the SMILES string: this indicates a <b>composite SMILES</b>. For balanced reactions, the substrate SMILES <b>must be a composite SMILES</b> to be accepted by MITE.</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help8.png') }}" alt="Example 2 Figure 1" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">2. Next, we draw the products. Each product must be drawn and exported separately. For a balanced reaction, the <b>product SMILES must NOT be a composite SMILES</b> to be accepted by MITE. At first, this is perhaps confusing, but it helps to prevent ambiguities during data validation. Here, the product SMILES are <b>“c1c(O)cc(O)c(Cl)c1O”</b> and <b>“[HH]”</b>, and they are to be entered in separate "product" fields.</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help9.png') }}" alt="Example 2 Figure 2" >
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help10.png') }}" alt="Example 2 Figure 3" >
+        </div>
+    </div>
+    <div class="row d-flex align-items-center">
+        <div class="col-md-6">
+            <p class="lead my-2">3. Next, we prepare the reaction: we first draw the reaction as before (only including the main reactants), add indices to the atoms using the Reaction Auto Mapping Tool, and <b>only then</b> add the additional substrates. This prevents the indexing of the auxiliary molecules, which can lead to errors in the validation. The resulting reaction SMARTS is <b>“[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2]:[#6:3]:1-[#8:7].Cl>>[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2](-Cl):[#6:3]:1-[#8:7].[H]”</b>. With substrate and product SMILES and reaction SMARTS prepared, the MITE entry can be filled in and submitted.</p>
+        </div>
+        <div class="col-md-6 d-flex flex-column align-items-center">
+            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help11.png') }}" alt="Example 2 Figure 2" >
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5 class="fw-semibold lh-2 my-3">Troubleshooting</h5>
+            <p class="lead my-2">Preparing reaction SMARTS of complex enzymatic reactions can sometimes lead to validation errors, even though the reaction drawing appears correct. Sometimes, this is due to user-introduced errors, but it can also be caused by reaction SMARTS formatting errors or ambiguities. These errors may pop up during the validation step, when a new MITE entry is submitted. Below are several known issues and ways to solve them.</p>
+            <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Error</th>
+                <th scope="col">Explanation</th>
+                <th scope="col">Solution</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><i>“ChemicalParserException: Number of reactants provided does not match number of reactant templates.”</i></td>
+                <td>A balanced reaction (SMILES substrates/products) was defined, but one or more substrates/products are missing in the reaction SMARTS.</td>
+                <td>Add the correct number of reactants to the reaction SMARTS.</td>
+            </tr>
+            <tr>
+                <td><i>“Explicit valence for atom # 3 C, 5, is greater than permitted. ValueError, Could not read SMILES string”</i></td>
+                <td>During the reaction, a carbon is modified (e.g. substitution, reduction, etc.), leading to a higher-than-possible valence grade. Since hydrogens are implicit in reaction SMARTS, there can be situations where RDKit (our validation engine) assumes an additional hydrogen to be located on an already tetravalent carbon, leading to a pentavalent state.</td>
+                <td>The correct number of hydrogens must be stated explicitly, i.e. replacing “[#6:2]” with “[#6&H0:2]” (atom number 6 (carbon) with exactly 0 hydrogens with atom label '2').</td>
+            </tr>
+        </tbody>
+    </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

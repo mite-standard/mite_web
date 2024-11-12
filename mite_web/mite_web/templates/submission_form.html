@@ -15,7 +15,7 @@
     {% if messages %}
     <div class="row">
         <div class="card card-body">
-            <div class="col-auto text-center mx-auto">
+            <div class="col text-center mx-auto">
                 <h4 class="fw-semibold lh-2">Error during automated validation!</h4>
                 <ul class="lh-base list-unstyled">
                 {% for message in messages %}
@@ -146,7 +146,7 @@
             </div>
         </div>
         <div class="row mb-2">
-            <div class="col-auto text-center mx-auto">
+            <div class="col text-center mx-auto">
                 <button type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
         </div>
@@ -168,6 +168,7 @@
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
         populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
+        testFirefoxMobile()
     });
 </script>
 {% endblock %}

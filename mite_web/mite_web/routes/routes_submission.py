@@ -251,14 +251,18 @@ class ProcessingHelper(BaseModel):
         with open(target.joinpath(self.dump_name), "w", encoding="utf-8") as outfile:
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
 
-    def send_email(self: Self):
-        """Sends data per email to data processer"""
+    def send_email(self: Self, sub_type: str) -> None:
+        """Sends data per email to data processer
+
+        Arguments:
+            sub_type: a string indicating the type of submission (modification of entry or new entry)
+        """
 
         if current_app.config.get("ONLINE", False):
             msg = Message()
             msg.recipients = [current_app.config.get("MAIL_TARGET")]
-            msg.subject = self.dump_name
-            msg.body = "A new file was submitted: see attached."
+            msg.subject = f"MITE: {sub_type}"
+            msg.body = f"Please find the dump file '{self.dump_name}' attached."
 
             json_content = json.dumps(self.data, indent=4)
             json_attachment = BytesIO(json_content.encode("utf-8"))
@@ -319,8 +323,10 @@ def submission_existing(mite_acc: str) -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            processing_helper.send_email()
-            return redirect(url_for("routes.submission_success"))
+            processing_helper.send_email(sub_type="MODIFIED")
+            return render_template(
+                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            )
         except Exception as e:
             current_app.logger.critical(e)
             flash(str(e))
@@ -354,8 +360,10 @@ def submission_new() -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            processing_helper.send_email()
-            return redirect(url_for("routes.submission_success"))
+            processing_helper.send_email(sub_type="NEW")
+            return render_template(
+                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            )
         except Exception as e:
             current_app.logger.critical(e)
             flash(str(e))
@@ -376,13 +384,3 @@ def submission_new() -> str | Response:
     }
 
     return render_template("submission_form.html", data=data, x=x, y=y)
-
-
-@bp.route("/submission/success/")
-def submission_success() -> str:
-    """Render the successful submission page
-
-    Returns:
-        The submission_success.html page as string.
-    """
-    return render_template("submission_success.html")

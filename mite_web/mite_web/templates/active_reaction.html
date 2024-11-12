@@ -64,10 +64,10 @@
                                         <ul class="list-unstyled mb-0">
                                         {% for key, value in reaction.databaseIds.items() %}
                                             {% if key == "rhea" %}
-                                            <li><a target="_blank" href="{{ value[1] }}">{{ key }}: {{ value[0] }}</a></li>
+                                            <li><a target="_blank" class="custom-link" href="{{ value[1] }}">{{ key }}: {{ value[0] }}</a></li>
                                             {% elif key == "ec" %}
-                                            <li><a target="_blank" href="{{ value[1] }}">BRENDA {{ key }}: {{ value[0] }}</a></li>
-                                            <li><a target="_blank" href="{{ value[2] }}">Expasy ENZYME {{ key }}: {{ value[0] }}</a></li>
+                                            <li><a target="_blank" class="custom-link" href="{{ value[1] }}">BRENDA {{ key }}: {{ value[0] }}</a></li>
+                                            <li><a target="_blank" class="custom-link" href="{{ value[2] }}">Expasy ENZYME {{ key }}: {{ value[0] }}</a></li>
                                             {% else %}
                                             <li>Unsupported format</li>
                                             {% endif %}
@@ -92,9 +92,9 @@
                                 <td width="25%"><b>References</b></td>
                                 <td>
                                     {% if reaction.references is not none %}
-                                        <ul class="mb-0">
+                                        <ul class="mb-0 list-unstyled">
                                         {% for ref in reaction.references %}
-                                            <li><a target="_blank" href="{{ ref[1] }}">{{ ref[0] }}</a></li>
+                                            <li><a target="_blank" class="custom-link" href="{{ ref[1] }}">{{ ref[0] }}</a></li>
                                         {% endfor %}
                                         </ul>
                                     {% else %}

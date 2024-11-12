@@ -1,3 +1,12 @@
+// Checks for Firefox Mobile browser which is not supported
+
+function testFirefoxMobile() {
+    if (navigator.userAgent.indexOf("Firefox") != -1 && /Mobile/i.test(navigator.userAgent)) {
+        alert("Sorry, form completion with Firefox Mobile is not supported on this site. Please use an alternative browser or use Firefox Desktop");
+    }
+}
+
+
 // Validates a simple addition on form submission, block submission if invalid
 function validateSumInput(event, x, y) {
     const userSum = parseInt(document.getElementById('usersum').value, 10);
