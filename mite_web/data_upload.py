@@ -52,7 +52,7 @@ class IssueManager(BaseModel):
 
             title = ""
             if json_dict.get("accession") == "MITE9999999":
-                title = f"NEW entry ({filename.stem})"
+                title = f"NEW entry {json_dict.get('enzyme', {}).get('name')} ({filename.stem})"
             else:
                 title = f"EXISTING entry {json_dict.get("accession")} ({filename.stem})"
 
