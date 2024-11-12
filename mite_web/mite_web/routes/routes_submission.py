@@ -189,7 +189,7 @@ class ProcessingHelper(BaseModel):
                     if data["orcid"][0] != ""
                     else "AAAAAAAAAAAAAAAAAAAAAAAA"
                 ],
-                "reviewers": ["AAAAAAAAAAAAAAAAAAAAAAAA"],
+                "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
                 "comment": data["changelog"][0],
             }
         )
