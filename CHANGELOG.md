@@ -7,9 +7,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [0.2.3] UNRELEASED
 
+### Added
+
+- Added Help page
+- Added script to upload submitted data as Issues to GitHub
+
 ### Changed
 
 - Changed Dockerfile to automatically populate app with data (before: `prepare_mite_data.py` had to be run manually)
+- Various fixes to templates
+- Updated Terms of Use
 
 ## [0.2.2] 09-11-2024
 

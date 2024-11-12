@@ -84,30 +84,25 @@ Please propose and discuss changes in the comments.
 
 *This action was performed by `mite-bot`*
 """
-            print(self.src.joinpath("temp"))
-
             with open(self.src.joinpath("temp.txt"), "w") as outfile:
                 outfile.write(body)
 
-            try:
-                subprocess.run(
-                    [
-                        "gh",
-                        "issue",
-                        "create",
-                        "--repo",
-                        "mite-standard/mite_data",
-                        "--title",
-                        f"{title}",
-                        "--body-file",
-                        f"{self.src.joinpath("temp.txt")}",
-                        "--label",
-                        "review",
-                    ],
-                    check=True,
-                )
-            except subprocess.CalledProcessError as e:
-                print(f"Error: {e.stderr}")
+            subprocess.run(
+                [
+                    "gh",
+                    "issue",
+                    "create",
+                    "--repo",
+                    "mite-standard/mite_data",
+                    "--title",
+                    f"{title}",
+                    "--body-file",
+                    f"{self.src.joinpath("temp.txt")}",
+                    "--label",
+                    "review",
+                ],
+                check=True,
+            )
 
 
 def setup_cli(args: list) -> argparse.Namespace:
