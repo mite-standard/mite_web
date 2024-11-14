@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.5] UNRELEASED
+
+### Changed
+
+- Added information Troubleshooting
+- Added cross-link to help/troubleshooting when error message is flashed
+
+
 ## [0.2.5] 12-11-24
 
 ### Bugfix
