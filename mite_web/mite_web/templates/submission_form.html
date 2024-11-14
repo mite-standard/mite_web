@@ -21,7 +21,8 @@
                 {% for message in messages %}
                     <li><p class="lead mb-1">{{ message }}</p></li>
                 {% endfor %}
-               </ul>
+                </ul>
+                <h5>For troubleshooting help, see the <a class="custom-link" href="{{ url_for('routes.help') }}">Help page</a></h5>
             </div>
         </div>
     </div>
