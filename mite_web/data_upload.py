@@ -68,6 +68,8 @@ https://github.com/mite-standard/mite_data/labels/review
 
 ## TODO Reviewers
 
+See the (Reviewer Instructions)[https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries] in the Wiki.
+
 - [x] Automated validation using `mite_extras` performed
 - [ ] Factual correctness of submission checked
 - [ ] Database ID crosslinks verified, added where possible
