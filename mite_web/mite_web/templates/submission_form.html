@@ -28,6 +28,11 @@
     </div>
     {% endif %}
     {% endwith %}
+    <div class="row my-4">
+        <div class="col text-center mx-auto">
+            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.help') }}"><b>Help page</b></a>.</h5>
+        </div>
+    </div>
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
