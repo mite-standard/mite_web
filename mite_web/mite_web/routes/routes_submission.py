@@ -252,7 +252,7 @@ class ProcessingHelper(BaseModel):
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
 
     def send_email(self: Self, sub_type: str) -> None:
-        """Sends data per email to data processer
+        """Sends data per email to data processor
 
         Arguments:
             sub_type: a string indicating the type of submission (modification of entry or new entry)

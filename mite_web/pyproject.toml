@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "0.2.5"
+version = "0.2.6"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
 license-files = { paths = ["LICENSE"] }
@@ -29,6 +29,7 @@ classifiers = [
 
 dependencies = [
     "coloredlogs~=15.0",
+    "jsondiff~=2.2",
     "Flask~=3.0",
     "Flask-Mail~=0.9",
     "Flask-WTF~=1.2",

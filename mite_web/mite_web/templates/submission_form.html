@@ -21,12 +21,18 @@
                 {% for message in messages %}
                     <li><p class="lead mb-1">{{ message }}</p></li>
                 {% endfor %}
-               </ul>
+                </ul>
+                <h5>For troubleshooting help, see the <a class="custom-link" href="{{ url_for('routes.help') }}">Help page</a></h5>
             </div>
         </div>
     </div>
     {% endif %}
     {% endwith %}
+    <div class="row my-4">
+        <div class="col text-center mx-auto">
+            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.help') }}"><b>Help page</b></a>.</h5>
+        </div>
+    </div>
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
@@ -112,7 +118,7 @@
                 <div class="col">
                     <h6 class="fw-semibold lh-2">ORCID</h6>
                     <div class="form-floating">
-                        <input id="orcid" minlength="19" maxlength="19" pattern="\d{4}-\d{4}-\d{4}-\d{4}" name="orcid" class="form-control" aria-describedby="OrcidHelp" type="text">
+                        <input id="orcid" minlength="19" maxlength="19" name="orcid" class="form-control" aria-describedby="OrcidHelp" type="text">
                         <label for="orcid" class="form-label">ORCID</label>
                         <div id="OrcidHelp" class="form-text">Enter your ORCID or leave empty for an anonymous submission. If you enter your ORCID, be aware of the <a class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>.</div>
                     </div>
