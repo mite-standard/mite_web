@@ -256,7 +256,7 @@ function createHtmlReaction(data = {}, index) {
                                 <div class="form-floating">
                                     <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control" aria-describedby="ReactionSmartsHelp" type="text" value='${data?.reactionSMARTS ?? ""}' required>
                                     <label for="reaction[${index}]smart" class="form-label">Reaction SMARTS</label>
-                                    <div id="ReactionSmartsHelp" class="form-text">The reaction SMARTS depicting the reaction - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemo/index.html?api_path=/v2b" class="custom-link" target="_blank"><b>Ketcher</b></a></div>
+                                    <div id="ReactionSmartsHelp" class="form-text">The reaction SMARTS depicting the reaction - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a></div>
                                 </div>
                             </div>
                         </div>
@@ -473,7 +473,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                     <div class="form-floating">
                         <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]substrate" id="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-control" aria-describedby="KnownReactionSubstrateHelp"  value='${data?.substrate ?? ""}' required>
                         <label for="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-label">Substrate SMILES</label>
-                        <div id="KnownReactionSubstrateHelp" class="form-text">The reaction substrate SMILES string - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemo/index.html?api_path=/v2b" class="custom-link" target="_blank"><b>Ketcher</b></a>. Multiple substrates must be specified with dot notation ('substrate1.substrate2')</div>
+                        <div id="KnownReactionSubstrateHelp" class="form-text">The reaction substrate SMILES string - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a>. Multiple substrates must be specified with dot notation ('substrate1.substrate2')</div>
                     </div>
                 </div>
             </div>
@@ -552,7 +552,7 @@ function insertProductForm(container_id, data = "") {
                 <div class="form-floating">
                     <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ReactionProductsHelp" value='${data}' required>
                     <label for="${container_id}" class="form-label">Product SMILES</label>
-                    <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemo/index.html?api_path=/v2b" class="custom-link" target="_blank"><b>Ketcher</b></a>. Dot notation is not permitted</div>
+                    <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string - draw it using <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a>. Dot notation is not permitted</div>
                 </div>
             </div>
             <div class="col-auto mx-auto">
