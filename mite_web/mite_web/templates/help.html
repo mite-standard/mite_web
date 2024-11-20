@@ -13,7 +13,8 @@
             <p class="lead mb-2">The following sections provide information to help interpreting MITE entries and creating new submissions.</p>
             <ul class="lh-base my-3">
                 <li><p class="lead my-1">Overview of the MITE entry page</p></li>
-                <li><p class="lead my-1">Creating MITE-compatible reaction SMARTS and SMILES strings, including Troubleshooting</p></li>
+                <li><p class="lead my-1">Creating MITE-compatible reaction SMARTS and SMILES strings</p></li>
+                <li><p class="lead my-1">Frequently Asked Questions and Troubleshooting</p></li>
             </ul>
         </div>
     </div>
@@ -137,6 +138,28 @@
         </div>
         <div class="col-md-6 d-flex flex-column align-items-center">
             <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help11.png') }}" alt="Example 2 Figure 2" >
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5 class="fw-semibold lh-2 my-3">Frequently asked questions</h5>
+            <p class="lead my-2">Below you can find a list of frequently asked questions </p>
+            <table class="table table-bordered align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Question</th>
+                        <th scope="col">Answer</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>An enzyme requires the substrate to be bound to a cofactor , e.g. the prosthetic group of a peptidyl carrier protein (PCP)/acyl carrier protein. Do I need to draw this too?</td>
+                        <td>In the reaction SMARTS, the cofactor can be indicated with an "Any Atom" wildcard. However, in the SMILES exemplifying the reaction, the cofactor must also be included. This is to make the co-factor machine-readable.</td>
+                        <td><img style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/help/help13.png') }}" alt="Visualize any-atom wildcard" ></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="row">
