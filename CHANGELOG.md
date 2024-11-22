@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.6] Unreleased
+## [0.2.7] 22-11-24
 
 ### Changed
 
 - Updated Contact page
+- Updated Help
 
 ## [0.2.6] 18-11-24
 
