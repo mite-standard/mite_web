@@ -43,6 +43,7 @@ from flask_mail import Message
 from mite_extras.processing.mite_parser import MiteParser
 from mite_schema import SchemaManager
 from pydantic import BaseModel
+from rdkit import Chem
 
 from mite_web.config.extensions import mail
 from mite_web.routes import bp
@@ -384,3 +385,31 @@ def submission_new() -> str | Response:
     }
 
     return render_template("submission_form.html", data=data, x=x, y=y)
+
+
+@bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
+def peptidesmiles() -> str:
+    """Render the paptide SMILES page
+
+    Returns:
+        The smiles_peptide.html page as string.
+    """
+    if request.method == "POST":
+        user_input = request.form.to_dict()
+        try:
+            return render_template(
+                "smiles_peptide.html",
+                data={
+                    "peptide_string": user_input.get("peptide_string"),
+                    "smiles": f"{Chem.MolToSmiles(Chem.MolFromSequence(user_input.get("peptide_string")))}",
+                },
+            )
+        except Exception as e:
+            current_app.logger.critical(e)
+            flash(str(e))
+            return render_template(
+                "smiles_peptide.html",
+                data={"peptide_string": user_input.get("peptide_string", "")},
+            )
+
+    return render_template("smiles_peptide.html", data={"peptide_string": ""})

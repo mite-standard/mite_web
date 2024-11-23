@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.8] Unreleased
+
+### Added
+
+- Added page to allow generating SMILES strings from single-letter amino acid string
+
 ## [0.2.7] 22-11-24
 
 ### Changed
@@ -20,7 +26,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Added cross-link to help/troubleshooting when error message is flashed
 - Added video tutorial link
 - Added jsondiff to show changes in modified files
-
 
 ## [0.2.5] 12-11-24
 

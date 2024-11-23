@@ -158,6 +158,7 @@
         </div>
     </form>
 </div>
+<script>const url_submission = {{ url_for('routes.submission') }}</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>
     document.querySelector('form').addEventListener('submit', function(event) {
