@@ -55,7 +55,7 @@ class IssueManager(BaseModel):
     mite_current_unzip: DirectoryPath | None = None
     mite_current_data: DirectoryPath | None = None
     src: DirectoryPath
-    reviewers: list = ["@mmzdouc", "@jorgecnavarrom", "@adafede"]
+    reviewers: list = ["@mmzdouc", "@adafede"]
 
     def run(self):
         """Parses files in the source directory and pushes them to GitHub"""
