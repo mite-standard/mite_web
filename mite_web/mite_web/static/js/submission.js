@@ -40,7 +40,7 @@ function createHtmlEnzymeName(container, data = {}) {
         <div class="form-floating">
             <input id="enzyme_name" name="enzyme_name" class="form-control" aria-describedby="EnzymeNameHelp" type="text" value='${data?.enzyme?.name ?? ""}' required>
             <label for="enzyme_name" class="form-label">Enzyme Name</label>
-            <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjB)</div>
+            <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. 'McjB')</div>
         </div>
     `;
     container.insertAdjacentHTML('beforeend', entryHtml);
@@ -50,9 +50,9 @@ function createHtmlEnzymeName(container, data = {}) {
 function createHtmlEnzymeDescription(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_description" name="enzyme_description" class="form-control" aria-describedby="EnzymeDescriptionHelp" type="text" value='${data?.enzyme?.description ?? ""}' required>
-            <label for="enzyme_description" class="form-label">Enzyme Description</label>
-            <div id="EnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
+            <input id="enzyme_description" name="enzyme_description" class="form-control" aria-describedby="EnzymeDescriptionHelp" type="text" value='${data?.enzyme?.description ?? ""}' maxlength="50" required>
+            <label for="enzyme_description" class="form-label">Enzyme Type</label>
+            <div id="EnzymeDescriptionHelp" class="form-text">Enzyme type description (e.g. 'O-methyltransferase')</div>
         </div>
     `;
     container.insertAdjacentHTML('beforeend', entryHtml);
@@ -197,14 +197,14 @@ function createHtmlAuxEnyzme(data = {}, index) {
                          <div class="form-floating">
                             <input type="text" name="auxenzyme[${index}]name" id="auxenzyme[${index}]name" class="form-control" aria-describedby="AuxEnzymeNameHelp"  value='${data?.name ?? ""}' required>
                             <label for="auxenzyme[${index}]name" class="form-label">Auxiliary Enyzme Name</label>
-                            <div id="AuxEnzymeNameHelp" class="form-text">The common enzyme name (e.g. McjC)</div>
+                            <div id="AuxEnzymeNameHelp" class="form-text">The common enzyme name (e.g. 'McjC')</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control" aria-describedby="AuxEnzymeDescriptionHelp"  value='${data?.description ?? ""}' required>
-                            <label for="auxenzyme[${index}]description" class="form-label">Auxiliary Enzyme Description</label>
-                            <div id="AuxEnzymeDescriptionHelp" class="form-text">A brief description of the enzyme function</div>
+                            <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control" aria-describedby="AuxEnzymeDescriptionHelp" maxlength="50" value='${data?.description ?? ""}' required>
+                            <label for="auxenzyme[${index}]description" class="form-label">Auxiliary Enzyme Type</label>
+                            <div id="AuxEnzymeDescriptionHelp" class="form-text">Auxiliary enzyme type description (e.g. 'Peptidase')</div>
                         </div>
                     </div>
                 </div>
@@ -274,7 +274,7 @@ function createHtmlReaction(data = {}, index) {
                                 <div class="form-floating">
                                     <input id="reaction[${index}]rhea" name="reaction[${index}]rhea" class="form-control" aria-describedby="ReactionRheaHelp" type="text" value='${data?.databaseIds?.rhea ?? ""}'>
                                     <label for="reaction[${index}]rhea" class="form-label">RHEA ID</label>
-                                    <div id="ReactionRheaHelp" class="form-text">The RHEA Knowledgebase ID</div>
+                                    <div id="ReactionRheaHelp" class="form-text">The RHEA Knowledgebase ID (e.g. '32647')</div>
                                 </div>
                             </div>
                             <div class="col">
