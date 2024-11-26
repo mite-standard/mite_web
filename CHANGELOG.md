@@ -11,6 +11,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added page to allow generating SMILES strings from single-letter amino acid string
 
+### Bugfix
+
+- Fixed the setting of the 'isIntermediate' flag in the submission forms
+
 ## [0.2.7] 22-11-24
 
 ### Changed
