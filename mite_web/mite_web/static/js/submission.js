@@ -3,8 +3,16 @@
 function testFirefoxMobile() {
     if (navigator.userAgent.indexOf("Firefox") != -1 && /Mobile/i.test(navigator.userAgent)) {
         alert("Sorry, form completion with Firefox Mobile is not supported on this site. Please use an alternative browser or use Firefox Desktop");
-    }
+    };
 }
+
+// Disable the "submit" button after the first click to prevent multiple submissions
+
+function disableButton(button_id) {
+    const button = document.getElementById(button_id);
+    button.disabled = true;
+}
+
 
 
 // Validates a simple addition on form submission, block submission if invalid

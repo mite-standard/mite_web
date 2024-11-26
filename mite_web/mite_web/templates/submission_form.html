@@ -153,7 +153,7 @@
         </div>
         <div class="row mb-2">
             <div class="col text-center mx-auto">
-                <button type="submit" class="btn btn-primary">Submit Data For Review</button>
+                <button id="submit" type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
         </div>
     </form>
@@ -163,6 +163,7 @@
 <script>
     document.querySelector('form').addEventListener('submit', function(event) {
         validateSumInput(event, {{ x }}, {{ y }});
+        disableButton("submit");
     });
 </script>
 <script>
