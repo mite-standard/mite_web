@@ -493,7 +493,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                         <label class="form-check-label" for="reaction[${index_outer}]knownreaction[${index_inner}]intermediate1">True</label>
                     </div>
                     <div class="form-check-inline">
-                        <input class="form-check-input" value="False" type="radio" name="reaction[${index_outer}]knownreaction[${index_inner}]intermediate" id="reaction[${index_outer}]knownreaction[${index_inner}]intermediate2" checked>
+                        <input class="form-check-input" value="False" type="radio" name="reaction[${index_outer}]knownreaction[${index_inner}]intermediate" id="reaction[${index_outer}]knownreaction[${index_inner}]intermediate2">
                         <label class="form-check-label" for="reaction[${index_outer}]knownreaction[${index_inner}]intermediate2">False</label>
                     </div>
                 </div>
@@ -538,6 +538,15 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
         data.forbidden_products.forEach(product => {
             insertForbiddenProductForm(`reaction[${index_outer}]knownreaction[${index_inner}]forbiddenproducts[]`, product);
         });
+    };
+
+    //    popules the "intermediate" checkbox based on input value
+    if (data.isIntermediate) {
+        let radioButton = document.getElementById(`reaction[${index_outer}]knownreaction[${index_inner}]intermediate1`);
+        radioButton.checked = true;
+    } else {
+        let radioButton = document.getElementById(`reaction[${index_outer}]knownreaction[${index_inner}]intermediate2`);
+        radioButton.checked = true;
     };
 
 }
