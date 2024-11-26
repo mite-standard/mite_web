@@ -540,7 +540,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
         });
     };
 
-    //    popules the "intermediate" checkbox based on input value
+    //    populates the "intermediate" checkbox based on input value
     if (data.isIntermediate) {
         let radioButton = document.getElementById(`reaction[${index_outer}]knownreaction[${index_inner}]intermediate1`);
         radioButton.checked = true;
