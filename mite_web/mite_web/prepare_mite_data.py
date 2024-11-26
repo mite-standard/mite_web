@@ -215,9 +215,10 @@ class AuxFileManager(BaseModel):
                         }
                     )
                 ),
-                "description": mite_data.get("enzyme", {}).get("description")
-                if not None
-                else "N/A",
+                "description": mite_data.get("enzyme", {}).get("description", "N/A"),
+                "reaction_description": mite_data["reactions"][0].get(
+                    "description", "No description available"
+                ),
             }
 
         keys = list(summary.get("entries").keys())

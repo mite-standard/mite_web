@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" data-bs-theme="light">
   <head>
       <meta charset="UTF-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,6 +58,13 @@
                   </a>
                 </li>
               </ul>
+              <ul class="navbar-nav flex-row ml-auto d-none d-md-flex">
+                <li class="nav-item">
+                  <button class="btn btn-link nav-link" id="theme-toggle" aria-label="Toggle theme">
+                    <i class="bi bi-sun" id="theme-icon" style="font-size: 24px;"></i>
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
         </nav>
@@ -69,7 +76,7 @@
       </main>
     {% endblock %}
     {% block footer %}
-      <footer class="container-fluid bg-light text-muted py-3 border-top">
+      <footer class="container-fluid text-muted py-3 border-top">
         <div class="row">
           <div class="col-md-12">
             <div class="d-flex flex-column text-center">
@@ -87,6 +94,7 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/dark_theme.js') }}" defer></script>
     {% endblock %}
   </body>
 </html>

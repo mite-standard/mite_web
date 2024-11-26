@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.8] Unreleased
+## [0.2.8] 26-11-24
 
 ### Added
 
 - Added page to allow generating SMILES strings from single-letter amino acid string
+- Added a dark theme for the webpage
+
+### Bugfix
+
+- Fixed the setting of the 'isIntermediate' flag in the submission forms
 
 ## [0.2.7] 22-11-24
 
