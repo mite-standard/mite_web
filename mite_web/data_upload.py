@@ -70,6 +70,7 @@ class IssueManager(BaseModel):
         "@martinklapper",
         "@Q-Bach",
         "@SimonSieberUZH",
+        "@thinkgenome",
     ]
 
     def run(self):
