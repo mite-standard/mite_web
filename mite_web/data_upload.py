@@ -71,6 +71,8 @@ class IssueManager(BaseModel):
         "@Q-Bach",
         "@SimonSieberUZH",
         "@thinkgenome",
+        "@stsowa",
+        "@PanghalMohit",
     ]
 
     def run(self):
