@@ -70,6 +70,9 @@ class IssueManager(BaseModel):
         "@martinklapper",
         "@Q-Bach",
         "@SimonSieberUZH",
+        "@thinkgenome",
+        "@stsowa",
+        "@PanghalMohit",
     ]
 
     def run(self):
@@ -182,13 +185,13 @@ https://github.com/mite-standard/mite_data/labels/review
 
 See the (Reviewer Instructions)[https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries] in the Wiki.
 
+Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
+
 - [x] Automated validation using `mite_extras` performed
 - [ ] Factual correctness of submission checked
 - [ ] Database ID crosslinks verified, added where possible
 - [ ] References properly formatted
 - [ ] Automated validation check ID "BBBBBB..." replaced with real reviewer ID
-
-Please propose and discuss changes in the comments.
 
 ## Submitted Data
 

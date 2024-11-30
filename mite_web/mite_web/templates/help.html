@@ -160,6 +160,10 @@
                         <td>It is possible to create 'balanced' reactions where essential co-factors are included. Naturally, they also need to be specified in the Example Reaction. Existing examples can be viewed in <a class="custom-link" href="{{ url_for('routes.repository', mite_acc='MITE0000089') }}">MITE0000089</a> or <a class="custom-link" href="{{ url_for('routes.repository', mite_acc='MITE0000042') }}">MITE0000042</a>.</td>
                     </tr>
                     <tr>
+                        <td>The tailoring enzyme that I want to describe requires another, non-tailoring enzyme to function properly. How can I submit the latter to MITE?</td>
+                        <td>MITE only describes tailoring enzymes, and therefore, the latter enzyme is out of scope and does not receive an entry on its own (e.g. a CoA-ligase that activates the substrate by loading it on coenzyme A). Instead, such enzymes can be added as "Auxiliary Enzymes" to the enzyme that does the actual tailoring.</td>
+                    </tr>
+                    <tr>
                         <td>My reaction affects a long peptide. Do I need to draw the complete peptide?</td>
                         <td>Yes, the full peptide must be provided, but we offer a <a class="custom-link" href="{{ url_for('routes.peptidesmiles') }}"><b>convenient tool</b></a> to generate a SMILES string from an amino acid sequence.</td>
                     </tr>

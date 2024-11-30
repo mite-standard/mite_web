@@ -60,18 +60,15 @@
                             <tr>
                                 <td width="25%"><b>Database References</b></td>
                                 <td>
-                                    {% if reaction.get("databaseIds") is not none %}
+                                    {% if reaction.get("databaseIds") %}
                                         <ul class="list-unstyled mb-0">
-                                        {% for key, value in reaction.databaseIds.items() %}
-                                            {% if key == "rhea" %}
-                                            <li><a target="_blank" class="custom-link" href="{{ value[1] }}">{{ key }}: {{ value[0] }}</a></li>
-                                            {% elif key == "ec" %}
-                                            <li><a target="_blank" class="custom-link" href="{{ value[1] }}">BRENDA {{ key }}: {{ value[0] }}</a></li>
-                                            <li><a target="_blank" class="custom-link" href="{{ value[2] }}">Expasy ENZYME {{ key }}: {{ value[0] }}</a></li>
-                                            {% else %}
-                                            <li>Unsupported format</li>
+                                            {% if reaction.databaseIds.get("rhea") %}
+                                            <li>RHEA: <a class="custom-link" target="_blank" href='https://www.rhea-db.org/rhea/{{ reaction.databaseIds.get("rhea") }}'>{{ reaction.databaseIds.get("rhea") }}</a></li>
                                             {% endif %}
-                                        {% endfor %}
+                                            {% if reaction.databaseIds.get("ec") %}
+                                            <li>BRENDA: <a class="custom-link" target="_blank" href='https://www.brenda-enzymes.org/enzyme.php?ecno={{ reaction.databaseIds.get("ec") }}'>{{ reaction.databaseIds.get("ec") }}</a></li>
+                                            <li>Expasy ENZYME: <a class="custom-link" target="_blank" href='https://enzyme.expasy.org/EC/{{ reaction.databaseIds.get("ec") }}'>{{ reaction.databaseIds.get("ec") }}</a></li>
+                                            {% endif %}
                                         </ul>
                                     {% else %}
                                         No database crosslinks available
@@ -94,7 +91,7 @@
                                     {% if reaction.references is not none %}
                                         <ul class="mb-0 list-unstyled">
                                         {% for ref in reaction.references %}
-                                            <li><a target="_blank" class="custom-link" href="{{ ref[1] }}">{{ ref[0] }}</a></li>
+                                            <li><a class="custom-link" target="_blank" href="https://www.doi.org/{{ ref.split(':') | last }}">{{ ref }}</a></li>
                                         {% endfor %}
                                         </ul>
                                     {% else %}

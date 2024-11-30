@@ -382,7 +382,10 @@ function createHtmlReaction(data = {}, index) {
         "Phosphorylation",
         "Prenylation",
         "Reduction",
+        "Ring contraction",
+        "Ring expansion",
         "Sulfation",
+        "Sulfonation",
         "Other"
     ];
     const containerTailoring = document.getElementById(`reaction[${index}]tailoring-field`);
