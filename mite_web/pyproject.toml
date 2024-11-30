@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "0.3.0"
+version = "1.0.0"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
 license-files = { paths = ["LICENSE"] }
@@ -35,7 +35,7 @@ dependencies = [
     "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=22.0",
-    "mite_extras==1.2.1",
+    "mite_extras==1.3.0",
     "requests~=2.32",
     "rdkit~=2024.3"
 ]

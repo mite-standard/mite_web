@@ -34,9 +34,15 @@
                     <td>
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.databaseIds is defined %}
-                            {% for key, value in data.enzyme.databaseIds.items() %}
-                            <li>{{ key }}: <a class="custom-link" target="_blank" href="{{ value[1] }}">{{ value[0] }}</a></li>
-                            {% endfor %}
+                            {% if data.enzyme.databaseIds.get("uniprot") %}
+                            <li>UniProt: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ data.enzyme.databaseIds.get("uniprot") }}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                            {% endif %}
+                            {% if data.enzyme.databaseIds.get("genpept") %}
+                            <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ data.enzyme.databaseIds.get("genpept") }}'>{{ data.enzyme.databaseIds.get("genpept") }}</a></li>
+                            {% endif %}
+                            {% if data.enzyme.databaseIds.get("mibig") %}
+                            <li>MIBiG: <a class="custom-link" target="_blank" href='https://mibig.secondarymetabolites.org/go/{{ data.enzyme.databaseIds.get("mibig") }}'>{{ data.enzyme.databaseIds.get("mibig") }}</a></li>
+                            {% endif %}
                         {% else %}
                             <li>No database crosslinks available</li>
                         {% endif %}
@@ -49,7 +55,7 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.references is defined %}
                             {% for row in data.enzyme.references %}
-                            <li><a class="custom-link" target="_blank" href="{{ row[1] }}">{{ row[0] }}</a></li>
+                            <li><a class="custom-link" target="_blank" href="https://www.doi.org/{{ row.split(':') | last }}">{{ row }}</a></li>
                             {% endfor %}
                         {% else %}
                             <li>No references available</li>
@@ -67,8 +73,8 @@
                     {% if data.enzyme.databaseIds.uniprot is defined %}
                     <td>
                         <div>
-                            <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot')[0] }}">
-                                <img style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot[0] + '.png') }}" alt="Protein visualized by PyMol OS">
+                            <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot') }}">
+                                <img style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='img/' + data.enzyme.databaseIds.uniprot + '.png') }}" alt="Protein visualized by PyMol OS">
                             </a>
                         </div>
                     </td>
@@ -149,9 +155,12 @@
                     <td>
                         <ul class="list-unstyled mb-0">
                         {% if auxenzyme.databaseIds is defined %}
-                            {% for key, value in auxenzyme.databaseIds.items() %}
-                            <li>{{ key }}: <a target="_blank" class="custom-link" href="{{ value[1] }}">{{ value[0] }}</a></li>
-                            {% endfor %}
+                            {% if auxenzyme.databaseIds.get("uniprot") %}
+                            <li>UniProt: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                            {% endif %}
+                            {% if auxenzyme.databaseIds.get("genpept") %}
+                            <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ auxenzyme.databaseIds.get("genpept") }}'>{{ auxenzyme.databaseIds.get("genpept") }}</a></li>
+                            {% endif %}
                         {% else %}
                             <li>No database crosslinks available</li>
                         {% endif %}
