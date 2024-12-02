@@ -22,9 +22,9 @@ WORKDIR $INSTALL_PATH
 
 COPY ./mite_web .
 
-RUN hatch env create dev
+RUN hatch env create
 
-RUN hatch run dev:python3.12 mite_web/prepare_mite_data.py
+RUN hatch run python3.12 mite_web/prepare_mite_data.py
 
 RUN chmod +x ./entrypoint_docker.sh
 

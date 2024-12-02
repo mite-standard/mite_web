@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] UNRELEASED
+
+### Added
+
+- Update to `mite_data` v1.7
+- Added search page
+- Added page for canoicalization or SMILES
+
 ## [1.0.0] 30-11-24
 
 ### Added
