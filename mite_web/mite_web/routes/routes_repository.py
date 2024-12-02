@@ -22,21 +22,87 @@ SOFTWARE.
 """
 
 import json
+import pickle
+from pathlib import Path
 
-from flask import current_app, render_template
+import pandas as pd
+from flask import current_app, flash, render_template, request
+from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools
 
 from mite_web.routes import bp
 
 
-@bp.route("/overview/")
+@bp.route("/overview/", methods=["GET", "POST"])
 def overview() -> str:
     """Render the repository overview page of mite_web
 
     Returns:
         The overview.html page as string.
     """
+
     with open(current_app.config["DATA_SUMMARY"]) as infile:
         summary = json.load(infile)
+
+    if request.method == "POST":
+        user_input = request.form.to_dict()
+
+        if (
+            not user_input.get("substructure_query")
+            or user_input.get("substructure_query") == ""
+        ):
+            flash("Please specify a substructure query string.")
+            return render_template("overview.html", entries=summary.get("entries"))
+
+        try:
+            df = pd.read_csv(
+                Path(__file__).parent.parent.joinpath("data/download/dump_smiles.csv")
+            )
+
+            with open(
+                Path(__file__).parent.parent.joinpath("data/substrate_list.pickle"),
+                "rb",
+            ) as infile:
+                substrate_list = pickle.load(infile)
+
+            with open(
+                Path(__file__).parent.parent.joinpath("data/product_list.pickle"), "rb"
+            ) as infile:
+                product_list = pickle.load(infile)
+
+            df["ROMol_substrates"] = substrate_list
+            df["ROMol_products"] = product_list
+
+            if user_input.get("action") == "smiles":
+                mol_query = MolFromSmiles(user_input.get("substructure_query"))
+            else:
+                mol_query = MolFromSmarts(user_input.get("substructure_query"))
+
+            df_substrate_match = df[df["ROMol_substrates"] >= mol_query]
+            df_product_match = df[df["ROMol_products"] >= mol_query]
+
+            unique_mite_acc = set(df_substrate_match["mite_id"].str.split(".").str[0])
+            unique_mite_acc.update(
+                set(df_product_match["mite_id"].str.split(".").str[0])
+            )
+
+            matching_entries = {
+                key: value
+                for key, value in summary.get("entries").items()
+                if key in unique_mite_acc
+            }
+
+            return render_template(
+                "overview.html",
+                entries=matching_entries,
+                query_data={
+                    "substructure_query": user_input.get("substructure_query"),
+                    "result_len": len(matching_entries),
+                },
+            )
+
+        except Exception as e:
+            flash(f"An error in the substructure matching occurred: '{e!s}'")
+            return render_template("overview.html", entries=summary.get("entries"))
 
     return render_template("overview.html", entries=summary.get("entries"))
 

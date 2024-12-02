@@ -2,13 +2,70 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="row mb-4">
-        <div class="col-md-6">
+    <div class="row mb-5">
+        <div class="col">
             <h1 class="fw-semibold lh-2">Repository</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="card card-body">
+            <div class="col text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during substructure search!</h4>
+                <ul class="lh-base list-unstyled">
+                {% for message in messages %}
+                    <li><p class="lead mb-1">{{ message }}</p></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row">
+            <div class="col">
+                <h5 class="fw-semibold lh-2">Search for substructure</h5>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <input type="text" name="substructure_query" id="substructure_query" class="form-control" aria-label="Insert your SMILES/SMARTS string" placeholder="Insert your SMILES/SMARTS substructure string">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select type of query</button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                    <li><button class="dropdown-item" type="submit" name="action" value="smiles">SMILES</button></li>
+                    <li><button class="dropdown-item" type="submit" name="action" value="smarts">SMARTS</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% if query_data is defined %}
+    <div class="row mb-3">
+        <div class="col">
+            <h5 class="fw-semibold lh-2">Substructure search results</h5>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-auto">
+            <h6 class="fw-semibold lh-2">Search query</h6>
+        </div>
+        <div class="col-auto">
+            <p>{{ query_data.substructure_query }}</p>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-auto">
+            <h6 class="fw-semibold lh-2">Number of matches</h6>
+        </div>
+        <div class="col-auto">
+            <p>{{ query_data.result_len }}</p>
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col">
             <div id="search-count" class="lead"></div>
         </div>
     </div>

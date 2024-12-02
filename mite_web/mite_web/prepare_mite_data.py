@@ -27,13 +27,17 @@ SOFTWARE.
 
 import json
 import os
+import pickle
 import shutil
 import sys
+from os import write
 from pathlib import Path
 
+import pandas as pd
 import requests
 from mite_extras import MiteParser
 from pydantic import BaseModel
+from rdkit.Chem import PandasTools
 
 
 class DownloadManager(BaseModel):
@@ -192,6 +196,7 @@ class AuxFileManager(BaseModel):
         """Call methods for preparation of auxiliary files"""
         self.prepare_summary()
         self.prepare_downloads()
+        self.prepare_pickled_smiles()
 
     def prepare_summary(self) -> None:
         """Create a summary of mite entries for repository table"""
@@ -285,6 +290,29 @@ class AuxFileManager(BaseModel):
                 f'{data['accession']}.reaction{readctionid},'
                 f'"{reaction["reactionSMARTS"]}"\n'
             )
+
+    def prepare_pickled_smiles(self) -> None:
+        """Create a pickle file that contains a pandas df with pre-calculated SMILES fingerprints"""
+        df = pd.read_csv(self.download.joinpath("dump_smiles.csv"))
+
+        PandasTools.AddMoleculeColumnToFrame(
+            df,
+            smilesCol="substrates",
+            molCol="ROMol_substrates",
+            includeFingerprints=True,
+        )
+        PandasTools.AddMoleculeColumnToFrame(
+            df, smilesCol="products", molCol="ROMol_products", includeFingerprints=True
+        )
+
+        substrate_list = list(df["ROMol_substrates"])
+        product_list = list(df["ROMol_products"])
+
+        with open(self.target.joinpath("substrate_list.pickle"), "wb") as outfile:
+            pickle.dump(obj=substrate_list, file=outfile)
+
+        with open(self.target.joinpath("product_list.pickle"), "wb") as outfile:
+            pickle.dump(obj=product_list, file=outfile)
 
 
 def main() -> None | SystemExit:
