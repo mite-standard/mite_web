@@ -176,15 +176,22 @@ class AuxFileManager(BaseModel):
 
     Attributes:
         src: the location in which the downloaded mite json files are stored
-        target: the location in which the auxiliary files will be stored
+        target: the location in which the auxiliary files are stored
+        download: the location in which download-files are stored
+        smiles: a list of MITE_ID,SMILES strings to be exported
+        smarts: a list of MITE_ID,reactionSMARTS strings to be exported
     """
 
     src: Path = Path(__file__).parent.joinpath("data/data")
     target: Path = Path(__file__).parent.joinpath("data/")
+    download: Path = Path(__file__).parent.joinpath("data/download/")
+    smiles: list = ["mite_id,substrates,products\n"]
+    smarts: list = ["mite_id,reactionsmarts\n"]
 
     def run(self) -> None:
         """Call methods for preparation of auxiliary files"""
         self.prepare_summary()
+        self.prepare_downloads()
 
     def prepare_summary(self) -> None:
         """Create a summary of mite entries for repository table"""
@@ -227,6 +234,57 @@ class AuxFileManager(BaseModel):
 
         with open(self.target.joinpath("summary.json"), "w") as outfile:
             outfile.write(json.dumps(summary_sorted, indent=2, ensure_ascii=False))
+
+    def prepare_downloads(self) -> None:
+        """Prepare the files that will be offered for downloading
+
+        Only "active" entries are dumped; others are skipped
+
+        """
+        if not self.download.exists():
+            self.download.mkdir(parents=True)
+
+        for entry in self.src.iterdir():
+            with open(entry) as infile:
+                mite_data = json.load(infile)
+
+            if mite_data["status"] != "active":
+                continue
+
+            self.prepare_smiles(mite_data)
+            self.prepare_smarts(mite_data)
+
+        with open(self.download.joinpath("dump_smiles.csv"), "w") as outfile:
+            outfile.writelines(self.smiles)
+
+        with open(self.download.joinpath("dump_smarts.csv"), "w") as outfile:
+            outfile.writelines(self.smarts)
+
+    def prepare_smiles(self, data: dict) -> None:
+        """Create a table of SMILES strings contained in MITE entries
+
+        Arguments:
+            data: a dict derived from a mite json file
+        """
+        for readctionid, reaction in enumerate(data["reactions"]):
+            for exampleid, example in enumerate(reaction["reactions"]):
+                self.smiles.append(
+                    f"{data['accession']}.reaction{readctionid}.example{exampleid},"
+                    f'"{example['substrate']}",'
+                    f'"{'.'.join(example['products'])}"\n'
+                )
+
+    def prepare_smarts(self, data: dict) -> None:
+        """Create a table of reaction SMARTS strings contained in MITE entries
+
+        Arguments:
+            data: a dict derived from a mite json file
+        """
+        for readctionid, reaction in enumerate(data["reactions"]):
+            self.smarts.append(
+                f'{data['accession']}.reaction{readctionid},'
+                f'"{reaction["reactionSMARTS"]}"\n'
+            )
 
 
 def main() -> None | SystemExit:
