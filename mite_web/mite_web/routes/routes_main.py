@@ -21,7 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from flask import current_app, render_template
+from pathlib import Path
+
+from flask import Response, current_app, render_template, send_file
 
 from mite_web.routes import bp
 
@@ -84,3 +86,34 @@ def downloads() -> str:
         The downloads.html page as string.
     """
     return render_template("downloads.html")
+
+
+@bp.route("/downloads/<identifier>")
+def download_identifier(identifier: str) -> Response | None:
+    """Delivers the file in question for download to user
+
+    Arguments:
+        identifier: the string identifier of the file
+
+    Returns:
+        A Response object containing the file
+    """
+    # TODO MMZ 3.12.: continue by adding the zipped mite json folder
+
+    if identifier == "smarts":
+        return send_file(
+            Path(__file__).parent.parent.joinpath("data/download/dump_smarts.csv"),
+            as_attachment=True,
+        )
+    elif identifier == "smiles":
+        return send_file(
+            Path(__file__).parent.parent.joinpath("data/download/dump_smiles.csv"),
+            as_attachment=True,
+        )
+    elif identifier == "blastlib":
+        return send_file(
+            Path(__file__).parent.parent.joinpath("data/blast_lib/MiteBlastDB.zip"),
+            as_attachment=True,
+        )
+    else:
+        return
