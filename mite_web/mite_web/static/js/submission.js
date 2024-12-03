@@ -484,7 +484,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                     <div class="form-floating">
                         <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]substrate" id="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-control" aria-describedby="KnownReactionSubstrateHelp"  value='${data?.substrate ?? ""}' required>
                         <label for="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-label">Substrate SMILES</label>
-                        <div id="KnownReactionSubstrateHelp" class="form-text">The reaction substrate(s) SMILES string. Covalently attached co-factors must be specified. Multiple substrates/non-covalent co-factors can be specified using dot notation ('substrate1.substrate2'). Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES. To draw long peptide sequences, you can use <a rel="MITE Peptide SMILES Drawer" href="${url_submission}peptidesmiles" class="custom-link" target="_blank"><b>this tool</b></a>.</div>
+                        <div id="KnownReactionSubstrateHelp" class="form-text">The reaction substrate(s) SMILES string. Covalently attached co-factors must be specified. Multiple substrates/non-covalent co-factors can be specified using dot notation ('substrate1.substrate2'). Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES.</div>
                     </div>
                 </div>
             </div>
@@ -572,7 +572,7 @@ function insertProductForm(container_id, data = "") {
                 <div class="form-floating">
                     <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ReactionProductsHelp" value='${data}' required>
                     <label for="${container_id}" class="form-label">Product SMILES</label>
-                    <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string. Covalently attached co-factors must be specified. Dot notation is not permitted and each product/non-covalent co-factor must be specified in a separate field. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES. To draw long peptide sequences, you can use <a rel="MITE Peptide SMILES Drawer" href="${url_submission}peptidesmiles" class="custom-link" target="_blank"><b>this tool</b></a>.</div>
+                    <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string. Covalently attached co-factors must be specified. Dot notation is not permitted and each product/non-covalent co-factor must be specified in a separate field. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES.</div>
                 </div>
             </div>
             <div class="col-auto mx-auto">
@@ -594,7 +594,7 @@ function insertForbiddenProductForm(container_id, data = "") {
                 <div class="form-floating">
                     <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ForbiddenProductsHelp" value='${data}' required>
                     <label for="${container_id}" class="form-label">Forbidden Product SMILES</label>
-                    <div id="ForbiddenProductsHelp" class="form-text">A single forbidden reaction product SMILES string (must not result from reaction). Covalently attached co-factors must be specified. Dot notation is not permitted and each product/non-covalent co-factor must be specified in a separate field. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES. To draw long peptide sequences, you can use <a rel="MITE Peptide SMILES Drawer" href="${url_submission}peptidesmiles" class="custom-link" target="_blank"><b>this tool</b></a>.</div>
+                    <div id="ForbiddenProductsHelp" class="form-text">A single forbidden reaction product SMILES string (must not result from reaction). Covalently attached co-factors must be specified. Dot notation is not permitted and each product/non-covalent co-factor must be specified in a separate field. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES.</div>
                 </div>
             </div>
             <div class="col-auto mx-auto">

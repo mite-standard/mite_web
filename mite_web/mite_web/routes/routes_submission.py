@@ -389,7 +389,7 @@ def submission_new() -> str | Response:
 
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
 def peptidesmiles() -> str:
-    """Render the paptide SMILES page
+    """Render the peptide SMILES page
 
     Returns:
         The smiles_peptide.html page as string.
@@ -413,3 +413,31 @@ def peptidesmiles() -> str:
             )
 
     return render_template("smiles_peptide.html", data={"peptide_string": ""})
+
+
+@bp.route("/submission/canonicalizesmiles", methods=["GET", "POST"])
+def canonsmiles() -> str:
+    """Render the canonicalize SMILES page
+
+    Returns:
+        The smiles_canonicalize.html page as string.
+    """
+    if request.method == "POST":
+        user_input = request.form.to_dict()
+        try:
+            return render_template(
+                "smiles_canonicalize.html",
+                data={
+                    "smiles_in": user_input.get("smiles_in"),
+                    "smiles_out": f"{Chem.MolToSmiles(Chem.MolFromSmiles(user_input.get("smiles_in")))}",
+                },
+            )
+        except Exception as e:
+            current_app.logger.critical(e)
+            flash(str(e))
+            return render_template(
+                "smiles_canonicalize.html",
+                data={"smiles_in": user_input.get("smiles_in", "")},
+            )
+
+    return render_template("smiles_canonicalize.html", data={"smiles_in": ""})
