@@ -74,7 +74,6 @@
             <tr>
                 <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
                 <th scope="col" data-sortable="true" data-field="status">Status</th>
-                <th scope="col" data-sortable="true" data-field="reviewed">Reviewed</th>
                 <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
                 <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
                 <th scope="col" data-sortable="false" data-field="description">Enzyme Type</th>
@@ -86,7 +85,6 @@
                 <tr>
                     <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
                     <td>{{ value.status | safe }}</td>
-                    <td>{{ value.reviewed | safe }}</td>
                     <td>{{ value.name }}</td>
                     <td>{{ value.tailoring }}</td>
                     <td>{{ value.description | truncate(75, True) }}</td>
