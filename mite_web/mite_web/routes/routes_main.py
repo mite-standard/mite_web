@@ -98,8 +98,6 @@ def download_identifier(identifier: str) -> Response | None:
     Returns:
         A Response object containing the file
     """
-    # TODO MMZ 3.12.: continue by adding the zipped mite json folder
-
     if identifier == "smarts":
         return send_file(
             Path(__file__).parent.parent.joinpath("data/download/dump_smarts.csv"),
@@ -113,6 +111,13 @@ def download_identifier(identifier: str) -> Response | None:
     elif identifier == "blastlib":
         return send_file(
             Path(__file__).parent.parent.joinpath("data/blast_lib/MiteBlastDB.zip"),
+            as_attachment=True,
+        )
+    elif identifier == "mite_zip":
+        return send_file(
+            Path(__file__).parent.parent.joinpath(
+                "data/download/MITE_all_active_entries.zip"
+            ),
             as_attachment=True,
         )
     else:

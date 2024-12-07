@@ -30,6 +30,7 @@ import os
 import pickle
 import shutil
 import sys
+from importlib import metadata
 from os import write
 from pathlib import Path
 
@@ -178,12 +179,15 @@ class HtmlJsonManager(BaseModel):
 class AuxFileManager(BaseModel):
     """Prepare auxiliary files for website
 
+    Only entries with "active" flag are used to compile auxiliary files
+
     Attributes:
         src: the location in which the downloaded mite json files are stored
         target: the location in which the auxiliary files are stored
         download: the location in which download-files are stored
         smiles: a list of MITE_ID,SMILES strings to be exported
         smarts: a list of MITE_ID,reactionSMARTS strings to be exported
+        zip_json_files: a list of files to zip for download
     """
 
     src: Path = Path(__file__).parent.joinpath("data/data")
@@ -191,6 +195,7 @@ class AuxFileManager(BaseModel):
     download: Path = Path(__file__).parent.joinpath("data/download/")
     smiles: list = ["mite_id,substrates,products\n"]
     smarts: list = ["mite_id,reactionsmarts\n"]
+    zip_json_files: list = []
 
     def run(self) -> None:
         """Call methods for preparation of auxiliary files"""
@@ -258,12 +263,15 @@ class AuxFileManager(BaseModel):
 
             self.prepare_smiles(mite_data)
             self.prepare_smarts(mite_data)
+            self.zip_json_files.append(f"{mite_data["accession"]}.json")
 
         with open(self.download.joinpath("dump_smiles.csv"), "w") as outfile:
             outfile.writelines(self.smiles)
 
         with open(self.download.joinpath("dump_smarts.csv"), "w") as outfile:
             outfile.writelines(self.smarts)
+
+        self.prepare_zip_mite()
 
     def prepare_smiles(self, data: dict) -> None:
         """Create a table of SMILES strings contained in MITE entries
@@ -290,6 +298,23 @@ class AuxFileManager(BaseModel):
                 f'{data['accession']}.reaction{readctionid},'
                 f'"{reaction["reactionSMARTS"]}"\n'
             )
+
+    def prepare_zip_mite(self) -> None:
+        """Compress MITE JSON files with active flag into a ZIP"""
+        temp_dir = self.download.joinpath("temp_dir")
+        temp_dir.mkdir(parents=True, exist_ok=True)
+        for filename in self.zip_json_files:
+            shutil.copy(
+                src=self.src.joinpath(filename), dst=temp_dir.joinpath(filename)
+            )
+        shutil.make_archive("MITE_all_active_entries", "zip", temp_dir)
+        shutil.rmtree(temp_dir)
+        shutil.move(
+            src=Path(__file__)
+            .parent.parent.joinpath("MITE_all_active_entries.zip")
+            .resolve(),
+            dst=self.download.joinpath("MITE_all_active_entries.zip").resolve(),
+        )
 
     def prepare_pickled_smiles(self) -> None:
         """Create a pickle file that contains a pandas df with pre-calculated SMILES fingerprints"""
