@@ -30,6 +30,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Download or clone this [repository](https://github.com/mite-standard/mite_web) and change into `mite_dev` (where the `pyproject.toml` file resides)
 - Run `hatch -v env create dev`
 - Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
+- Install BLAST+ by running `sudo apt-get install ncbi-blast+`
 - Run the script `hatch run dev:python mite_web/prepare_mite_data.py` to populate the application using the most recent version of `mite_data`
 - Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
 

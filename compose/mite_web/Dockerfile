@@ -9,6 +9,7 @@ RUN apt-get install -y \
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y libxrender1
 RUN apt-get install -y libxtst6
+RUN apt-get install -y ncbi-blast+
 
 RUN add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y python3.12 python3.12-dev python3-pip
 RUN pip install --upgrade pip
@@ -22,9 +23,9 @@ WORKDIR $INSTALL_PATH
 
 COPY ./mite_web .
 
-RUN hatch env create dev
+RUN hatch env create
 
-RUN hatch run dev:python3.12 mite_web/prepare_mite_data.py
+RUN hatch run python3.12 mite_web/prepare_mite_data.py
 
 RUN chmod +x ./entrypoint_docker.sh
 

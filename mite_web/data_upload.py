@@ -183,7 +183,7 @@ https://github.com/mite-standard/mite_data/labels/review
 
 ## TODO Reviewers
 
-See the (Reviewer Instructions)[https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries] in the Wiki.
+See the [Reviewer Instructions](https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries) in the Wiki.
 
 Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
 
