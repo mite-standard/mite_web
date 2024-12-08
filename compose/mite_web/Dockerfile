@@ -9,7 +9,7 @@ RUN apt-get install -y \
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y libxrender1
 RUN apt-get install -y libxtst6
-RUN apt-get install ncbi-blast+
+RUN apt-get install -y ncbi-blast+
 
 RUN add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y python3.12 python3.12-dev python3-pip
 RUN pip install --upgrade pip
