@@ -120,5 +120,10 @@ def download_identifier(identifier: str) -> Response | None:
             ),
             as_attachment=True,
         )
+    elif identifier.startswith("MITE"):
+        return send_file(
+            Path(__file__).parent.parent.joinpath(f"data/data/{identifier}.json"),
+            as_attachment=True,
+        )
     else:
         return
