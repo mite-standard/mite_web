@@ -5,13 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] UNRELEASED
+## [1.1.0] 08-12-2024
 
 ### Added
 
-- Update to `mite_data` v1.7
-- Added search page
+- Update to `mite_data` v1.8
+- Added search functionality (substructure and BLAST) to repository overview
 - Added page for canoicalization or SMILES
+- Added resolution of organism or origin
+- Improved Download page
 
 ## [1.0.0] 30-11-24
 
