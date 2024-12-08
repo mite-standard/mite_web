@@ -124,16 +124,38 @@ class DownloadManager(BaseModel):
             src=self.record_unzip.joinpath(subdir).joinpath("mite_data/data").resolve(),
             dst=self.location.resolve(),
         )
+
         shutil.move(
             src=self.record_unzip.joinpath(subdir).joinpath("mite_data/img").resolve(),
             dst=self.location.parent.joinpath("static/").resolve(),
         )
-        shutil.move(
-            src=self.record_unzip.joinpath(subdir)
-            .joinpath("mite_data/blast_lib")
-            .resolve(),
-            dst=self.location.resolve(),
+
+        self.location.joinpath("download/").mkdir(exist_ok=True)
+        shutil.copy(
+            src=str(
+                self.record_unzip.joinpath(subdir).joinpath(
+                    "mite_data/blast_lib/MiteBlastDB.zip"
+                )
+            ),
+            dst=str(self.location.joinpath("download/MiteBlastDB.zip")),
         )
+
+        self.location.joinpath("blastlib/").mkdir(exist_ok=True)
+        shutil.copy(
+            src=str(
+                self.record_unzip.joinpath(subdir).joinpath(
+                    "mite_data/blast_lib/MiteBlastDB.zip"
+                )
+            ),
+            dst=str(self.location.joinpath("blastlib/MiteBlastDB.zip")),
+        )
+
+        shutil.unpack_archive(
+            filename=self.location.joinpath("blastlib/MiteBlastDB.zip"),
+            extract_dir=self.location.joinpath("blastlib/"),
+            format="zip",
+        )
+        os.remove(self.location.joinpath("blastlib/MiteBlastDB.zip"))
 
         os.remove(self.record)
         shutil.rmtree(self.record_unzip)
@@ -307,14 +329,13 @@ class AuxFileManager(BaseModel):
             shutil.copy(
                 src=self.src.joinpath(filename), dst=temp_dir.joinpath(filename)
             )
-        shutil.make_archive("MITE_all_active_entries", "zip", temp_dir)
-        shutil.rmtree(temp_dir)
-        shutil.move(
-            src=Path(__file__)
-            .parent.parent.joinpath("MITE_all_active_entries.zip")
-            .resolve(),
-            dst=self.download.joinpath("MITE_all_active_entries.zip").resolve(),
+        shutil.make_archive(
+            base_name=str(self.download.joinpath("MITE_all_active_entries").resolve()),
+            format="zip",
+            root_dir=temp_dir,
+            base_dir=".",
         )
+        shutil.rmtree(temp_dir)
 
     def prepare_pickled_smiles(self) -> None:
         """Create a pickle file that contains a pandas df with pre-calculated SMILES fingerprints"""
