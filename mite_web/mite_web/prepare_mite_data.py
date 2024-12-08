@@ -36,9 +36,12 @@ from pathlib import Path
 
 import pandas as pd
 import requests
+from Bio import Entrez
 from mite_extras import MiteParser
 from pydantic import BaseModel
 from rdkit.Chem import PandasTools
+
+Entrez.email = "your_email@example.com"  # must be set but does not have to be real
 
 
 class DownloadManager(BaseModel):
@@ -233,6 +236,33 @@ class AuxFileManager(BaseModel):
             with open(entry) as infile:
                 mite_data = json.load(infile)
 
+            organism = "Could not resolve organism"
+            if acc := mite_data["enzyme"]["databaseIds"].get("genpept"):
+                handle = Entrez.efetch(
+                    db="protein", id=acc, rettype="gb", retmode="text"
+                )
+                record = handle.read()
+                handle.close()
+                for line in record.splitlines():
+                    if line.startswith("  ORGANISM"):
+                        organism = line.split("  ORGANISM  ")[-1]
+                        break
+            elif acc := mite_data["enzyme"]["databaseIds"].get("uniprot"):
+                if (
+                    response := requests.get(
+                        f"https://rest.uniprot.org/uniprotkb/{acc}.json"
+                    )
+                ).status_code == 200 or (
+                    response := requests.get(
+                        f"https://rest.uniprot.org/uniparc/{acc}.json"
+                    )
+                ).status_code == 200:
+                    data = response.json()
+                    organism = (
+                        data.get("organism", {}).get("scientificName", None)
+                        or "Could not resolve organism"
+                    )
+
             reviewer = set()
             for log in mite_data.get("changelog"):
                 reviewer.update(log.get("reviewers"))
@@ -258,6 +288,7 @@ class AuxFileManager(BaseModel):
                 "reaction_description": mite_data["reactions"][0].get(
                     "description", "No description available"
                 ),
+                "organism": organism,
             }
 
         keys = list(summary.get("entries").keys())

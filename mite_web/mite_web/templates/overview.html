@@ -113,7 +113,8 @@
                 <th scope="col" data-sortable="true" data-field="status">Status</th>
                 <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
                 <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
-                <th scope="col" data-sortable="false" data-field="description">Enzyme Type</th>
+                <th scope="col" data-sortable="true" data-field="description">Enzyme Type</th>
+                <th scope="col" data-sortable="true" data-field="organism">Organism of Origin</th>
                 <th scope="col" data-sortable="false" data-field="reaction_description">Reaction Description</th>
             </tr>
         </thead>
@@ -125,6 +126,7 @@
                     <td>{{ value.name }}</td>
                     <td>{{ value.tailoring }}</td>
                     <td>{{ value.description | truncate(75, True) }}</td>
+                    <td>{{ value.organism }}</td>
                     <td>{{ value.reaction_description | truncate(75, True) }}</td>
                 </tr>
             {% endfor %}
