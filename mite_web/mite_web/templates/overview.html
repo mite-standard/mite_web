@@ -12,7 +12,7 @@
         {% if messages %}
         <div class="card card-body">
             <div class="col text-center mx-auto">
-                <h4 class="fw-semibold lh-2">Error during substructure search!</h4>
+                <h4 class="fw-semibold lh-2">Error during search!</h4>
                 <ul class="lh-base list-unstyled">
                 {% for message in messages %}
                     <li><p class="lead mb-1">{{ message }}</p></li>
@@ -25,23 +25,33 @@
     </div>
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="row">
-            <div class="col">
-                <h5 class="fw-semibold lh-2">Search for substructure</h5>
-            </div>
-            <div class="col">
-                <div class="input-group mb-3">
-                    <input type="text" name="substructure_query" id="substructure_query" class="form-control" aria-label="Insert your SMILES/SMARTS string" placeholder="Insert your SMILES/SMARTS substructure string">
+        <div class="row d-flex align-items-center mb-3">
+            <div class="col-auto">
+                <label for="substructure_query" class="form-label">Search for a substructure</label>
+                <div class="input-group">
+                    <input type="text" name="substructure_query" id="substructure_query" class="form-control" aria-label="Insert your query SMILES/SMARTS" aria-describedby="substructure_descr" placeholder="Insert SMILES/SMARTS query">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select type of query</button>
                     <ul class="dropdown-menu dropdown-menu-end">
                     <li><button class="dropdown-item" type="submit" name="action" value="smiles">SMILES</button></li>
                     <li><button class="dropdown-item" type="submit" name="action" value="smarts">SMARTS</button></li>
                     </ul>
                 </div>
+                <div class="form-text" id="substructure_descr">Search the MITE repository for a certain substructure (e.g. 'C1CCCCC1' or '[c]-[X]')</div>
+            </div>
+            <div class="col">
+                <label for="sequence" class="form-label">Search for a protein sequence</label>
+                <div class="input-group">
+                    <input type="text" aria-label="sequence" id="sequence" name="sequence" class="form-control" aria-describedby="blast_descr" placeholder="Insert your query protein sequence">
+                    <input type="number" aria-label="e_val" id="e_val" name="e_val" class="form-control" value="10">
+                    <span class="input-group-text">E-value</span>
+                    <button class="btn btn-outline-secondary" type="submit" name="action" value="blast">BLAST!</button>
+                </div>
+                <div class="form-text" id="blast_descr">BLAST a protein sequence against all enzymes in the MITE repository</div>
             </div>
         </div>
     </form>
-    {% if query_data is defined %}
+    {% if substructure_query_data is defined %}
+    <hr>
     <div class="row mb-3">
         <div class="col">
             <h5 class="fw-semibold lh-2">Substructure search results</h5>
@@ -52,7 +62,7 @@
             <h6 class="fw-semibold lh-2">Search query</h6>
         </div>
         <div class="col-auto">
-            <p>{{ query_data.substructure_query }}</p>
+            <p>{{ substructure_query_data.substructure_query }}</p>
         </div>
     </div>
     <div class="row mb-2">
@@ -60,9 +70,36 @@
             <h6 class="fw-semibold lh-2">Number of matches</h6>
         </div>
         <div class="col-auto">
-            <p>{{ query_data.result_len }}</p>
+            <p>{{ substructure_query_data.result_len }}</p>
         </div>
     </div>
+    <hr>
+    {% endif %}
+    {% if blast_results is defined %}
+    <hr>
+    <table id="blast_table" class="my-3 table-striped" data-toggle="table" data-search="true">
+        <thead>
+            <tr>
+                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
+                <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
+                <th scope="col" data-sortable="true" data-field="similarity">Sequence Similarity (%)</th>
+                <th scope="col" data-sortable="true" data-field="alignment">Alignment Score</th>
+                <th scope="col" data-sortable="true" data-field="bitscore">Bit-Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in blast_results.items() %}
+                <tr>
+                    <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
+                    <td>{{ value.evalue }}</td>
+                    <td>{{ value.sequence_similarity }}</td>
+                    <td>{{ value.alignment_score }}</td>
+                    <td>{{ value.bit_score }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
     {% endif %}
     <div class="row">
         <div class="col">

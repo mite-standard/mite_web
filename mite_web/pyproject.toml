@@ -28,6 +28,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "biopython~=1.84",
     "coloredlogs~=15.0",
     "jsondiff~=2.2",
     "Flask~=3.0",
@@ -99,5 +100,7 @@ ignore = [
     # unneccesary True False
     "SIM210",
     # combine nested if conditionals
-    "SIM102"
+    "SIM102",
+    # if-else block
+    "SIM108"
 ]
