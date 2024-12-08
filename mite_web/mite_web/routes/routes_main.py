@@ -110,7 +110,7 @@ def download_identifier(identifier: str) -> Response | None:
         )
     elif identifier == "blastlib":
         return send_file(
-            Path(__file__).parent.parent.joinpath("data/blast_lib/MiteBlastDB.zip"),
+            Path(__file__).parent.parent.joinpath("data/download/MiteBlastDB.zip"),
             as_attachment=True,
         )
     elif identifier == "mite_zip":
