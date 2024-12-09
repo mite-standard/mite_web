@@ -332,8 +332,8 @@ class AuxFileManager(BaseModel):
         Arguments:
             data: a dict derived from a mite json file
         """
-        for readctionid, reaction in enumerate(data["reactions"]):
-            for exampleid, example in enumerate(reaction["reactions"]):
+        for readctionid, reaction in enumerate(data["reactions"], 1):
+            for exampleid, example in enumerate(reaction["reactions"], 1):
                 self.smiles.append(
                     f"{data['accession']}.reaction{readctionid}.example{exampleid},"
                     f'"{example['substrate']}",'
@@ -346,7 +346,7 @@ class AuxFileManager(BaseModel):
         Arguments:
             data: a dict derived from a mite json file
         """
-        for readctionid, reaction in enumerate(data["reactions"]):
+        for readctionid, reaction in enumerate(data["reactions"], 1):
             self.smarts.append(
                 f'{data['accession']}.reaction{readctionid},'
                 f'"{reaction["reactionSMARTS"]}"\n'
