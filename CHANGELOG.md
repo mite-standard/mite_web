@@ -5,9 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] UNRELEASED
+## [1.1.1] 09-12-2024
 
 ### Added
+
+- Implemented an API (/api/<mite_accession>) to serve MITE JSON files
+
+### Changed
 
 - Changed generic MITE contributor "AAAAA..." with explanation
 
@@ -15,9 +19,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Update to `mite_data` v1.8
 - Added search functionality (substructure and BLAST) to repository overview
-- Added page for canoicalization or SMILES
+- Added page for canonicalization or SMILES
 - Added resolution of organism or origin
 - Improved Download page
 
@@ -25,7 +28,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Update to `mite_data` v1.6
 - Added additional "tailoring" qualifiers
 
 ### Changed
