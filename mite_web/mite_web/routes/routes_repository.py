@@ -67,12 +67,15 @@ class QueryManager(BaseModel):
         """Returns the summary dict"""
         return self.summary
 
-    def query_substructure(self, action: str, query: str) -> None:
+    def query_substructure(self, action: str, query: str) -> dict:
         """Query dataset for a specific substructure and filter summary for matching entries
 
         Arguments:
             action: the type of matching to perform (smiles or smarts matching)
             query: a SMILES or SMARTS string
+
+        Returns:
+            A dict with substructure matching results
         """
 
         df = pd.read_csv(self.dump_smiles)
@@ -97,13 +100,28 @@ class QueryManager(BaseModel):
         df_substrate_match = df[df["ROMol_substrates"] >= mol_query]
         df_product_match = df[df["ROMol_products"] >= mol_query]
 
-        unique_mite_acc = set()
-        unique_mite_acc.update(set(df_substrate_match["mite_id"].str.split(".").str[0]))
-        unique_mite_acc.update(set(df_product_match["mite_id"].str.split(".").str[0]))
+        matches = set()
+        matches.update(set(df_substrate_match["mite_id"]))
+        matches.update(set(df_product_match["mite_id"]))
+
+        matches = sorted(matches)
+
+        mite_entries = []
+        substructure_results = {}
+        for idx, hit in enumerate(matches, 1):
+            mite_entries.append(hit.split(".")[0])
+            substructure_results[idx] = {
+                "accession": hit.split(".")[0],
+                "reaction": hit.split(".")[1],
+                "example": hit.split(".")[2],
+                "query": query,
+            }
 
         self.summary = {
-            key: value for key, value in self.summary.items() if key in unique_mite_acc
+            key: value for key, value in self.summary.items() if key in mite_entries
         }
+
+        return substructure_results
 
     def query_sequence(self, query: str, e_val: int) -> dict:
         """Run BLAST against MITE BLAST DB for a specific protein and filter summary for matching entries
@@ -153,8 +171,11 @@ class QueryManager(BaseModel):
             blast_record = Blast.read(infile)
 
         blast_results = {}
-        for hit in blast_record:
-            blast_results[hit[0].target.description.split()[0]] = {
+        mite_entries = []
+        for idx, hit in enumerate(blast_record, 1):
+            mite_entries.append(hit[0].target.description.split()[0])
+            blast_results[idx] = {
+                "accession": hit[0].target.description.split()[0],
                 "sequence_similarity": round(
                     (
                         (float(hit[0].annotations.get("positive")) / float(len(query)))
@@ -170,7 +191,7 @@ class QueryManager(BaseModel):
         os.remove(self.blastlib.joinpath(f"{job_uuid}.fasta"))
 
         self.summary = {
-            key: value for key, value in self.summary.items() if key in blast_results
+            key: value for key, value in self.summary.items() if key in mite_entries
         }
 
         return blast_results
@@ -198,17 +219,14 @@ def overview() -> str:
                 return render_template("overview.html", entries=summary)
 
             try:
-                query_manager.query_substructure(
+                results = query_manager.query_substructure(
                     action=user_input.get("action"),
                     query=user_input.get("substructure_query"),
                 )
                 return render_template(
                     "overview.html",
                     entries=query_manager.return_summary(),
-                    substructure_query_data={
-                        "substructure_query": user_input.get("substructure_query"),
-                        "result_len": len(query_manager.return_summary()),
-                    },
+                    substructure_results=results,
                 )
             except Exception as e:
                 flash(f"An error in the substructure matching occurred: '{e!s}'")

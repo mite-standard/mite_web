@@ -50,29 +50,30 @@
             </div>
         </div>
     </form>
-    {% if substructure_query_data is defined %}
+    {% if substructure_results is defined %}
     <hr>
-    <div class="row mb-3">
-        <div class="col">
-            <h5 class="fw-semibold lh-2">Substructure search results</h5>
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-auto">
-            <h6 class="fw-semibold lh-2">Search query</h6>
-        </div>
-        <div class="col-auto">
-            <p>{{ substructure_query_data.substructure_query }}</p>
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-auto">
-            <h6 class="fw-semibold lh-2">Number of matches</h6>
-        </div>
-        <div class="col-auto">
-            <p>{{ substructure_query_data.result_len }}</p>
-        </div>
-    </div>
+    <table id="substructure_table" class="my-3 table-striped" data-toggle="table" data-search="true">
+        <thead>
+            <tr>
+                <th scope="col" data-sortable="true" data-field="index">Match #</th>
+                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
+                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
+                <th scope="col" data-sortable="true" data-field="reaction_example">Reaction Example</th>
+                <th scope="col" data-sortable="false" data-field="query">Matches Query</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, value in substructure_results.items() %}
+                <tr>
+                    <th scope="row">{{ key }}</th>
+                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ value.accession }}</a></td>
+                    <td>{{ value.reaction }}</td>
+                    <td>{{ value.example }}</td>
+                    <td>{{ value.query }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <hr>
     {% endif %}
     {% if blast_results is defined %}
@@ -80,6 +81,7 @@
     <table id="blast_table" class="my-3 table-striped" data-toggle="table" data-search="true">
         <thead>
             <tr>
+                <th scope="col" data-sortable="true" data-field="index">Match #</th>
                 <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
                 <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
                 <th scope="col" data-sortable="true" data-field="similarity">Sequence Similarity (%)</th>
@@ -90,7 +92,8 @@
         <tbody>
             {% for key, value in blast_results.items() %}
                 <tr>
-                    <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
+                    <th scope="row">{{ key }}</th>
+                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ value.accession }}</a></td>
                     <td>{{ value.evalue }}</td>
                     <td>{{ value.sequence_similarity }}</td>
                     <td>{{ value.alignment_score }}</td>

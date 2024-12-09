@@ -101,7 +101,11 @@
                                     <td>
                                         <ul class="list-unstyled mb-0">
                                             {% for curator in entry.contributors %}
+                                            {% if curator == "AAAAAAAAAAAAAAAAAAAAAAAA" %}
+                                            <li>Anonymous MITE contributor</li>
+                                            {% else %}
                                             <li><a target="_blank" class="custom-link" href="https://orcid.org/{{ curator }}">{{ curator }}</a></li>
+                                            {% endif %}
                                             {% endfor %}
                                         </ul>
                                     </td>
