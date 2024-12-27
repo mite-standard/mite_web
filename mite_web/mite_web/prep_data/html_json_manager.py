@@ -22,11 +22,14 @@ SOFTWARE.
 """
 
 import json
+import logging
 import shutil
 from pathlib import Path
 
 from mite_extras import MiteParser
 from pydantic import BaseModel
+
+logger = logging.getLogger("prep_data")
 
 
 class HtmlJsonManager(BaseModel):
@@ -42,10 +45,18 @@ class HtmlJsonManager(BaseModel):
 
     def run(self) -> None:
         """Call methods for preparation of html-compatible json files"""
-        shutil.rmtree(path=self.target, ignore_errors=True)
+        logger.info("HtmlJsonManager: Started")
 
-        self.target.mkdir(parents=True)
+        if self.target.exists():
+            logger.warning(
+                f"DownloadManager: Directory {self.target} already exists - skip json preparation"
+            )
+            return
+
+        self.target.mkdir(parents=True, exist_ok=True)
         self.convert_json_html()
+
+        logger.info("HtmlJsonManager: Completed")
 
     def convert_json_html(self) -> None:
         """Convert regular mite json files to html-compatible ones"""

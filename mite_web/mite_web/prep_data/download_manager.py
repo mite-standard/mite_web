@@ -22,12 +22,15 @@ SOFTWARE.
 """
 
 import json
+import logging
 import os
 import shutil
 from pathlib import Path
 
 import requests
 from pydantic import BaseModel
+
+logger = logging.getLogger("prep_data")
 
 
 class DownloadManager(BaseModel):
@@ -50,14 +53,19 @@ class DownloadManager(BaseModel):
     def run(self) -> None:
         """Call methods for downloading and moving data"""
 
-        shutil.rmtree(path=self.location, ignore_errors=True)
-        shutil.rmtree(
-            path=self.location.parent.joinpath("static/img/"), ignore_errors=True
-        )
+        logger.info("DownloadManager: Started")
+
+        if self.location.exists():
+            logger.warning(
+                f"DownloadManager: Download location {self.location} already exists - skip download"
+            )
+            return
 
         self.location.mkdir(parents=True)
         self.download_data()
         self.organize_data()
+
+        logger.info("DownloadManager: Completed")
 
     def download_data(self) -> None:
         """Download data from Zenodo
@@ -111,12 +119,6 @@ class DownloadManager(BaseModel):
         shutil.move(
             src=self.record_unzip.joinpath(subdir).joinpath("mite_data/data").resolve(),
             dst=self.location.resolve(),
-        )
-
-        # TODO(MMZ 21.12.24): replace with de-novo generation of images
-        shutil.move(
-            src=self.record_unzip.joinpath(subdir).joinpath("mite_data/img").resolve(),
-            dst=self.location.parent.joinpath("static/").resolve(),
         )
 
         shutil.move(

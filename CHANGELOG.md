@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Changed generic MITE contributor "AAAAA..." with explanation
 - Improved search functionality for substructure
+- Implemented generating of enzyme visualization from scratch
 
 ## [1.1.0] 08-12-2024
 

@@ -28,6 +28,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "AlphaFetcher~=0.2",
     "biopython~=1.84",
     "coloredlogs~=15.0",
     "jsondiff~=2.2",

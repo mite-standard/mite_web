@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import json
+import logging
 import pickle
 import shutil
 from pathlib import Path
@@ -33,6 +34,8 @@ from pydantic import BaseModel
 from rdkit.Chem import PandasTools
 
 Entrez.email = "your_email@example.com"  # must be set but does not have to be real
+
+logger = logging.getLogger("prep_data")
 
 
 class Locations(BaseModel):
@@ -63,8 +66,18 @@ class SummaryManager(Locations):
 
     def run(self) -> None:
         """Runs methods"""
+        logger.info("SummaryManager: Started")
+
+        if self.target.joinpath("summary.json").exists:
+            logger.warning(
+                f"SummaryManager: File {self.target.joinpath("summary.json")} already exists - skip file preparation"
+            )
+            return
+
         self.assemble_summary()
         self.dump_files()
+
+        logger.info("SummaryManager: Completed")
 
     def assemble_summary(self):
         """Assemble the summary data"""
@@ -177,8 +190,18 @@ class AuxFileManager(Locations):
 
     def run(self) -> None:
         """Call methods for preparation of auxiliary files"""
+        logger.info("AuxFileManager: Started")
+
+        if self.download.joinpath("dump_smiles.csv").exists:
+            logger.warning(
+                f"AuxFileManager: File {self.download.joinpath("dump_smiles.csv")} already exists - skip file preparation"
+            )
+            return
+
         self.prepare_files()
         self.dump_files()
+
+        logger.info("AuxFileManager: Completed")
 
     def prepare_files(self) -> None:
         """Prepare the auxiliary files derived from mite entries
