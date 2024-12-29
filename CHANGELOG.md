@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
+- DatabaseIds crosslinking: differentiate between UniprotKB and UniParc in link-creation (UniParcID starts with "UPI")
 - Replaced generic MITE contributor "AAAAA..." with a human-readable explanation
 - Moved enzyme-structure visualization with PyMol from `mite_data` to `mite_web`
 - Moved MITE BLAST-DB generation from `mite_data` to `mite_web`

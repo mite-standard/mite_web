@@ -94,7 +94,7 @@ def api(mite_acc: str) -> Response:
     """Return the MITE entry JSON upon an API call
 
     Arguments:
-        mite_acc: A valid MITE accession (regexp: ^MITE\d\d\d\d\d\d\d$)
+        mite_acc: A valid MITE accession
 
     Returns:
         A Response object (a MITE JSON or a 404)
