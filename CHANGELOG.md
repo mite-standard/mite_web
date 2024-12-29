@@ -7,9 +7,19 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.1.2] UNRELEASED
 
+### Added
+
+- Added concatenated protein FASTA files to downloads
+
 ### Bugfix
 
 - Fixed broken hyperlinks in substructure/blast search results
+
+### Changed
+
+- Replaced generic MITE contributor "AAAAA..." with a human-readable explanation
+- Moved enzyme-structure visualization with PyMol from `mite_data` to `mite_web`
+- Moved MITE BLAST-DB generation from `mite_data` to `mite_web`
 
 ## [1.1.1] 09-12-2024
 
@@ -19,9 +29,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Changed generic MITE contributor "AAAAA..." with explanation
 - Improved search functionality for substructure
-- Implemented generating of enzyme visualization from scratch
 
 ## [1.1.0] 08-12-2024
 
