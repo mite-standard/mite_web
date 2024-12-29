@@ -29,6 +29,7 @@ import sys
 import coloredlogs
 
 from mite_web.prep_data.aux_file_manager import AuxFileManager, SummaryManager
+from mite_web.prep_data.blast_manager import BlastManager
 from mite_web.prep_data.download_manager import DownloadManager
 from mite_web.prep_data.html_json_manager import HtmlJsonManager
 from mite_web.prep_data.image_manager import ImageManager
@@ -61,6 +62,9 @@ def main() -> None | SystemExit:
 
         img_manager = ImageManager()
         img_manager.run()
+
+        blast_manager = BlastManager()
+        blast_manager.run()
 
         logger.info("Completed 'mite_web' data preparation.")
 

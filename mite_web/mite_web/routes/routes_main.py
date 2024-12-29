@@ -117,7 +117,7 @@ def download_identifier(identifier: str) -> Response | None:
         identifier: the string identifier of the file
 
     Returns:
-        A Response object containing the file
+        A Response object containing the file or None
     """
     if identifier == "smarts":
         return send_file(
@@ -144,6 +144,11 @@ def download_identifier(identifier: str) -> Response | None:
     elif identifier.startswith("MITE"):
         return send_file(
             Path(__file__).parent.parent.joinpath(f"data/data/{identifier}.json"),
+            as_attachment=True,
+        )
+    elif identifier == "mite_fasta":
+        return send_file(
+            Path(__file__).parent.parent.joinpath("data/download/mite_concat.fasta"),
             as_attachment=True,
         )
     else:

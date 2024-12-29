@@ -45,7 +45,6 @@ class Locations(BaseModel):
         src: the location in which the downloaded mite json files are stored
         target: the location in which the auxiliary files are stored
         download: the location in which download-files are stored
-
     """
 
     src: Path = Path(__file__).parent.parent.joinpath("data/data")
@@ -68,7 +67,7 @@ class SummaryManager(Locations):
         """Runs methods"""
         logger.info("SummaryManager: Started")
 
-        if self.target.joinpath("summary.json").exists:
+        if self.target.joinpath("summary.json").exists():
             logger.warning(
                 f"SummaryManager: File {self.target.joinpath("summary.json")} already exists - skip file preparation"
             )
@@ -192,7 +191,7 @@ class AuxFileManager(Locations):
         """Call methods for preparation of auxiliary files"""
         logger.info("AuxFileManager: Started")
 
-        if self.download.joinpath("dump_smiles.csv").exists:
+        if self.download.joinpath("dump_smiles.csv").exists():
             logger.warning(
                 f"AuxFileManager: File {self.download.joinpath("dump_smiles.csv")} already exists - skip file preparation"
             )

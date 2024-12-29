@@ -128,31 +128,5 @@ class DownloadManager(BaseModel):
             dst=self.location.resolve(),
         )
 
-        # TODO(MMZ 21.12.24): replace with de-novo generation of MITE BLASTLIE
-        self.location.joinpath("download/").mkdir(exist_ok=True)
-        shutil.copy(
-            src=str(
-                self.record_unzip.joinpath(subdir).joinpath(
-                    "mite_data/blast_lib/MiteBlastDB.zip"
-                )
-            ),
-            dst=str(self.location.joinpath("download/MiteBlastDB.zip")),
-        )
-        self.location.joinpath("blastlib/").mkdir(exist_ok=True)
-        shutil.copy(
-            src=str(
-                self.record_unzip.joinpath(subdir).joinpath(
-                    "mite_data/blast_lib/MiteBlastDB.zip"
-                )
-            ),
-            dst=str(self.location.joinpath("blastlib/MiteBlastDB.zip")),
-        )
-        shutil.unpack_archive(
-            filename=self.location.joinpath("blastlib/MiteBlastDB.zip"),
-            extract_dir=self.location.joinpath("blastlib/"),
-            format="zip",
-        )
-        os.remove(self.location.joinpath("blastlib/MiteBlastDB.zip"))
-
         os.remove(self.record)
         shutil.rmtree(self.record_unzip)
