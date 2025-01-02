@@ -66,7 +66,7 @@
             {% for key, value in substructure_results.items() %}
                 <tr>
                     <th scope="row">{{ key }}</th>
-                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ value.accession }}</a></td>
+                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=value.accession) }}">{{ value.accession }}</a></td>
                     <td>{{ value.reaction }}</td>
                     <td>{{ value.example }}</td>
                     <td>{{ value.query }}</td>
@@ -93,7 +93,7 @@
             {% for key, value in blast_results.items() %}
                 <tr>
                     <th scope="row">{{ key }}</th>
-                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ value.accession }}</a></td>
+                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=value.accession) }}">{{ value.accession }}</a></td>
                     <td>{{ value.evalue }}</td>
                     <td>{{ value.sequence_similarity }}</td>
                     <td>{{ value.alignment_score }}</td>

@@ -35,7 +35,11 @@
                         <ul class="list-unstyled mb-0">
                         {% if data.enzyme.databaseIds is defined %}
                             {% if data.enzyme.databaseIds.get("uniprot") %}
-                            <li>UniProt: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ data.enzyme.databaseIds.get("uniprot") }}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% if data.enzyme.databaseIds.get("uniprot").startswith("UPI") %}
+                                <li>UniParc: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniparc:{{ data.enzyme.databaseIds.get("uniprot")}}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% else %}
+                                <li>UniProtKB: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ data.enzyme.databaseIds.get("uniprot")}}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% endif %}
                             {% endif %}
                             {% if data.enzyme.databaseIds.get("genpept") %}
                             <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ data.enzyme.databaseIds.get("genpept") }}'>{{ data.enzyme.databaseIds.get("genpept") }}</a></li>
@@ -160,7 +164,11 @@
                         <ul class="list-unstyled mb-0">
                         {% if auxenzyme.databaseIds is defined %}
                             {% if auxenzyme.databaseIds.get("uniprot") %}
-                            <li>UniProt: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% if auxenzyme.databaseIds.get("uniprot").startswith("UPI") %}
+                                <li>UniParc: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniparc:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% else %}
+                                <li>UniProtKB: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% endif %}
                             {% endif %}
                             {% if auxenzyme.databaseIds.get("genpept") %}
                             <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ auxenzyme.databaseIds.get("genpept") }}'>{{ auxenzyme.databaseIds.get("genpept") }}</a></li>

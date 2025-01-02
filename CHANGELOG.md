@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] 02-01-2024
+
+### Added
+
+- Added concatenated protein FASTA files to downloads
+
+### Bugfix
+
+- Fixed broken hyperlinks in substructure/blast search results
+
+### Changed
+
+- DatabaseIds crosslinking: differentiate between UniprotKB and UniParc in link-creation (UniParcID starts with "UPI")
+- Replaced generic MITE contributor "AAAAA..." with a human-readable explanation
+- Moved enzyme-structure visualization with PyMol from `mite_data` to `mite_web`
+- Moved MITE BLAST-DB generation from `mite_data` to `mite_web`
+
 ## [1.1.1] 09-12-2024
 
 ### Added
@@ -13,7 +30,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Changed generic MITE contributor "AAAAA..." with explanation
 - Improved search functionality for substructure
 
 ## [1.1.0] 08-12-2024
