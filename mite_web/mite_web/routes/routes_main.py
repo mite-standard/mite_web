@@ -21,10 +21,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import json
 from pathlib import Path
 
-from flask import Response, abort, current_app, jsonify, render_template, send_file
+from flask import Response, render_template, send_file
 
 from mite_web.routes import bp
 
@@ -87,26 +86,6 @@ def downloads() -> str:
         The downloads.html page as string.
     """
     return render_template("downloads.html")
-
-
-@bp.route("/api/<mite_acc>", methods=["GET"])
-def api(mite_acc: str) -> Response:
-    """Return the MITE entry JSON upon an API call
-
-    Arguments:
-        mite_acc: A valid MITE accession
-
-    Returns:
-        A Response object (a MITE JSON or a 404)
-    """
-    location = Path(__file__).parent.parent.joinpath(f"data/data/{mite_acc}.json")
-
-    if not location.exists():
-        return abort(404, description="Item not found")
-    else:
-        with open(location) as infile:
-            mite = json.load(infile)
-            return jsonify(mite)
 
 
 @bp.route("/downloads/<identifier>")
