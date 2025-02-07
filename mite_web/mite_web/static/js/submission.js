@@ -29,6 +29,7 @@ function validateSumInput(event, x, y) {
     } else {
         sumInputForm.style.borderColor = '';
         document.getElementById('usersum-error-message').textContent = "";
+        disableButton(document.getElementById('submit'));
     }
 }
 
