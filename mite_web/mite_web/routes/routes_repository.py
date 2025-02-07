@@ -254,7 +254,7 @@ def overview() -> str:
     return render_template("overview.html", entries=summary)
 
 
-@bp.route("/repository/<mite_acc>/")
+@bp.route("/repository/<mite_acc>")
 def repository(mite_acc: str) -> str:
     """Render the individual pages
 

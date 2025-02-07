@@ -38,7 +38,7 @@ def index() -> str:
     return render_template("index.html")
 
 
-@bp.route("/about/")
+@bp.route("/about")
 def about() -> str:
     """Render the about page of mite_web
 
@@ -48,7 +48,7 @@ def about() -> str:
     return render_template("about.html")
 
 
-@bp.route("/contact/")
+@bp.route("/contact")
 def contact() -> str:
     """Render the contact page of mite_web
 
@@ -58,7 +58,7 @@ def contact() -> str:
     return render_template("contact.html")
 
 
-@bp.route("/terms/")
+@bp.route("/terms")
 def termsofuse() -> str:
     """Render the terms of use page of mite_web
 
@@ -68,7 +68,7 @@ def termsofuse() -> str:
     return render_template("submission_terms_of_use.html")
 
 
-@bp.route("/help/")
+@bp.route("/help")
 def help() -> str:
     """Render the help page of mite_web
 

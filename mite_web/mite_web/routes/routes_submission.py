@@ -290,7 +290,7 @@ def submission() -> str:
     return render_template("submission.html")
 
 
-@bp.route("/submission/<mite_acc>/", methods=["GET", "POST"])
+@bp.route("/submission/<mite_acc>", methods=["GET", "POST"])
 def submission_existing(mite_acc: str) -> str | Response:
     """Render the submission forms for an existing entry mite_acc
 
@@ -341,7 +341,7 @@ def submission_existing(mite_acc: str) -> str | Response:
     return render_template("submission_form.html", data=data, x=x, y=y)
 
 
-@bp.route("/submission/new/", methods=["GET", "POST"])
+@bp.route("/submission/new", methods=["GET", "POST"])
 def submission_new() -> str | Response:
     """Render the submission forms for a new entry
 

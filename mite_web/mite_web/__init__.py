@@ -44,6 +44,7 @@ def create_app() -> Flask:
     """
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
+    app.url_map.strict_slashes = False
     verify_data(app)
 
     register_context_processors(app)
