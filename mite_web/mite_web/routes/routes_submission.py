@@ -238,6 +238,10 @@ class ProcessingHelper(BaseModel):
                 raise RuntimeError(
                     "At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked."
                 )
+            if re.search(r"\|", reaction.get("reactionSMARTS")):
+                raise RuntimeError(
+                    f"Reaction SMARTS with CXSMARTS (Chemaxon SMARTS) elements detected which are not supported by MITE. The offending reaction SMARTS is: '{reaction.get("reactionSMARTS")}'"
+                )
 
         parser = MiteParser()
         parser.parse_mite_json(data=self.data)
