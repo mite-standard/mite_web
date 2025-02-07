@@ -121,6 +121,9 @@ class ProcessingHelper(BaseModel):
             "reactions": [],
         }
 
+        if data.get("comment", [""])[0] != "":
+            self.data["comment"] = data.get("comment")[0]
+
         nr_auxenzymes = sorted(nr_auxenzymes)
         for index in nr_auxenzymes:
             if not self.data["enzyme"].get("auxiliaryEnzymes"):
