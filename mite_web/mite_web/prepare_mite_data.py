@@ -33,6 +33,7 @@ from mite_web.prep_data.blast_manager import BlastManager
 from mite_web.prep_data.download_manager import DownloadManager
 from mite_web.prep_data.html_json_manager import HtmlJsonManager
 from mite_web.prep_data.image_manager import ImageManager
+from mite_web.prep_data.mibig_manager import MibigManager
 
 logger = logging.getLogger("prep_data")
 logger.setLevel("DEBUG")
@@ -65,6 +66,9 @@ def main() -> None | SystemExit:
 
         blast_manager = BlastManager()
         blast_manager.run()
+
+        mibig_manager = MibigManager()
+        mibig_manager.run()
 
         logger.info("Completed 'mite_web' data preparation.")
 

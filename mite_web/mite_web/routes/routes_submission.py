@@ -30,6 +30,8 @@ from io import BytesIO
 from pathlib import Path
 from typing import Self
 
+import pandas as pd
+import requests
 from flask import (
     Response,
     current_app,
@@ -198,8 +200,11 @@ class ProcessingHelper(BaseModel):
             }
         )
 
-    def validate_user_input(self: Self):
+    def validate_user_input(self: Self, initial: str):
         """Validates the incoming user-submitted and formatted data
+
+        Arguments:
+            initial: a string ("true", "false") indicating if validation has failed previously
 
         Raises:
             RuntimeError: input validation does not pass
@@ -215,6 +220,18 @@ class ProcessingHelper(BaseModel):
             raise RuntimeError(
                 "No enzyme database cross-references specified. Please provide at least an UniProt or GenPept ID."
             )
+
+        if initial == "true":
+            if (
+                self.data["enzyme"]["databaseIds"].get("genpept")
+                and not self.data["enzyme"]["databaseIds"]["mibig"]
+            ):
+                self.check_mibig()
+
+            if self.data["enzyme"]["databaseIds"].get("uniprot") and not self.data[
+                "enzyme"
+            ]["databaseIds"].get("uniprot").startswith("UPI"):
+                self.check_rhea()
 
         if len(self.data.get("enzyme").get("references")) == 0 or all(
             item == "" for item in self.data.get("enzyme").get("references")
@@ -250,6 +267,56 @@ class ProcessingHelper(BaseModel):
         schema_manager.validate_mite(instance=parser.to_json())
 
         self.data = parser.to_json()
+
+    def check_mibig(self: Self) -> None:
+        """Check if genpept ID can be found in mibig genes
+
+        Raises:
+            RuntimeError: genpept found in MIBiG protein accession list
+        """
+        genpept = self.data["enzyme"]["databaseIds"].get("genpept")
+
+        df = pd.read_csv(
+            Path(__file__).parent.parent.joinpath("data/mibig_proteins.csv")
+        )
+        matches = df[df["genpept"].str.contains(genpept)]
+        print(matches)
+        if len(matches) > 0:
+            raise RuntimeError(
+                f"NCBI GenPept Accession '{genpept}' is associated to MIBiG entry '{matches["mibig"].iloc[0]}', but was not added in this form. Please consider adding this cross-reference. This message will appear only once."
+            )
+
+    def check_rhea(self: Self) -> None:
+        """Check if rhea ids can be found for uniprot and/or are already added
+
+        Raises:
+            RuntimeError: found non-overlapping ids between uniprot rheas and form
+        """
+        rhea = set()
+        form = set()
+
+        response = requests.get(
+            url="https://www.rhea-db.org/rhea?",
+            params={
+                "query": self.data["enzyme"]["databaseIds"].get("uniprot"),
+                "columns": "rhea-id",
+                "format": "tsv",
+                "limit": 10,
+            },
+            timeout=3,
+        )
+        if response.status_code == 200:
+            rhea = {i.removeprefix("RHEA:") for i in response.text.split()[2:]}
+
+        for reaction in self.data["reactions"]:
+            if val := reaction.get("databaseIds", {}).get("rhea"):
+                form.add(val)
+
+        diff = form.intersection(rhea)
+        if len(diff) == 0:
+            raise RuntimeError(
+                f"The UniProt ID '{self.data["enzyme"]["databaseIds"].get("uniprot")}' is described in Rhea, but its Rhea IDs were not detected in the submission form. Please consider adding this cross-reference. This message will appear only once. The detected Rhea IDs are: {rhea}."
+            )
 
     def dump_json(self: Self):
         """Dumps dict as JSON to disk"""
@@ -329,7 +396,7 @@ def submission_existing(mite_acc: str) -> str | Response:
             return render_template("submission_failure.html", error=str(e))
 
         try:
-            processing_helper.validate_user_input()
+            processing_helper.validate_user_input(initial=user_input["initial"][0])
             processing_helper.dump_json()
             processing_helper.send_email(sub_type="MODIFIED")
             return render_template(
@@ -340,12 +407,16 @@ def submission_existing(mite_acc: str) -> str | Response:
             flash(str(e))
             x, y = processing_helper.random_numbers()
             return render_template(
-                "submission_form.html", data=processing_helper.data, x=x, y=y
+                "submission_form.html",
+                data=processing_helper.data,
+                x=x,
+                y=y,
+                initial="false",
             )
 
     x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
 
-    return render_template("submission_form.html", data=data, x=x, y=y)
+    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
 
 
 @bp.route("/submission/new", methods=["GET", "POST"])
@@ -366,7 +437,7 @@ def submission_new() -> str | Response:
             return render_template("submission_failure.html", error=str(e))
 
         try:
-            processing_helper.validate_user_input()
+            processing_helper.validate_user_input(initial=user_input["initial"][0])
             processing_helper.dump_json()
             processing_helper.send_email(sub_type="NEW")
             return render_template(
@@ -377,7 +448,11 @@ def submission_new() -> str | Response:
             flash(str(e))
             x, y = processing_helper.random_numbers()
             return render_template(
-                "submission_form.html", data=processing_helper.data, x=x, y=y
+                "submission_form.html",
+                data=processing_helper.data,
+                x=x,
+                y=y,
+                initial="false",
             )
 
     x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
@@ -391,7 +466,7 @@ def submission_new() -> str | Response:
         ],
     }
 
-    return render_template("submission_form.html", data=data, x=x, y=y)
+    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
 
 
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
