@@ -63,7 +63,7 @@
                                     {% if reaction.get("databaseIds") %}
                                         <ul class="list-unstyled mb-0">
                                             {% if reaction.databaseIds.get("rhea") %}
-                                            <li>RHEA: <a class="custom-link" target="_blank" href='https://www.rhea-db.org/rhea/{{ reaction.databaseIds.get("rhea") }}'>{{ reaction.databaseIds.get("rhea") }}</a></li>
+                                            <li>RHEA: <a class="custom-link" target="_blank" href='https://bioregistry.io/rhea:{{ reaction.databaseIds.get("rhea") }}'>{{ reaction.databaseIds.get("rhea") }}</a></li>
                                             {% endif %}
                                             {% if reaction.databaseIds.get("ec") %}
                                             <li>BRENDA: <a class="custom-link" target="_blank" href='https://www.brenda-enzymes.org/enzyme.php?ecno={{ reaction.databaseIds.get("ec") }}'>{{ reaction.databaseIds.get("ec") }}</a></li>

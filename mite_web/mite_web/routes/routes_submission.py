@@ -221,18 +221,6 @@ class ProcessingHelper(BaseModel):
                 "No enzyme database cross-references specified. Please provide at least an UniProt or GenPept ID."
             )
 
-        if initial == "true":
-            if (
-                self.data["enzyme"]["databaseIds"].get("genpept")
-                and not self.data["enzyme"]["databaseIds"]["mibig"]
-            ):
-                self.check_mibig()
-
-            if self.data["enzyme"]["databaseIds"].get("uniprot") and not self.data[
-                "enzyme"
-            ]["databaseIds"].get("uniprot").startswith("UPI"):
-                self.check_rhea()
-
         if len(self.data.get("enzyme").get("references")) == 0 or all(
             item == "" for item in self.data.get("enzyme").get("references")
         ):
@@ -260,6 +248,18 @@ class ProcessingHelper(BaseModel):
                     f"Reaction SMARTS with CXSMARTS (Chemaxon SMARTS) elements detected which are not supported by MITE. The offending reaction SMARTS is: '{reaction.get("reactionSMARTS")}'"
                 )
 
+        if initial == "true":
+            if (
+                self.data["enzyme"]["databaseIds"].get("genpept")
+                and not self.data["enzyme"]["databaseIds"]["mibig"]
+            ):
+                self.check_mibig()
+
+            if self.data["enzyme"]["databaseIds"].get("uniprot") and not self.data[
+                "enzyme"
+            ]["databaseIds"].get("uniprot").startswith("UPI"):
+                self.check_rhea()
+
         parser = MiteParser()
         parser.parse_mite_json(data=self.data)
 
@@ -280,7 +280,7 @@ class ProcessingHelper(BaseModel):
             Path(__file__).parent.parent.joinpath("data/mibig_proteins.csv")
         )
         matches = df[df["genpept"].str.contains(genpept)]
-        print(matches)
+
         if len(matches) > 0:
             raise RuntimeError(
                 f"NCBI GenPept Accession '{genpept}' is associated to MIBiG entry '{matches["mibig"].iloc[0]}', but was not added in this form. Please consider adding this cross-reference. This message will appear only once."
