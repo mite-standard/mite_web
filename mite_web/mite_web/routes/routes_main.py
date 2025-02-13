@@ -68,14 +68,34 @@ def termsofuse() -> str:
     return render_template("submission_terms_of_use.html")
 
 
-@bp.route("/help")
-def help() -> str:
-    """Render the help page of mite_web
+@bp.route("/tutorial")
+def tutorial() -> str:
+    """Render the tutorial page of mite_web
 
     Returns:
-        The help.html page as string.
+        The tutorial.html page as string.
     """
-    return render_template("help.html")
+    return render_template("tutorial.html")
+
+
+@bp.route("/troubleshooting")
+def troubleshooting() -> str:
+    """Render the troubleshooting page of mite_web
+
+    Returns:
+        The troubleshooting.html page as string.
+    """
+    return render_template("troubleshooting.html")
+
+
+@bp.route("/faqs")
+def faqs() -> str:
+    """Render the faqs page of mite_web
+
+    Returns:
+        The faqs.html page as string.
+    """
+    return render_template("faqs.html")
 
 
 @bp.route("/downloads/")

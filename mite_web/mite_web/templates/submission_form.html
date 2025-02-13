@@ -23,7 +23,7 @@
                 {% endfor %}
                 </ul>
                 <h5>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}">canonicalize your substrate/product SMILES</a>.</h5>
-                <h5>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.help') }}">Help page</a>.</h5>
+                <h5>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting page</a>.</h5>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
     {% endwith %}
     <div class="row my-4">
         <div class="col text-center mx-auto">
-            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.help') }}"><b>Help page</b></a>.</h5>
+            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h5>
             <h6>Need to draw long peptides? Check out our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a>.</h6>
             <h6>Want to canonicalize your SMILES? Try our <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>helper tool</b></a>.</h6>
         </div>

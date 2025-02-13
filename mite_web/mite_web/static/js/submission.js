@@ -405,6 +405,7 @@ function createHtmlReaction(data = {}, index) {
     }
 
     let evidenceCodeArray = [
+        "Chemical probe",
         "Heterologous expression",
         "Inference from genomic data and chemical structure",
         "In vitro assay",

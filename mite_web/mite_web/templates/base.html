@@ -41,7 +41,9 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{{ url_for('routes.help') }}">Help</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.tutorial') }}">Tutorial</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.faqs') }}">Frequently asked questions</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('doc') }}">API Documentation</a></li>
                     </ul>
@@ -85,7 +87,7 @@
             <div class="d-flex flex-column text-center">
               <div class="mt-auto px-5">
                 <h6 class="text-uppercase fw-bold mb-1"><a rel="mite_web repository" href="https://github.com/mite-standard/mite_web" class="custom-link" target="_blank">MITE Website</a> v{{version_mite_web}} hosting <a rel="mite_data repository" href="https://github.com/mite-standard/mite_data" class="custom-link" target="_blank">MITE Data</a> v{{version_mite_data}}</h6>
-                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('routes.contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">cite us.</a></p>
+                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('routes.contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">cite us.</a></p>
                 <div>
                   <a class="nav-link" href="https://github.com/mite-standard" target="_blank" rel="noopener" aria-label="GitHub MITE-Standard Organisation Page"><i class="bi bi-github"></i></a>
                 </div>
