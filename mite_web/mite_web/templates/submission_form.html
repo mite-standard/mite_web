@@ -23,7 +23,7 @@
                 {% endfor %}
                 </ul>
                 <h5>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}">canonicalize your substrate/product SMILES</a>.</h5>
-                <h5>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.help') }}">Help page</a>.</h5>
+                <h5>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting page</a>.</h5>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
     {% endwith %}
     <div class="row my-4">
         <div class="col text-center mx-auto">
-            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.help') }}"><b>Help page</b></a>.</h5>
+            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h5>
             <h6>Need to draw long peptides? Check out our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a>.</h6>
             <h6>Want to canonicalize your SMILES? Try our <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>helper tool</b></a>.</h6>
         </div>
@@ -39,6 +39,7 @@
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
+        <input type="hidden" name="initial" value="{{ initial }}">
         <div class="row my-2" id="row-enzyme">
             <div class="col-md-6" id="col-enzyme">
                 <div class="row">
@@ -111,12 +112,23 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="row">
-                <h4 class="fw-semibold lh-2">Submitter Information</h4>
+        <div class="row my-3">
+            <div class="col">
+                <h3 class="fw-semibold lh-2 text-center">General Information</h3>
+                <p class="mb-2 text-center">Submitter details and other information</p>
             </div>
         </div>
         <div class="card card-body mb-2">
+            <div class="row mb-2">
+                <div class="col">
+                    <h6 class="fw-semibold lh-2">General Comment</h6>
+                    <div class="form-floating">
+                        <input id="comment" maxlength="300" name="comment" class="form-control" aria-describedby="CommentHelp" type="text" value="{{ data.get('comment', '') }}">
+                        <label for="comment" class="form-label">Optional general comment</label>
+                        <div id="CommentHelp" class="form-text">Briefly comment on enzyme and/or reaction details that did not fit any of the other form fields.</div>
+                    </div>
+                </div>
+            </div>
             <div class="row mb-2">
                 <div class="col">
                     <h6 class="fw-semibold lh-2">ORCID</h6>
@@ -154,7 +166,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-2">
+        <div class="row my-3">
             <div class="col text-center mx-auto">
                 <button id="submit" type="submit" class="btn btn-primary">Submit Data For Review</button>
             </div>
@@ -166,7 +178,6 @@
 <script>
     document.querySelector('form').addEventListener('submit', function(event) {
         validateSumInput(event, {{ x }}, {{ y }});
-        disableButton("submit");
     });
 </script>
 <script>

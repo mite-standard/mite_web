@@ -5,7 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.2] 02-01-2024
+## [1.2.0] 13-02-2025
+
+### Added
+
+- Added API documentation under `/api/`
+
+### Changed
+
+- Reworked UI (Navbar)
+- Changed templates
+
+## [1.1.2] 02-01-2025
 
 ### Added
 
@@ -26,7 +37,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
-- Implemented an API (/api/<mite_accession>) to serve MITE JSON files
+- Implemented an API under `/api/<mite_accession>` to serve MITE JSON files
 
 ### Changed
 
