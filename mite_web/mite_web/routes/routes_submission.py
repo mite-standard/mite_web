@@ -312,11 +312,14 @@ class ProcessingHelper(BaseModel):
             if val := reaction.get("databaseIds", {}).get("rhea"):
                 form.add(val)
 
-        diff = form.intersection(rhea)
-        if len(diff) == 0:
-            raise RuntimeError(
-                f"The UniProt ID '{self.data["enzyme"]["databaseIds"].get("uniprot")}' is described in Rhea, but its Rhea IDs were not detected in the submission form. Please consider adding this cross-reference. This message will appear only once. The detected Rhea IDs are: {rhea}."
-            )
+        if len(rhea) == 0:
+            return
+        else:
+            diff = form.intersection(rhea)
+            if len(diff) == 0:
+                raise RuntimeError(
+                    f"The UniProt ID '{self.data["enzyme"]["databaseIds"].get("uniprot")}' is described in Rhea, but its Rhea IDs were not detected in the submission form. Please consider adding this cross-reference. This message will appear only once. The detected Rhea IDs are: {rhea}."
+                )
 
     def dump_json(self: Self):
         """Dumps dict as JSON to disk"""
