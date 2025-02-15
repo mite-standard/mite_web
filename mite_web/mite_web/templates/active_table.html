@@ -45,7 +45,7 @@
                             <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ data.enzyme.databaseIds.get("genpept") }}'>{{ data.enzyme.databaseIds.get("genpept") }}</a></li>
                             {% endif %}
                             {% if data.enzyme.databaseIds.get("mibig") %}
-                            <li>MIBiG: <a class="custom-link" target="_blank" href='https://mibig.secondarymetabolites.org/go/{{ data.enzyme.databaseIds.get("mibig") }}'>{{ data.enzyme.databaseIds.get("mibig") }}</a></li>
+                            <li>MIBiG: <a class="custom-link" target="_blank" href='https://bioregistry.io/mibig:{{ data.enzyme.databaseIds.get("mibig") }}'>{{ data.enzyme.databaseIds.get("mibig") }}</a></li>
                             {% endif %}
                         {% else %}
                             <li>No database crosslinks available</li>
