@@ -175,15 +175,14 @@ class IssueManager(BaseModel):
 A submission for a new entry was performed via the MITE Submission portal.
 Please find the file in the code block below.
 
-### Labels
-https://github.com/mite-standard/mite_data/labels/review
-
 ### Review requested
 {", ".join(self.reviewers)}
 
 ## TODO Reviewers
 
 See the [Reviewer Instructions](https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries) in the Wiki.
+
+You can visualize the MITE JSON file using the [MITE Entry Review Portal](mite.bioinformatics.nl/submission/review).
 
 Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
 
@@ -222,8 +221,6 @@ Please propose and discuss changes in the comments by adding the content in a co
 A submission for an existing entry was performed via the MITE Submission portal.
 Please find the file in the code block below.
 
-### Labels
-https://github.com/mite-standard/mite_data/labels/review
 
 ### Review requested
 {", ".join(self.reviewers)}
@@ -238,7 +235,9 @@ See the [Reviewer Instructions](https://github.com/mite-standard/mite_data/wiki/
 - [ ] References properly formatted
 - [ ] Automated validation check ID "BBBBBB..." replaced with real reviewer ID
 
-Please propose and discuss changes in the comments.
+You can visualize the MITE JSON file using the [MITE Entry Review Portal](mite.bioinformatics.nl/submission/review).
+
+Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
 
 ## Proposed changes (compared to current version in mite_data v{self.version})
 

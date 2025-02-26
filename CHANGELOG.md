@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] 26-02-2025
+
+### Added
+
+- Implement a page to visualize a MITE JSON file (for reviewing purposes)
+
+### Changed
+
+- MIBiG URL resolve via Bioregistry
+
 ## [1.2.1] 14-02-2025
 
 ### Bugfix

@@ -472,6 +472,48 @@ def submission_new() -> str | Response:
     return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
 
 
+@bp.route("/submission/review", methods=["GET", "POST"])
+def review() -> str:
+    """Render the review page
+
+    Returns:
+        The entry.html page as string
+    """
+
+    def _render(data: dict) -> dict:
+        """Run validations and render html-json"""
+        parser = MiteParser()
+        parser.parse_mite_json(data=data)
+        schema_manager = SchemaManager()
+        schema_manager.validate_mite(instance=parser.to_json())
+        return parser.to_html()
+
+    if request.method == "POST":
+        try:
+            json_data = ""
+            user_input = request.form.to_dict(flat=True)
+
+            if user_input.get("jsonText") and user_input.get("jsonText") != "":
+                json_data = json.loads(user_input.get("jsonText"))
+            elif "jsonFile" in request.files:
+                json_file = request.files["jsonFile"]
+                if json_file.filename.endswith(".json"):
+                    json_data = json.load(json_file)
+            else:
+                raise RuntimeError(
+                    f"Neither MITE file nor content provided. Please try again."
+                )
+
+            return render_template("entry.html", data=_render(json_data))
+
+        except Exception as e:
+            current_app.logger.critical(e)
+            flash(str(e))
+            return render_template("review.html")
+
+    return render_template("review.html")
+
+
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
 def peptidesmiles() -> str:
     """Render the peptide SMILES page
