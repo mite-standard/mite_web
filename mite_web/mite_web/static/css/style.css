@@ -61,3 +61,7 @@ a:not(.footer a) {
 pre, code {
     white-space: nowrap;
 }
+
+.mandatory {
+    color: red
+}

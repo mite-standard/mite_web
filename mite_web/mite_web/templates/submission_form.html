@@ -31,9 +31,9 @@
     {% endwith %}
     <div class="row my-4">
         <div class="col text-center mx-auto">
-            <h5>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h5>
-            <h6>Need to draw long peptides? Check out our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a>.</h6>
-            <h6>Want to canonicalize your SMILES? Try our <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>helper tool</b></a>.</h6>
+            <h6>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h6>
+            <h6>See also our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a> and <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>SMILES canonicalizer</b></a> tool.</h6>
+            <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
     <form method="post">
@@ -139,7 +139,7 @@
                     </div>
                 </div>
                 <div class="col">
-                    <h6 class="fw-semibold lh-2">Changelog</h6>
+                    <h6 class="fw-semibold lh-2">Changelog<span class="mandatory">*</span></h6>
                     <div class="form-floating">
                         <input id="changelog" name="changelog" class="form-control" aria-describedby="ChangeLogHelp" type="text" required>
                         <label for="changelog" class="form-label">Changelog</label>
@@ -149,7 +149,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <h6 class="fw-semibold lh-2">Math Challenge</h6>
+                    <h6 class="fw-semibold lh-2">Math Challenge<span class="mandatory">*</span></h6>
                     <div class="form-floating">
                         <input id="usersum" name="usersum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
                         <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
@@ -158,7 +158,7 @@
                     <p class="lead" id="usersum-error-message" style="color: red;"></p>
                 </div>
                 <div class="col">
-                    <h6 class="fw-semibold lh-2">Terms of Use</h6>
+                    <h6 class="fw-semibold lh-2">Terms of Use<span class="mandatory">*</span></h6>
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
                       <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>

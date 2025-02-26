@@ -48,7 +48,7 @@ function createHtmlEnzymeName(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
             <input id="enzyme_name" name="enzyme_name" class="form-control" aria-describedby="EnzymeNameHelp" type="text" value='${data?.enzyme?.name ?? ""}' required>
-            <label for="enzyme_name" class="form-label">Enzyme Name</label>
+            <label for="enzyme_name" class="form-label">Enzyme Name<span class="mandatory">*</span></label>
             <div id="EnzymeNameHelp" class="form-text">The common enzyme name (e.g. 'McjB')</div>
         </div>
     `;
@@ -60,7 +60,7 @@ function createHtmlEnzymeDescription(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
             <input id="enzyme_description" name="enzyme_description" class="form-control" aria-describedby="EnzymeDescriptionHelp" type="text" value='${data?.enzyme?.description ?? ""}' maxlength="50" required>
-            <label for="enzyme_description" class="form-label">Enzyme Type</label>
+            <label for="enzyme_description" class="form-label">Enzyme Type<span class="mandatory">*</span></label>
             <div id="EnzymeDescriptionHelp" class="form-text">Enzyme type description (e.g. 'O-methyltransferase')</div>
         </div>
     `;
@@ -72,19 +72,19 @@ function createHtmlEnzymeUniprot(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
             <input id="enzyme_uniprot" name="enzyme_uniprot" class="form-control" aria-describedby="EnzymeUniprotHelp" type="text" value='${data?.enzyme?.databaseIds?.uniprot ?? ""}'>
-            <label for="enzyme_description" class="form-label">Enzyme UniProt ID</label>
+            <label for="enzyme_description" class="form-label">Enzyme UniProt ID<span class="mandatory">**</span></label>
             <div id="EnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
         </div>
     `;
     container.insertAdjacentHTML('beforeend', entryHtml);
-}
+}require
 
 // Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeGenpept(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
             <input id="enzyme_genpept" name="enzyme_genpept" class="form-control" aria-describedby="EnzymeGenpeptHelp" type="text" value='${data?.enzyme?.databaseIds?.genpept ?? ""}'>
-            <label for="enzyme_genpept" class="form-label">Enzyme GenPept ID</label>
+            <label for="enzyme_genpept" class="form-label">Enzyme GenPept ID<span class="mandatory">**</span></label>
             <div id="EnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
         </div>
     `;
@@ -153,14 +153,14 @@ function insertReactionForm(container) {
     createHtmlReaction({}, index)
 }
 
-// Triggred by button to add an empty ReactionReferenceForm
+// Triggered by button to add an empty ReactionReferenceForm
 function insertReactionRefForm(index) {
     const container = document.getElementById(`reaction[${index}]ref-field`);
     const entryHtml = createHtmlRef("", "reaction_ref", `reaction[${index}]ref[]`);
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
-// Triggred by button to add an empty KnownReactionForm
+// Triggered by button to add an empty KnownReactionForm
 function insertKnownReactionForm(index) {
     const knownReactionElements = document.querySelectorAll('.knownreaction');
     const containerReaction = document.getElementById(`reaction[${index}]knownreaction-field`);
@@ -176,7 +176,7 @@ function createHtmlRef(data, className, jsonID) {
                 <div class="col">
                     <div class="form-floating">
                         <input type="text" name="${jsonID}" pattern="^doi:10.+" id="${jsonID}" class="form-control" aria-describedby="${jsonID}Help"  value="${data}" required>
-                        <label for="${jsonID}" class="form-label">Reference DOI</label>
+                        <label for="${jsonID}" class="form-label">Reference DOI<span class="mandatory">*</span></label>
                         <div id="${jsonID}Help" class="form-text">A Digital Object Identifier (DOI), must begin with 'doi:10.'</div>
                     </div>
                 </div>
@@ -205,14 +205,14 @@ function createHtmlAuxEnyzme(data = {}, index) {
                     <div class="col">
                          <div class="form-floating">
                             <input type="text" name="auxenzyme[${index}]name" id="auxenzyme[${index}]name" class="form-control" aria-describedby="AuxEnzymeNameHelp"  value='${data?.name ?? ""}' required>
-                            <label for="auxenzyme[${index}]name" class="form-label">Auxiliary Enyzme Name</label>
+                            <label for="auxenzyme[${index}]name" class="form-label">Auxiliary Enyzme Name<span class="mandatory">*</span></label>
                             <div id="AuxEnzymeNameHelp" class="form-text">The common enzyme name (e.g. 'McjC')</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
                             <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control" aria-describedby="AuxEnzymeDescriptionHelp" maxlength="50" value='${data?.description ?? ""}' required>
-                            <label for="auxenzyme[${index}]description" class="form-label">Auxiliary Enzyme Type</label>
+                            <label for="auxenzyme[${index}]description" class="form-label">Auxiliary Enzyme Type<span class="mandatory">*</span></label>
                             <div id="AuxEnzymeDescriptionHelp" class="form-text">Auxiliary enzyme type description (e.g. 'Peptidase')</div>
                         </div>
                     </div>
@@ -221,14 +221,14 @@ function createHtmlAuxEnyzme(data = {}, index) {
                     <div class="col">
                         <div class="form-floating">
                             <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control" aria-describedby="AuxEnzymeUniprotHelp"  value='${data?.databaseIds?.uniprot ?? ""}'>
-                            <label for="auxenzyme[${index}]uniprot" class="form-label">UniProt/UniParc ID</label>
+                            <label for="auxenzyme[${index}]uniprot" class="form-label">Enzyme UniProt ID<span class="mandatory">**</span></label>
                             <div id="AuxEnzymeUniprotHelp" class="form-text">The UniProtKB or UniParc ID</div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
                             <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control" aria-describedby="AuxEnzymeGenpeptHelp"  value='${data?.databaseIds?.genpept ?? ""}'>
-                            <label for="auxenzyme[${index}]genpept" class="form-label">GenPept ID</label>
+                            <label for="auxenzyme[${index}]genpept" class="form-label">Enzyme GenPept ID<span class="mandatory">**</span></label>
                             <div id="AuxEnzymeGenpeptHelp" class="form-text">The NCBI GenPept ID</div>
                         </div>
                     </div>
@@ -264,7 +264,7 @@ function createHtmlReaction(data = {}, index) {
                             <div class="col">
                                 <div class="form-floating">
                                     <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control" aria-describedby="ReactionSmartsHelp" type="text" value='${data?.reactionSMARTS ?? ""}' required>
-                                    <label for="reaction[${index}]smart" class="form-label">Reaction SMARTS</label>
+                                    <label for="reaction[${index}]smart" class="form-label">Reaction SMARTS<span class="mandatory">*</span></label>
                                     <div id="ReactionSmartsHelp" class="form-text">Reaction SMARTS describing substrate specificity and the introduced changes. Include any (covalent) co-factors the substrate(s)/product(s) may be attached to. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the reaction SMARTS.</div>
                                 </div>
                             </div>
@@ -273,7 +273,7 @@ function createHtmlReaction(data = {}, index) {
                             <div class="col">
                                 <div class="form-floating">
                                     <input id="reaction[${index}]description" name="reaction[${index}]description" class="form-control" aria-describedby="ReactionDescriptionHelp" type="text" value='${data?.description ?? ""}' required>
-                                    <label for="reaction[${index}]description" class="form-label">Description</label>
+                                    <label for="reaction[${index}]description" class="form-label">Description<span class="mandatory">*</span></label>
                                     <div id="ReactionDescriptionHelp" class="form-text">Brief description of the reaction</div>
                                 </div>
                             </div>
@@ -296,7 +296,7 @@ function createHtmlReaction(data = {}, index) {
                         </div>
                         <div class="row">
                             <div class="col">
-                                <h6 class="lh-2">Tailoring Reaction Controlled Vocabulary</h6>
+                                <h6 class="lh-2">Tailoring Reaction Controlled Vocabulary<span class="mandatory">*</span></h6>
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -311,7 +311,7 @@ function createHtmlReaction(data = {}, index) {
                         </div>
                         <div class="row">
                             <div class="col">
-                                <h6 class="lh-2">Experimental Evidence Qualifiers</h6>
+                                <h6 class="lh-2">Experimental Evidence Qualifiers<span class="mandatory">*</span></h6>
                             </div>
                         </div>
                         <div class="row mb-2">
@@ -485,7 +485,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                 <div class="col">
                     <div class="form-floating">
                         <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]substrate" id="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-control" aria-describedby="KnownReactionSubstrateHelp"  value='${data?.substrate ?? ""}' required>
-                        <label for="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-label">Substrate SMILES</label>
+                        <label for="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-label">Substrate SMILES<span class="mandatory">*</span></label>
                         <div id="KnownReactionSubstrateHelp" class="form-text">The reaction substrate(s) SMILES string. Covalently attached co-factors must be specified. Multiple substrates/non-covalent co-factors can be specified using dot notation ('substrate1.substrate2'). Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES.</div>
                     </div>
                 </div>
@@ -511,7 +511,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
                     </div>
                 </div>
                 <div class="col">
-                    <div class="form-text">Intermediate product?</div>
+                    <div class="form-text">Intermediate product?<span class="mandatory">*</span></div>
                 </div>
             </div>
             <div class="row mb-2">
@@ -573,7 +573,7 @@ function insertProductForm(container_id, data = "") {
             <div class="col">
                 <div class="form-floating">
                     <input type="text" name="${container_id}" id="${container_id}" class="form-control" aria-describedby="ReactionProductsHelp" value='${data}' required>
-                    <label for="${container_id}" class="form-label">Product SMILES</label>
+                    <label for="${container_id}" class="form-label">Product SMILES<span class="mandatory">*</span></label>
                     <div id="ReactionProductsHelp" class="form-text">A single reaction product SMILES string. Covalently attached co-factors must be specified. Dot notation is not permitted and each product/non-covalent co-factor must be specified in a separate field. Use <a rel="Ketcher Chemistry drawing program" href="https://lifescience.opensource.epam.com/KetcherDemoSA/index.html" class="custom-link" target="_blank"><b>Ketcher</b></a> to draw the SMILES.</div>
                 </div>
             </div>
