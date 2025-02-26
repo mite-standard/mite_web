@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.2.2] UNRELEASED
 
+### Added
+
+- Implement a page to visualize a MITE JSON file (for reviewing purposes)
+
 ### Changed
 
 - MIBiG URL resolve via Bioregistry
