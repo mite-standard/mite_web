@@ -182,7 +182,7 @@ Please find the file in the code block below.
 
 See the [Reviewer Instructions](https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries) in the Wiki.
 
-You can visualize the MITE JSON file using the [MITE Entry Review Portal](mite.bioinformatics.nl/submission/review).
+You can visualize the MITE JSON file using the [MITE Entry Review Portal](https://mite.bioinformatics.nl/submission/review).
 
 Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
 
@@ -235,7 +235,7 @@ See the [Reviewer Instructions](https://github.com/mite-standard/mite_data/wiki/
 - [ ] References properly formatted
 - [ ] Automated validation check ID "BBBBBB..." replaced with real reviewer ID
 
-You can visualize the MITE JSON file using the [MITE Entry Review Portal](mite.bioinformatics.nl/submission/review).
+You can visualize the MITE JSON file using the [MITE Entry Review Portal](https://mite.bioinformatics.nl/submission/review).
 
 Please propose and discuss changes in the comments by adding the content in a code block (between triple backticks, i.e. ` ``` `data` ``` `).
 
