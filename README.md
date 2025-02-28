@@ -1,6 +1,8 @@
 mite_web
 =========
 
+[![DOI](https://zenodo.org/badge/874302233.svg)](https://doi.org/10.5281/zenodo.14933931)
+
 This repository contains code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard and repository.
 
 The MITE web presence contains functionality to visualize data and receive submissions for new and existing MITE entries.
