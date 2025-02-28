@@ -7,7 +7,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.2.4] UNRELEASED
 
+### Changed
 
+- Updated metadata to refer to community-level collaboration documents
 
 ## [1.2.3] 27-02-2025
 
