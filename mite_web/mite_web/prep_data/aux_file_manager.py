@@ -31,7 +31,7 @@ import pandas as pd
 import requests
 from Bio import Entrez
 from pydantic import BaseModel
-from rdkit.Chem import PandasTools
+from rdkit.Chem import PandasTools, rdChemReactions
 
 Entrez.email = "your_email@example.com"  # must be set but does not have to be real
 
@@ -177,6 +177,7 @@ class AuxFileManager(Locations):
         smarts: dict of reaction SMARTS to be exported as csv file
         pickle_substrates: list with pre-calculated fingerprints for substructure search
         pickle_products: list with pre-calculated fingerprints for substructure search
+        pickle_smartsfps: dict with pre-calucated reaction smarts fingerprints for search
     """
 
     smiles: dict = {"mite_id": [], "substrates": [], "products": []}
@@ -186,6 +187,11 @@ class AuxFileManager(Locations):
     }
     pickle_substrates: list = []
     pickle_products: list = []
+    pickle_smartsfps: dict = {
+        "mite_id": [],
+        "reactionsmarts": [],
+        "reaction_fps": [],
+    }
 
     def run(self) -> None:
         """Call methods for preparation of auxiliary files"""
@@ -220,6 +226,7 @@ class AuxFileManager(Locations):
             self.prepare_smarts(mite_data)
 
         self.prepare_pickled_smiles()
+        self.prepare_pickled_smarts()
 
     def prepare_smiles(self, data: dict) -> None:
         """Create a table of SMILES strings contained in MITE entries
@@ -246,7 +253,7 @@ class AuxFileManager(Locations):
             self.smarts["reactionsmarts"].append(f"{reaction["reactionSMARTS"]}")
 
     def prepare_pickled_smiles(self) -> None:
-        """Create a pickle file that contains a pandas df with pre-calculated SMILES fingerprints"""
+        """Create a pickle file with pre-calculated SMILES fingerprints"""
         df = pd.DataFrame(self.smiles)
 
         PandasTools.AddMoleculeColumnToFrame(
@@ -262,6 +269,18 @@ class AuxFileManager(Locations):
         self.pickle_substrates = list(df["ROMol_substrates"])
         self.pickle_products = list(df["ROMol_products"])
 
+    def prepare_pickled_smarts(self) -> None:
+        """Create a pickle file of a dict with pre-calculated reaction SMARTS fingerprints"""
+        self.pickle_smartsfps["mite_id"] = self.smarts.get("mite_id")
+        self.pickle_smartsfps["reactionsmarts"] = self.smarts.get("reactionsmarts")
+
+        for smarts in self.smarts.get("reactionsmarts"):
+            self.pickle_smartsfps["reaction_fps"].append(
+                rdChemReactions.CreateStructuralFingerprintForReaction(
+                    rdChemReactions.ReactionFromSmarts(smarts)
+                )
+            )
+
     def dump_files(self) -> None:
         """Dump the assembled files"""
         df_smiles = pd.DataFrame(self.smiles)
@@ -275,3 +294,6 @@ class AuxFileManager(Locations):
 
         with open(self.target.joinpath("product_list.pickle"), "wb") as outfile:
             pickle.dump(obj=self.pickle_products, file=outfile)
+
+        with open(self.target.joinpath("reaction_fps.pickle"), "wb") as outfile:
+            pickle.dump(obj=self.pickle_smartsfps, file=outfile)
