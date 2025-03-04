@@ -7,9 +7,14 @@
             <h1 class="fw-semibold lh-2">Repository</h1>
         </div>
     </div>
+    <div class="row my-3">
+        <div class="col">
+            <h3 class="fw-semibold lh-2">Search</h3>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
     <div class="row">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
         <div class="card card-body">
             <div class="col text-center mx-auto">
                 <h4 class="fw-semibold lh-2">Error during search!</h4>
@@ -20,9 +25,9 @@
                 </ul>
             </div>
         </div>
-        {% endif %}
-        {% endwith %}
     </div>
+    {% endif %}
+    {% endwith %}
     <form method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="row d-flex align-items-center mb-3">
@@ -39,10 +44,22 @@
                 <div class="form-text" id="substructure_descr">Search the MITE repository for a certain substructure (e.g. 'C1CCCCC1' or '[c]-[X]')</div>
             </div>
             <div class="col">
+                <label for="reaction_query" class="form-label">Search for a reaction</label>
+                <div class="input-group">
+                    <input type="text" name="reaction_query" id="reaction_query" class="form-control" aria-label="Insert your query reaction SMARTS" aria-describedby="reaction_descr" placeholder="Insert reaction SMARTS query">
+                    <span><input type="number" aria-label="similarity" id="similarity" name="similarity" class="form-control" value="0.9" min="0.1" max="1.0" step="0.1"></span>
+                    <span class="input-group-text">Similarity score</span>
+                    <button class="btn btn-outline-secondary" type="submit" name="action" value="reaction">Search</button>
+                </div>
+                <div class="form-text" id="reaction_descr">Search the MITE repository for a certain reaction using a reaction SMARTS</div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-center mb-3">
+            <div class="col">
                 <label for="sequence" class="form-label">Search for a protein sequence</label>
                 <div class="input-group">
                     <input type="text" aria-label="sequence" id="sequence" name="sequence" class="form-control" aria-describedby="blast_descr" placeholder="Insert your query protein sequence">
-                    <input type="number" aria-label="e_val" id="e_val" name="e_val" class="form-control" value="10">
+                    <span><input type="number" aria-label="e_val" id="e_val" name="e_val" class="form-control" value="10"></span>
                     <span class="input-group-text">E-value</span>
                     <button class="btn btn-outline-secondary" type="submit" name="action" value="blast">BLAST!</button>
                 </div>
@@ -50,60 +67,11 @@
             </div>
         </div>
     </form>
-    {% if substructure_results is defined %}
-    <hr>
-    <table id="substructure_table" class="my-3 table-striped" data-toggle="table" data-search="true">
-        <thead>
-            <tr>
-                <th scope="col" data-sortable="true" data-field="index">Match #</th>
-                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
-                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
-                <th scope="col" data-sortable="true" data-field="reaction_example">Reaction Example</th>
-                <th scope="col" data-sortable="false" data-field="query">Matches Query</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for key, value in substructure_results.items() %}
-                <tr>
-                    <th scope="row">{{ key }}</th>
-                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=value.accession) }}">{{ value.accession }}</a></td>
-                    <td>{{ value.reaction }}</td>
-                    <td>{{ value.example }}</td>
-                    <td>{{ value.query }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <hr>
-    {% endif %}
-    {% if blast_results is defined %}
-    <hr>
-    <table id="blast_table" class="my-3 table-striped" data-toggle="table" data-search="true">
-        <thead>
-            <tr>
-                <th scope="col" data-sortable="true" data-field="index">Match #</th>
-                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
-                <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
-                <th scope="col" data-sortable="true" data-field="similarity">Sequence Similarity (%)</th>
-                <th scope="col" data-sortable="true" data-field="alignment">Alignment Score</th>
-                <th scope="col" data-sortable="true" data-field="bitscore">Bit-Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for key, value in blast_results.items() %}
-                <tr>
-                    <th scope="row">{{ key }}</th>
-                    <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=value.accession) }}">{{ value.accession }}</a></td>
-                    <td>{{ value.evalue }}</td>
-                    <td>{{ value.sequence_similarity }}</td>
-                    <td>{{ value.alignment_score }}</td>
-                    <td>{{ value.bit_score }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <hr>
-    {% endif %}
+    <div class="row mt-4">
+        <div class="col">
+            <h3 class="fw-semibold lh-2">Overview</h3>
+        </div>
+    </div>
     <div class="row">
         <div class="col">
             <div id="search-count" class="lead"></div>
@@ -113,6 +81,21 @@
         <thead>
             <tr>
                 <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
+                {% set first_key, first_val = entries.items() | first %}
+                {% if "example" in first_val %}
+                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
+                <th scope="col" data-sortable="true" data-field="reaction_example">Reaction Example</th>
+                {% endif %}
+                {% if "sim_score" in first_val %}
+                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
+                <th scope="col" data-sortable="true" data-field="sim_score">Similarity Score</th>
+                {% endif %}
+                {% if "evalue" in first_val %}
+                <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
+                <th scope="col" data-sortable="true" data-field="similarity">Sequence Sim. (%)</th>
+                <th scope="col" data-sortable="true" data-field="alignment">Alignment Score</th>
+                <th scope="col" data-sortable="true" data-field="bitscore">Bit-Score</th>
+                {% endif %}
                 <th scope="col" data-sortable="true" data-field="status">Status</th>
                 <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
                 <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
@@ -125,6 +108,20 @@
             {% for key, value in entries.items() %}
                 <tr>
                     <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
+                    {% if "example" in first_val %}
+                    <td>{{ value.reaction }}</td>
+                    <td>{{ value.example }}</td>
+                    {% endif %}
+                    {% if "sim_score" in first_val %}
+                    <td>{{ value.reaction }}</td>
+                    <td>{{ value.sim_score }}</td>
+                    {% endif %}
+                    {% if "evalue" in first_val %}
+                    <td>{{ value.evalue }}</td>
+                    <td>{{ value.sequence_similarity }}</td>
+                    <td>{{ value.alignment_score }}</td>
+                    <td>{{ value.bit_score }}</td>
+                    {% endif %}
                     <td>{{ value.status | safe }}</td>
                     <td>{{ value.name }}</td>
                     <td>{{ value.tailoring }}</td>
