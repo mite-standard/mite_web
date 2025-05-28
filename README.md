@@ -37,7 +37,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Install BLAST+ by running `sudo apt-get install ncbi-blast+`
 - Install Pymol by running `sudo apt-get install pymol`
 - Run the script `hatch run dev:python mite_web/prepare_mite_data.py` to populate the application with data
-- Run the script `./run_pymol.sh` to populate the application with data
+- Run the script `./run_pymol.sh` to generate enzyme visualizations
 - Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
 
 ## Config-file

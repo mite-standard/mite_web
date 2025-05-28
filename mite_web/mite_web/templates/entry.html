@@ -4,15 +4,23 @@
 <div class="container-fluid mt-2">
     {% if ret_acc %}
     <div class="row mb-2">
-        <div class="col d-flex justify-content-start align-items-center">
+        {% if ret_acc == "MITE0000000" %}
+        <div class="col-2 d-flex justify-content-start align-items-center"></div>
+        {% else %}
+        <div class="col-2 d-flex justify-content-start align-items-center">
             {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
-        <div class="col d-flex justify-content-center align-items-center">
+        {% endif %}
+        <div class="col-8 d-flex justify-content-center align-items-center">
             <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
         </div>
-        <div class="col d-flex justify-content-end align-items-center">
+        {% if max_entry_reached %}
+            <div class="col-2 d-flex justify-content-start align-items-center"></div>
+        {% else %}
+        <div class="col-2 d-flex justify-content-end align-items-center">
             {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
         </div>
+        {% endif %}
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
