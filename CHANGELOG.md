@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Fixed
 
 - Frontend fixes
-- Nginx vulnerability fix
+- Gunicorn vulnerability fix
 
 ## [1.3.0] 04-03-2025
 
