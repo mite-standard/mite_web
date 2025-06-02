@@ -23,6 +23,7 @@ SOFTWARE.
 
 import json
 import logging
+import os
 import sys
 from importlib import metadata
 from pathlib import Path

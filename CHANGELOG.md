@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] 02-06-2025
+
+### Fixed
+
+- Frontend fixes
+- Gunicorn vulnerability fix
+
 ## [1.3.0] 04-03-2025
 
 ### Added

@@ -67,6 +67,7 @@ class IssueManager(BaseModel):
         "@Galn3x",
         "@iaco-vtt",
         "@marnixmedema",
+        "@MartinBaunach",
         "@martinklapper",
         "@Q-Bach",
         "@SimonSieberUZH",
