@@ -17,6 +17,7 @@
         <div class="col-auto">
             <div class="list-group">
                 <a href="{{ url_for('routes.download_identifier', identifier='mite_zip') }}"><button type="button" class="list-group-item list-group-item-action"><i class="bi bi-download"></i> Download all active (non-retired) MITE entries</button></a>
+                <a href="{{ url_for('routes.download_identifier', identifier='mite_overview') }}"><button type="button" class="list-group-item list-group-item-action"><i class="bi bi-download"></i> Download overview table (.csv)</button></a>
                 <a href="{{ url_for('routes.download_identifier', identifier='smarts') }}"><button type="button" class="list-group-item list-group-item-action"><i class="bi bi-download"></i> Download all reaction SMARTS</button></a>
                 <a href="{{ url_for('routes.download_identifier', identifier='smiles') }}"><button type="button" class="list-group-item list-group-item-action"><i class="bi bi-download"></i> Download all substrate/product SMILES</button></a>
                 <a href="{{ url_for('routes.download_identifier', identifier='blastlib') }}"><button type="button" class="list-group-item list-group-item-action"><i class="bi bi-download"></i> Download the MITE BLAST DB</button></a>

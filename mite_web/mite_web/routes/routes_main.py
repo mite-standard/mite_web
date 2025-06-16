@@ -150,5 +150,10 @@ def download_identifier(identifier: str) -> Response | None:
             Path(__file__).parent.parent.joinpath("data/download/mite_concat.fasta"),
             as_attachment=True,
         )
+    elif identifier == "mite_overview":
+        return send_file(
+            Path(__file__).parent.parent.joinpath("data/summary.csv"),
+            as_attachment=True,
+        )
     else:
         return

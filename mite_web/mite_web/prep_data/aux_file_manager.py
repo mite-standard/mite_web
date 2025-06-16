@@ -29,7 +29,7 @@ from pathlib import Path
 
 import pandas as pd
 import requests
-from Bio import Entrez
+from Bio import Entrez, SeqIO
 from pydantic import BaseModel
 from rdkit.Chem import PandasTools, rdChemReactions
 
@@ -57,10 +57,26 @@ class SummaryManager(Locations):
 
     Attributes:
         summary: dict to assemble data for later dump
+        csv: dict to construct table for dump
         active_files: list of active mite entries (non-retired)
     """
 
     summary: dict = {"entries": {}}
+    csv: dict = {
+        "accession": [],
+        "status": [],
+        "name": [],
+        "tailoring": [],
+        "description": [],
+        "reaction_description": [],
+        "organism": [],
+        "domain": [],
+        "kingdom": [],
+        "phylum": [],
+        "class": [],
+        "order": [],
+        "family": [],
+    }
     active_files: list = []
 
     def run(self) -> None:
@@ -87,10 +103,13 @@ class SummaryManager(Locations):
             if mite_data.get("status") == "active":
                 self.active_files.append(f"{mite_data.get("accession")}.json")
 
+            origin = self.get_organism(data=mite_data)
+
             self.summary["entries"][mite_data.get("accession")] = {
                 "status": '<i class="bi bi-check-circle-fill"></i>'
                 if mite_data.get("status") == "active"
                 else '<i class="bi bi-circle"></i>',
+                "status_plain": mite_data.get("status"),
                 "name": mite_data.get("enzyme", {}).get("name"),
                 "tailoring": "|".join(
                     sorted(
@@ -101,33 +120,76 @@ class SummaryManager(Locations):
                         }
                     )
                 ),
-                "description": mite_data.get("enzyme", {}).get("description", "N/A"),
-                "reaction_description": mite_data["reactions"][0].get(
-                    "description", "No description available"
+                "description": mite_data.get("enzyme", {}).get(
+                    "description", "No description"
                 ),
-                "organism": self.get_organism(data=mite_data),
+                "reaction_description": mite_data["reactions"][0].get(
+                    "description", "No description"
+                ),
+                "organism": origin["organism"],
+                "domain": origin["domain"],
+                "kingdom": origin["kingdom"],
+                "phylum": origin["phylum"],
+                "class": origin["class"],
+                "order": origin["order"],
+                "family": origin["family"],
             }
 
         keys = sorted(self.summary.get("entries").keys())
         self.summary = {"entries": {key: self.summary["entries"][key] for key in keys}}
 
+        for key, val in self.summary["entries"].items():
+            self.csv["accession"].append(key)
+            self.csv["status"].append(val["status_plain"])
+            self.csv["name"].append(val["name"])
+            self.csv["tailoring"].append(val["tailoring"])
+            self.csv["description"].append(val["description"])
+            self.csv["reaction_description"].append(val["reaction_description"])
+            self.csv["organism"].append(val["organism"])
+            self.csv["domain"].append(val["domain"])
+            self.csv["kingdom"].append(val["kingdom"])
+            self.csv["phylum"].append(val["phylum"])
+            self.csv["class"].append(val["class"])
+            self.csv["order"].append(val["order"])
+            self.csv["family"].append(val["family"])
+
     @staticmethod
-    def get_organism(data: dict) -> str:
+    def get_organism(data: dict) -> dict:
         """Download the organism identifier
 
         Arguments:
             data: mite entry
 
         Returns:
-            A string of the organism
+            A dict of organism info
         """
+        origin = {
+            "organism": "Not found",
+            "domain": "Not found",
+            "kingdom": "Not found",
+            "phylum": "Not found",
+            "class": "Not found",
+            "order": "Not found",
+            "family": "Not found",
+        }
+
         if acc := data["enzyme"]["databaseIds"].get("genpept"):
             handle = Entrez.efetch(db="protein", id=acc, rettype="gb", retmode="text")
-            record = handle.read()
+            record = SeqIO.read(handle, "genbank")
+            try:
+                origin["domain"] = record.annotations.get("taxonomy")[0] or "Not found"
+                origin["kingdom"] = record.annotations.get("taxonomy")[1] or "Not found"
+                origin["phylum"] = record.annotations.get("taxonomy")[2] or "Not found"
+                origin["class"] = record.annotations.get("taxonomy")[3] or "Not found"
+                origin["order"] = record.annotations.get("taxonomy")[4] or "Not found"
+                origin["family"] = record.annotations.get("taxonomy")[5] or "Not found"
+                origin["organism"] = record.annotations.get("organism") or "Not found"
+            except Exception as e:
+                logger.warning(
+                    f"Did not find organism information for '{acc}' ({data["accession"]}): {e!s}"
+                )
             handle.close()
-            for line in record.splitlines():
-                if line.startswith("  ORGANISM"):
-                    return line.split("  ORGANISM  ")[-1]
+            return origin
 
         if acc := data["enzyme"]["databaseIds"].get("uniprot"):
             if (
@@ -137,18 +199,33 @@ class SummaryManager(Locations):
             ).status_code == 200 or (
                 response := requests.get(f"https://rest.uniprot.org/uniparc/{acc}.json")
             ).status_code == 200:
-                data = response.json()
-                return (
-                    data.get("organism", {}).get("scientificName", None)
-                    or "Could not resolve organism"
-                )
+                content = response.json()
+                record = content.get("organism", {}).get("lineage", None)
+                try:
+                    origin["domain"] = record[0] or "Not found"
+                    origin["kingdom"] = record[1] or "Not found"
+                    origin["phylum"] = record[2] or "Not found"
+                    origin["class"] = record[3] or "Not found"
+                    origin["order"] = record[4] or "Not found"
+                    origin["family"] = record[5] or "Not found"
+                    origin["organism"] = (
+                        content.get("organism", {}).get("scientificName") or "Not found"
+                    )
+                except Exception as e:
+                    logger.warning(
+                        f"Did not find organism information for '{acc}' ({data["accession"]}): {e!s}"
+                    )
+                return origin
 
-        return "Could not resolve organism"
+        return origin
 
     def dump_files(self):
         """Dump files to disk"""
         with open(self.target.joinpath("summary.json"), "w") as outfile:
             outfile.write(json.dumps(self.summary, indent=2, ensure_ascii=False))
+
+        df = pd.DataFrame(self.csv)
+        df.to_csv(self.target.joinpath("summary.csv"))
 
         self.download.mkdir(parents=True, exist_ok=True)
 
