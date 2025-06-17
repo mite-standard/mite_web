@@ -377,33 +377,27 @@ function createHtmlReaction(data = {}, index, form_vals) {
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="lh-2">Tailoring Reaction Controlled Vocabulary<span class="mandatory">*</span></h6>
-                            </div>
-                        </div>
                         <div class="row mb-2">
                             <div class="col">
-                                <div class="form-group">
-                                    <div class="card card-body">
-                                        <div class="row" id="reaction[${index}]tailoring-field">
+                                <div class="card card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-text mb-2">Tailoring reaction terms<span class="mandatory">*</span></div>
                                         </div>
                                     </div>
+                                    <div class="row" id="reaction[${index}]tailoring-field"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <h6 class="lh-2">Experimental Evidence Qualifiers<span class="mandatory">*</span></h6>
-                            </div>
-                        </div>
                         <div class="row mb-2">
                             <div class="col">
-                                <div class="form-group">
-                                    <div class="card card-body">
-                                        <div class="row" id="reaction[${index}]evidencecode-field">
+                                <div class="card card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-text mb-2">Experimental evidence qualifiers<span class="mandatory">*</span></div>
                                         </div>
                                     </div>
+                                    <div class="row" id="reaction[${index}]evidencecode-field"></div>
                                 </div>
                             </div>
                         </div>
@@ -444,12 +438,16 @@ function createHtmlReaction(data = {}, index, form_vals) {
     for (let tailoring of form_vals.tailoring) {
         if (data.tailoring && data.tailoring.includes(tailoring) ) {
             const entryHtml = document.createElement('div');
-            entryHtml.classList.add('col');
+            entryHtml.classList.add('col-3');
+            entryHtml.classList.add('form-text');
+            entryHtml.classList.add('text-break');
             entryHtml.innerHTML = addTickedCheckbox(`reaction[${index}]tailoring[]`, tailoring);
             containerTailoring.appendChild(entryHtml)
         } else {
             const entryHtml = document.createElement('div');
-            entryHtml.classList.add('col');
+            entryHtml.classList.add('col-3');
+            entryHtml.classList.add('form-text');
+            entryHtml.classList.add('text-break');
             entryHtml.innerHTML =  addUntickedCheckbox(`reaction[${index}]tailoring[]`, tailoring);
             containerTailoring.appendChild(entryHtml)
         }
@@ -459,12 +457,16 @@ function createHtmlReaction(data = {}, index, form_vals) {
     for (let evidence of form_vals.evidence) {
         if (data.evidence?.evidenceCode && data.evidence.evidenceCode.includes(evidence) ) {
             const entryHtml = document.createElement('div');
-            entryHtml.classList.add('col');
+            entryHtml.classList.add('col-3');
+            entryHtml.classList.add('form-text');
+            entryHtml.classList.add('text-break');
             entryHtml.innerHTML = addTickedCheckbox(`reaction[${index}]evidencecode[]`, evidence);
             containerEvidenceCode.appendChild(entryHtml);
         } else {
             const entryHtml = document.createElement('div');
-            entryHtml.classList.add('col');
+            entryHtml.classList.add('col-3');
+            entryHtml.classList.add('form-text');
+            entryHtml.classList.add('text-break');
             entryHtml.innerHTML =  addUntickedCheckbox(`reaction[${index}]evidencecode[]`, evidence);
             containerEvidenceCode.appendChild(entryHtml);
         }
