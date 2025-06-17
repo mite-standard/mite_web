@@ -135,6 +135,10 @@ class ProcessingHelper(BaseModel):
                     if data.get("enzyme_wikidata", [""])[0] != ""
                     else None,
                 },
+                "cofactors": {
+                    "organic": data.get(f"enzyme-cofactors-organic-check[]", []),
+                    "inorganic": data.get(f"enzyme-cofactors-inorganic-check[]", []),
+                },
             },
             "reactions": [],
         }

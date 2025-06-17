@@ -72,6 +72,11 @@
                 </div>
                 <div class="row mb-2">
                     <div class="col">
+                        <div id="enzyme-cofactors"></div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
                         <div id="enzyme-ref"></div>
                         <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
                     </div>
@@ -200,6 +205,7 @@
         createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), data)
         createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), data)
         createHtmlEnzymeWikidata(document.getElementById('enzyme-wikidata'), data)
+        createHtmlEnzymeCofactors(document.getElementById('enzyme-cofactors'), data, formVals)
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), data)
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
         populateReactionForm(document.getElementById('reactions'), data, formVals)

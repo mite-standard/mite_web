@@ -67,6 +67,8 @@ class SummaryManager(Locations):
         "status": [],
         "name": [],
         "tailoring": [],
+        "cofactors_organic": [],
+        "cofactors_inorganic": [],
         "description": [],
         "reaction_description": [],
         "organism": [],
@@ -120,6 +122,8 @@ class SummaryManager(Locations):
                         }
                     )
                 ),
+                "cofactors_organic": "N/A",
+                "cofactors_inorganic": "N/A",
                 "description": mite_data.get("enzyme", {}).get(
                     "description", "No description"
                 ),
@@ -135,6 +139,24 @@ class SummaryManager(Locations):
                 "family": origin["family"],
             }
 
+            if (
+                val := mite_data.get("enzyme", {})
+                .get("cofactors", {})
+                .get("organic", [])
+            ):
+                self.summary["entries"][mite_data.get("accession")][
+                    "cofactors_organic"
+                ] = "|".join(sorted(set(val)))
+
+            if (
+                val := mite_data.get("enzyme", {})
+                .get("cofactors", {})
+                .get("inorganic", [])
+            ):
+                self.summary["entries"][mite_data.get("accession")][
+                    "cofactors_inorganic"
+                ] = "|".join(sorted(set(val)))
+
         keys = sorted(self.summary.get("entries").keys())
         self.summary = {"entries": {key: self.summary["entries"][key] for key in keys}}
 
@@ -143,6 +165,8 @@ class SummaryManager(Locations):
             self.csv["status"].append(val["status_plain"])
             self.csv["name"].append(val["name"])
             self.csv["tailoring"].append(val["tailoring"])
+            self.csv["cofactors_organic"].append(val["cofactors_organic"])
+            self.csv["cofactors_inorganic"].append(val["cofactors_inorganic"])
             self.csv["description"].append(val["description"])
             self.csv["reaction_description"].append(val["reaction_description"])
             self.csv["organism"].append(val["organism"])

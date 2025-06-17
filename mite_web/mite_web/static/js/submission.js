@@ -115,6 +115,70 @@ function createHtmlEnzymeWikidata(container, data = {}) {
     container.insertAdjacentHTML('beforeend', entryHtml);
 }
 
+// Populate a unique field, triggered by DOMContentLoaded event
+function createHtmlEnzymeCofactors(container, data = {}, form_vals) {
+    const entryHtml = `
+        <div class="card card-body">
+            <div class="row d-flex align-items-center">
+                <div class="col">
+                    <div class="form-text mb-2">Inorganic cofactors</div>
+                </div>
+                <div class="col-auto">
+                    <button class="accordion-button-info collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#enzyme-cofactors-inorganic" aria-controls="enzyme-cofactors-inorganic" aria-expanded="false"></button>
+                </div>
+            </div>
+            <div class="row collapse" id="enzyme-cofactors-inorganic"></div>
+            <div class="row d-flex align-items-center mt-2">
+                <div class="col">
+                    <div class="form-text mb-2">Organic cofactors</div>
+                </div>
+                <div class="col-auto">
+                    <button class="accordion-button-info collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#enzyme-cofactors-organic" aria-controls="enzyme-cofactors-organic" aria-expanded="false"></button>
+                </div>
+            </div>
+            <div class="row collapse" id="enzyme-cofactors-organic"></div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', entryHtml);
+
+    const containerInorganic = document.getElementById(`enzyme-cofactors-inorganic`);
+    for (let inorg of form_vals.inorganic) {
+        if (data.enzyme.cofactors && data.enzyme.cofactors.inorganic && data.enzyme.cofactors.inorganic.includes(inorg) ) {
+            const checkHtmlInorg = document.createElement('div');
+            checkHtmlInorg.classList.add('col-1');
+            checkHtmlInorg.classList.add('form-text');
+            checkHtmlInorg.innerHTML = addTickedCheckbox(`enzyme-cofactors-inorganic-check[]`, inorg);
+            containerInorganic.appendChild(checkHtmlInorg)
+        } else {
+            const checkHtmlInorg = document.createElement('div');
+            checkHtmlInorg.classList.add('col-1');
+            checkHtmlInorg.classList.add('form-text');
+            checkHtmlInorg.innerHTML =  addUntickedCheckbox(`enzyme-cofactors-inorganic-check[]`, inorg);
+            containerInorganic.appendChild(checkHtmlInorg)
+        }
+    }
+
+    const containerOrganic = document.getElementById(`enzyme-cofactors-organic`);
+    for (let org of form_vals.organic) {
+        if (data.enzyme.cofactors && data.enzyme.cofactors.organic && data.enzyme.cofactors.organic.includes(org) ) {
+            const checkHtmlOrg = document.createElement('div');
+            checkHtmlOrg.classList.add('col-3');
+            checkHtmlOrg.classList.add('text-break');
+            checkHtmlOrg.classList.add('form-text');
+            checkHtmlOrg.innerHTML = addTickedCheckbox(`enzyme-cofactors-organic-check[]`, org);
+            containerOrganic.appendChild(checkHtmlOrg)
+        } else {
+            const checkHtmlOrg = document.createElement('div');
+            checkHtmlOrg.classList.add('col-3');
+            checkHtmlOrg.classList.add('text-break');
+            checkHtmlOrg.classList.add('form-text');
+            checkHtmlOrg.innerHTML =  addUntickedCheckbox(`enzyme-cofactors-organic-check[]`, org);
+            containerOrganic.appendChild(checkHtmlOrg)
+        }
+    }
+}
+
+
 // Populate the enzyme reference forms, triggered by DOMContentLoaded event
 function populateEnzymeRefForm(container, data) {
     if (data.enzyme?.references) {

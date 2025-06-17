@@ -56,6 +56,35 @@
                         </ul>
                     </td>
                 </tr>
+                {% if data.enzyme.cofactors is defined %}
+                <tr>
+                    <td><b>Cofactors</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                            {% if data.enzyme.cofactors.organic is defined %}
+                            <li><b>Organic</b></li>
+                            <li>
+                                <ul class="list-unstyled mb-0">
+                                {% for row in data.enzyme.cofactors.organic %}
+                                    <li>{{ row }}</li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                            {% if data.enzyme.cofactors.inorganic is defined %}
+                            <li><b>Inorganic</b></li>
+                            <li>
+                                <ul class="list-unstyled mb-0">
+                                {% for row in data.enzyme.cofactors.inorganic %}
+                                    <li>{{ row }}</li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
                 <tr>
                     <td><b>References</b></td>
                     <td>
