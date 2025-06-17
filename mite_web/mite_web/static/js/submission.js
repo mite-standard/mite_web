@@ -77,7 +77,7 @@ function createHtmlEnzymeUniprot(container, data = {}) {
         </div>
     `;
     container.insertAdjacentHTML('beforeend', entryHtml);
-}require
+}
 
 // Populate a unique field, triggered by DOMContentLoaded event
 function createHtmlEnzymeGenpept(container, data = {}) {
@@ -125,11 +125,11 @@ function populateAuxEnzymeForm(container, data) {
 }
 
 // Populate the Reaction forms, triggered by DOMContentLoaded event
-function populateReactionForm(container, data) {
+function populateReactionForm(container, data, form_vals) {
     if (data.reactions) {
         data.reactions.forEach(entry => {
             const index = container.children.length;
-            createHtmlReaction(entry, index)
+            createHtmlReaction(entry, index, form_vals)
         });
     }
 }
@@ -148,9 +148,9 @@ function insertAuxEnzymeForm(container) {
 }
 
 // Triggered by button to add an empty ReactionForm
-function insertReactionForm(container) {
+function insertReactionForm(container, form_vals) {
     const index = container.children.length;
-    createHtmlReaction({}, index)
+    createHtmlReaction({}, index, form_vals);
 }
 
 // Triggered by button to add an empty ReactionReferenceForm
@@ -239,7 +239,7 @@ function createHtmlAuxEnyzme(data = {}, index) {
 }
 
 // Creates the reaction field; index is used to keep track of the instance that is opened
-function createHtmlReaction(data = {}, index) {
+function createHtmlReaction(data = {}, index, form_vals) {
     const reactionEntry = document.createElement('div')
     reactionEntry.classList.add('reaction')
     reactionEntry.innerHTML = `
@@ -357,40 +357,8 @@ function createHtmlReaction(data = {}, index) {
     const container = document.getElementById('reactions');
     container.appendChild(reactionEntry);
 
-    let tailoringArray = [
-        "Acetylation",
-        "Acylation",
-        "Amination",
-        "Biaryl bond formation",
-        "Carboxylation",
-        "Cyclization",
-        "Deamination",
-        "Decarboxylation",
-        "Dehydration",
-        "Dehydrogenation",
-        "Demethylation",
-        "Dioxygenation",
-        "Epimerization",
-        "Glycosylation",
-        "Halogenation",
-        "Heterocyclization",
-        "Hydrolysis",
-        "Hydroxylation",
-        "Macrolactam formation",
-        "Methylation",
-        "Monooxygenation",
-        "Oxidation",
-        "Phosphorylation",
-        "Prenylation",
-        "Reduction",
-        "Ring contraction",
-        "Ring expansion",
-        "Sulfation",
-        "Sulfonation",
-        "Other"
-    ];
     const containerTailoring = document.getElementById(`reaction[${index}]tailoring-field`);
-    for (let tailoring of tailoringArray) {
+    for (let tailoring of form_vals.tailoring) {
         if (data.tailoring && data.tailoring.includes(tailoring) ) {
             const entryHtml = document.createElement('div');
             entryHtml.classList.add('col');
@@ -404,18 +372,8 @@ function createHtmlReaction(data = {}, index) {
         }
     }
 
-    let evidenceCodeArray = [
-        "Chemical probe",
-        "Heterologous expression",
-        "Inference from genomic data and chemical structure",
-        "In vitro assay",
-        "Isothermal titration calorimetry",
-        "Knock-out studies",
-        "Site-directed mutagenesis",
-        "Surface plasmon resonance"
-    ]
     const containerEvidenceCode = document.getElementById(`reaction[${index}]evidencecode-field`);
-    for (let evidence of evidenceCodeArray) {
+    for (let evidence of form_vals.evidence) {
         if (data.evidence?.evidenceCode && data.evidence.evidenceCode.includes(evidence) ) {
             const entryHtml = document.createElement('div');
             entryHtml.classList.add('col');

@@ -51,6 +51,17 @@ from mite_web.config.extensions import mail
 from mite_web.routes import bp
 
 
+def get_schema_vals() -> dict:
+    """Extract values from MITE JSON Schema"""
+    with open(SchemaManager().entry) as f:
+        schema = json.load(f)
+
+    return {
+        "evidence": schema["$defs"]["evidence"]["enum"],
+        "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
+    }
+
+
 class ProcessingHelper(BaseModel):
     """Contains methods to help processing the data
 
@@ -415,11 +426,19 @@ def submission_existing(mite_acc: str) -> str | Response:
                 x=x,
                 y=y,
                 initial="false",
+                form_vals=get_schema_vals(),
             )
 
     x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
 
-    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
+    return render_template(
+        "submission_form.html",
+        data=data,
+        x=x,
+        y=y,
+        initial="true",
+        form_vals=get_schema_vals(),
+    )
 
 
 @bp.route("/submission/new", methods=["GET", "POST"])
@@ -456,6 +475,7 @@ def submission_new() -> str | Response:
                 x=x,
                 y=y,
                 initial="false",
+                form_vals=get_schema_vals(),
             )
 
     x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
@@ -469,7 +489,14 @@ def submission_new() -> str | Response:
         ],
     }
 
-    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
+    return render_template(
+        "submission_form.html",
+        data=data,
+        x=x,
+        y=y,
+        initial="true",
+        form_vals=get_schema_vals(),
+    )
 
 
 @bp.route("/submission/review", methods=["GET", "POST"])

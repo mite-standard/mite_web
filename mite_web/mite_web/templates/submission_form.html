@@ -107,7 +107,7 @@
                 <div class="row mb-2">
                     <div class="col">
                         <div id="reactions"></div>
-                        <button type="button" class="btn btn-secondary my-2" onclick="insertReactionForm(document.getElementById('reactions'))">Add Reaction</button>
+                        <button type="button" class="btn btn-secondary my-2" id="add-reaction-btn">Add Reaction</button>
                     </div>
                 </div>
             </div>
@@ -179,17 +179,26 @@
     document.querySelector('form').addEventListener('submit', function(event) {
         validateSumInput(event, {{ x }}, {{ y }});
     });
+
+    const formVals = {{ form_vals | tojson | safe }};
+    document.getElementById('add-reaction-btn').addEventListener('click', () => {
+        const container = document.getElementById('reactions');
+        insertReactionForm(container, formVals);
+    });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        createHtmlEnzymeName(document.getElementById('enzyme-name'), {{ data | tojson }})
-        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), {{ data | tojson }})
-        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), {{ data | tojson }})
-        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), {{ data | tojson }})
-        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), {{ data | tojson }})
-        populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
-        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
-        populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
+        const data = {{ data | tojson | safe }};
+        const formVals = {{ form_vals | tojson | safe }};
+    
+        createHtmlEnzymeName(document.getElementById('enzyme-name'), data)
+        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), data)
+        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), data)
+        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), data)
+        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), data)
+        populateEnzymeRefForm(document.getElementById('enzyme-ref'), data)
+        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
+        populateReactionForm(document.getElementById('reactions'), data, formVals)
         testFirefoxMobile()
     });
 </script>
