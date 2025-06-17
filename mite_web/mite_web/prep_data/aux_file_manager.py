@@ -249,7 +249,7 @@ class SummaryManager(Locations):
             outfile.write(json.dumps(self.summary, indent=2, ensure_ascii=False))
 
         df = pd.DataFrame(self.csv)
-        df.to_csv(self.target.joinpath("summary.csv"))
+        df.to_csv(self.target.joinpath("summary.csv"), index=False)
 
         self.download.mkdir(parents=True, exist_ok=True)
 
