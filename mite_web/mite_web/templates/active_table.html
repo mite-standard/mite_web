@@ -47,6 +47,9 @@
                             {% if data.enzyme.databaseIds.get("mibig") %}
                             <li>MIBiG: <a class="custom-link" target="_blank" href='https://bioregistry.io/mibig:{{ data.enzyme.databaseIds.get("mibig") }}'>{{ data.enzyme.databaseIds.get("mibig") }}</a></li>
                             {% endif %}
+                            {% if data.enzyme.databaseIds.get("wikidata") %}
+                            <li>Wikidata: <a class="custom-link" target="_blank" href='https://bioregistry.io/wikidata:{{ data.enzyme.databaseIds.get("wikidata") }}'>{{ data.enzyme.databaseIds.get("wikidata") }}</a></li>
+                            {% endif %}
                         {% else %}
                             <li>No database crosslinks available</li>
                         {% endif %}
@@ -172,6 +175,9 @@
                             {% endif %}
                             {% if auxenzyme.databaseIds.get("genpept") %}
                             <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ auxenzyme.databaseIds.get("genpept") }}'>{{ auxenzyme.databaseIds.get("genpept") }}</a></li>
+                            {% endif %}
+                            {% if auxenzyme.databaseIds.get("wikidata") %}
+                            <li>Wikidata: <a class="custom-link" target="_blank" href='https://bioregistry.io/wikidata:{{ auxenzyme.databaseIds.get("wikidata") }}'>{{ auxenzyme.databaseIds.get("wikidata") }}</a></li>
                             {% endif %}
                         {% else %}
                             <li>No database crosslinks available</li>
