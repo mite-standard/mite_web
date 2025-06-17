@@ -66,6 +66,9 @@
                     <div class="col">
                         <div id="enzyme-mibig"></div>
                     </div>
+                    <div class="col">
+                        <div id="enzyme-wikidata"></div>
+                    </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">
@@ -196,6 +199,7 @@
         createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), data)
         createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), data)
         createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), data)
+        createHtmlEnzymeWikidata(document.getElementById('enzyme-wikidata'), data)
         populateEnzymeRefForm(document.getElementById('enzyme-ref'), data)
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
         populateReactionForm(document.getElementById('reactions'), data, formVals)

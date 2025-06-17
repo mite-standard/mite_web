@@ -59,6 +59,8 @@ def get_schema_vals() -> dict:
     return {
         "evidence": schema["$defs"]["evidence"]["enum"],
         "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
+        "inorganic": schema["$defs"]["inorganic"]["enum"],
+        "organic": schema["$defs"]["organic"]["enum"],
     }
 
 
@@ -129,6 +131,9 @@ class ProcessingHelper(BaseModel):
                     "mibig": data.get("enzyme_mibig", [""])[0]
                     if data.get("enzyme_mibig", [""])[0] != ""
                     else None,
+                    "wikidata": data.get("enzyme_wikidata", [""])[0]
+                    if data.get("enzyme_wikidata", [""])[0] != ""
+                    else None,
                 },
             },
             "reactions": [],
@@ -148,6 +153,7 @@ class ProcessingHelper(BaseModel):
                     "databaseIds": {
                         "uniprot": data.get(f"auxenzyme[{index}]uniprot", [""])[0],
                         "genpept": data.get(f"auxenzyme[{index}]genpept", [""])[0],
+                        "wikidata": data.get(f"auxenzyme[{index}]wikidata", [""])[0],
                     },
                 }
             )

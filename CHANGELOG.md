@@ -7,10 +7,16 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [1.4.0] UNRELEASED
 
+### Added
+
+- Additional source info in overview table (e.g. Domain, Kingdom, ...)
+- Download of overview table as .csv
+- Forms: added cofactor selection and wikidata cross-link for enzyme info
+
 ### Changed
 
+- Forms: options for tailoring, evidence etc. now directly from `mite_schema` data model
 - Removed redundant user input sanitation (already performed by `mite_extras`)
-- 
 
 
 ## [1.3.1] 02-06-2025
