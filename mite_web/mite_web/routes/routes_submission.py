@@ -234,8 +234,8 @@ class ProcessingHelper(BaseModel):
             raise RuntimeError("Please provide at least one reaction entry!")
 
         enzyme_db_ids = [
-            self.data["enzyme"]["databaseIds"]["uniprot"],
-            self.data["enzyme"]["databaseIds"]["genpept"],
+            self.data["enzyme"]["databaseIds"].get("uniprot"),
+            self.data["enzyme"]["databaseIds"].get("genpept"),
         ]
         if all(item is None for item in enzyme_db_ids):
             raise RuntimeError(
@@ -263,10 +263,6 @@ class ProcessingHelper(BaseModel):
             if reaction.get("tailoring") == [""]:
                 raise RuntimeError(
                     "At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked."
-                )
-            if re.search(r"\|", reaction.get("reactionSMARTS")):
-                raise RuntimeError(
-                    f"Reaction SMARTS with CXSMARTS (Chemaxon SMARTS) elements detected which are not supported by MITE. The offending reaction SMARTS is: '{reaction.get("reactionSMARTS")}'"
                 )
 
         if initial == "true":
