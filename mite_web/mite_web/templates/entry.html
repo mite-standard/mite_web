@@ -2,10 +2,35 @@
 {% import '_macro_navigation.html' as macro %}
 {% block content %}
 <div class="container-fluid mt-2">
-    {% if preview %}
+    {% if review %}
     <div class="row mb-2">
         <div class="col d-flex justify-content-center align-items-center">
             <h1 class="fw-semibold lh-2">Reviewer Mode</h1>
+        </div>
+    </div>
+    {% elif submission_id %}
+    <div class="row mb-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <h1 class="fw-semibold lh-2">Preview entry</h1>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <h2 class="fw-semibold lh-2">Submission ID: {{ submission_id }}</h2>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-auto">
+            <form method="post" enctype="multipart/form-data" action="">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button id="submit" name="submit" value="submit" type="submit" class="btn btn-primary">Submit entry for review</button>
+            </form>
+        </div>
+        <div class="col-auto text-center">
+            <form method="post" enctype="multipart/form-data" action="">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button id="modify" name="modify" value="modify" type="submit" class="btn btn-secondary">Modify further</button>
+            </form>
         </div>
     </div>
     {% else %}
@@ -30,7 +55,7 @@
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <a href="{{ url_for('routes.submission_existing', mite_acc=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
+            <a href="{{ url_for('routes.submission_existing', mite_acc=data.accession, src_path='data') }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
         </div>
         <div class="col-auto">
             <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-download"></i> Download entry</button></a>

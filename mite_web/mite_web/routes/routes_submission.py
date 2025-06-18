@@ -64,6 +64,15 @@ def get_schema_vals() -> dict:
     }
 
 
+def render(data: dict) -> dict:
+    """Run validations and render html-json"""
+    parser = MiteParser()
+    parser.parse_mite_json(data=data)
+    schema_manager = SchemaManager()
+    schema_manager.validate_mite(instance=parser.to_json())
+    return parser.to_html()
+
+
 class ProcessingHelper(BaseModel):
     """Contains methods to help processing the data
 
@@ -384,68 +393,6 @@ def submission() -> str:
     return render_template("submission.html")
 
 
-@bp.route("/submission/<mite_acc>", methods=["GET", "POST"])
-def submission_existing(mite_acc: str) -> str | Response:
-    """Render the submission forms for an existing entry mite_acc
-
-    Arguments:
-        mite_acc: the mite accession, provided by the URL variable
-
-    Returns:
-        The submission_existing.html page as string or a redirect to another page
-    """
-    src = current_app.config["DATA_JSON"].joinpath(f"{mite_acc}.json")
-
-    if not src.exists():
-        return render_template("entry_not_found.html", mite_acc=mite_acc)
-
-    with open(src) as infile:
-        data = json.load(infile)
-
-    if data.get("status") != "active":
-        return redirect(url_for("routes.repository", mite_acc=mite_acc))
-
-    if request.method == "POST":
-        user_input = request.form.to_dict(flat=False)
-
-        processing_helper = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json")
-
-        try:
-            processing_helper.parse_user_input(data=user_input, original_data=data)
-        except Exception as e:
-            return render_template("submission_failure.html", error=str(e))
-
-        try:
-            processing_helper.validate_user_input(initial=user_input["initial"][0])
-            processing_helper.dump_json()
-            processing_helper.send_email(sub_type="MODIFIED")
-            return render_template(
-                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
-            )
-        except Exception as e:
-            current_app.logger.critical(e)
-            flash(str(e))
-            x, y = processing_helper.random_numbers()
-            return render_template(
-                "submission_form.html",
-                data=processing_helper.data,
-                x=x,
-                y=y,
-                initial="false",
-                form_vals=get_schema_vals(),
-            )
-
-    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
-    return render_template(
-        "submission_form.html",
-        data=data,
-        x=x,
-        y=y,
-        initial="true",
-        form_vals=get_schema_vals(),
-    )
-
-
 @bp.route("/submission/new", methods=["GET", "POST"])
 def submission_new() -> str | Response:
     """Render the submission forms for a new entry
@@ -466,9 +413,10 @@ def submission_new() -> str | Response:
         try:
             processing_helper.validate_user_input(initial=user_input["initial"][0])
             processing_helper.dump_json()
-            processing_helper.send_email(sub_type="NEW")
-            return render_template(
-                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            return redirect(
+                url_for(
+                    "routes.preview", mite_acc=Path(processing_helper.dump_name).stem
+                )
             )
         except Exception as e:
             current_app.logger.critical(e)
@@ -504,6 +452,119 @@ def submission_new() -> str | Response:
     )
 
 
+@bp.route("/submission/<mite_acc>/<src_path>", methods=["GET", "POST"])
+def submission_existing(mite_acc: str, src_path: str = "dumps") -> str | Response:
+    """Render the submission forms for an existing entry mite_acc
+
+    src_path only "data" if coming from entry page; then set to a uuid.
+    This new mite_acc is kept.
+
+    Arguments:
+        mite_acc: the mite accession, provided by the URL variable
+        src_path: location to read data from
+
+    Returns:
+        The submission_existing.html page as string or a redirect to another page
+    """
+    src = ""
+    if src_path == "data":
+        src = current_app.config["DATA_JSON"].joinpath(f"{mite_acc}.json")
+    else:
+        src = current_app.config["DATA_DUMPS"].joinpath(f"{mite_acc}.json")
+
+    if not src.exists():
+        return render_template("entry_not_found.html", mite_acc=mite_acc)
+
+    with open(src) as infile:
+        data = json.load(infile)
+
+    if data.get("status") == "retired":
+        return redirect(url_for("routes.repository", mite_acc=mite_acc))
+
+    if src_path == "data":
+        mite_acc = uuid.uuid1()
+
+    if request.method == "POST":
+        user_input = request.form.to_dict(flat=False)
+
+        processing_helper = ProcessingHelper(dump_name=f"{mite_acc}.json")
+
+        try:
+            processing_helper.parse_user_input(data=user_input, original_data=data)
+        except Exception as e:
+            return render_template("submission_failure.html", error=str(e))
+
+        try:
+            processing_helper.validate_user_input(initial=user_input["initial"][0])
+            processing_helper.dump_json()
+            return redirect(url_for("routes.preview", mite_acc=mite_acc))
+
+        except Exception as e:
+            current_app.logger.critical(e)
+            flash(str(e))
+            x, y = processing_helper.random_numbers()
+            return render_template(
+                "submission_form.html",
+                data=processing_helper.data,
+                x=x,
+                y=y,
+                initial="false",
+                form_vals=get_schema_vals(),
+            )
+
+    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
+    return render_template(
+        "submission_form.html",
+        data=data,
+        x=x,
+        y=y,
+        initial="true",
+        form_vals=get_schema_vals(),
+    )
+
+
+@bp.route("/submission/preview/<mite_acc>", methods=["GET", "POST"])
+def preview(mite_acc: str) -> str | Response:
+    """Render the preview page
+
+    Arguments:
+        mite_acc: the ID
+
+    Returns:
+        The entry.html page as string
+    """
+    src = current_app.config["DATA_DUMPS"].joinpath(f"{mite_acc}.json")
+
+    if not src.exists():
+        return render_template("entry_not_found.html", mite_acc=mite_acc)
+
+    with open(src) as infile:
+        data = json.load(infile)
+
+    if request.method == "POST":
+        user_input = request.form.to_dict()
+        processing_helper = ProcessingHelper(dump_name=f"{mite_acc}.json", data=data)
+
+        if user_input.get("submit"):
+            processing_helper.send_email(sub_type="MODIFIED")
+            return render_template(
+                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
+            )
+        else:
+            processing_helper.data["changelog"].pop()
+            processing_helper.dump_json()
+
+            return redirect(
+                url_for(
+                    "routes.submission_existing", mite_acc=mite_acc, src_path="dumps"
+                )
+            )
+
+    return render_template(
+        "entry.html", data=render(data), preview=True, submission_id=mite_acc
+    )
+
+
 @bp.route("/submission/review", methods=["GET", "POST"])
 def review() -> str:
     """Render the review page
@@ -511,15 +572,6 @@ def review() -> str:
     Returns:
         The entry.html page as string
     """
-
-    def _render(data: dict) -> dict:
-        """Run validations and render html-json"""
-        parser = MiteParser()
-        parser.parse_mite_json(data=data)
-        schema_manager = SchemaManager()
-        schema_manager.validate_mite(instance=parser.to_json())
-        return parser.to_html()
-
     if request.method == "POST":
         try:
             json_data = ""
@@ -536,7 +588,9 @@ def review() -> str:
                     f"Neither MITE file nor content provided. Please try again."
                 )
 
-            return render_template("entry.html", data=_render(json_data), preview=True)
+            return render_template(
+                "entry.html", data=render(json_data), preview=True, review=True
+            )
 
         except Exception as e:
             current_app.logger.critical(e)
@@ -544,15 +598,6 @@ def review() -> str:
             return render_template("review.html")
 
     return render_template("review.html")
-
-
-@bp.route("/submission/preview", methods=["GET", "POST"])
-def preview() -> str:
-    """Render the preview page
-
-    Returns:
-        The entry.html page as string
-    """
 
 
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
