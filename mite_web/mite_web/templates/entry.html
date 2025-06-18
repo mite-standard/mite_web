@@ -2,7 +2,13 @@
 {% import '_macro_navigation.html' as macro %}
 {% block content %}
 <div class="container-fluid mt-2">
-    {% if ret_acc %}
+    {% if preview %}
+    <div class="row mb-2">
+        <div class="col d-flex justify-content-center align-items-center">
+            <h1 class="fw-semibold lh-2">Reviewer Mode</h1>
+        </div>
+    </div>
+    {% else %}
     <div class="row mb-2">
         {% if ret_acc == "MITE0000000" %}
         <div class="col-2 d-flex justify-content-start align-items-center"></div>
@@ -30,19 +36,13 @@
             <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-download"></i> Download entry</button></a>
         </div>
     </div>
-</div>
-    {% else %}
-    <div class="row mb-2">
-        <div class="col d-flex justify-content-center align-items-center">
-            <h1 class="fw-semibold lh-2">Reviewer Mode</h1>
-        </div>
-    </div>
     {% endif %}
 {% if data.status == "retired" %}
     {% include 'retired.html' %}
 {% else %}
     {% include 'active.html' %}
 {% endif %}
+</div>
 <script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
 {% endblock %}

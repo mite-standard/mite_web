@@ -149,3 +149,10 @@ pre, code {
     width: 20px;
     height: 20px;
 }
+
+body.preview-mode {
+  background-image: url('/static/images/watermark.svg');
+  background-repeat: repeat;
+  background-size: 300px auto;
+  background-position: center;
+}

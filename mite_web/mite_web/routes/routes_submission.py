@@ -436,7 +436,6 @@ def submission_existing(mite_acc: str) -> str | Response:
             )
 
     x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
-
     return render_template(
         "submission_form.html",
         data=data,
@@ -537,7 +536,7 @@ def review() -> str:
                     f"Neither MITE file nor content provided. Please try again."
                 )
 
-            return render_template("entry.html", data=_render(json_data))
+            return render_template("entry.html", data=_render(json_data), preview=True)
 
         except Exception as e:
             current_app.logger.critical(e)
@@ -545,6 +544,15 @@ def review() -> str:
             return render_template("review.html")
 
     return render_template("review.html")
+
+
+@bp.route("/submission/preview", methods=["GET", "POST"])
+def preview() -> str:
+    """Render the preview page
+
+    Returns:
+        The entry.html page as string
+    """
 
 
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
