@@ -453,7 +453,7 @@ def submission_new() -> str | Response:
 
 
 @bp.route("/submission/<mite_acc>/<src_path>", methods=["GET", "POST"])
-def submission_existing(mite_acc: str, src_path: str = "dumps") -> str | Response:
+def submission_existing(mite_acc: str, src_path: str) -> str | Response:
     """Render the submission forms for an existing entry mite_acc
 
     src_path only "data" if coming from entry page; then set to a uuid.

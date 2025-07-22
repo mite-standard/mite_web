@@ -66,6 +66,15 @@ pre, code {
     color: red
 }
 
+.form-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: grey
+}
+
+
 /* dashboard page accordion elements */
 .accordion {
     --bs-accordion-btn-icon: url("/static/images/collapse_icon_white.svg");
