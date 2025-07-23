@@ -82,6 +82,8 @@ def configure_app(app: Flask) -> Flask:
         app.logger.warning("No 'config.py' file found. Default to dev settings.")
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
+    app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+
     csrf = CSRFProtect()
     csrf.init_app(app)
 

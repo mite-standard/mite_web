@@ -16,7 +16,7 @@
     </div>
     <div class="row mb-2">
         <div class="col d-flex justify-content-center align-items-center">
-            <h2 class="fw-semibold lh-2">Submission ID: {{ submission_id }}</h2>
+            <h5 class="fw-semibold lh-2">Submission ID: {{ submission_id }}</h5>
         </div>
     </div>
     <div class="row d-flex justify-content-center">
@@ -55,7 +55,7 @@
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <a href="{{ url_for('routes.submission_existing', mite_acc=data.accession, src_path='data') }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
+            <a href="{{ url_for('routes.submission_data', var=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
         </div>
         <div class="col-auto">
             <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-download"></i> Download entry</button></a>
