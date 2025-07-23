@@ -428,6 +428,7 @@ def submission_data(var: str) -> str | Response:
 
     elif var == "new":
         data = {
+            "changelog": [],
             "enzyme": {"references": ["doi:"]},
             "reactions": [
                 {
@@ -481,17 +482,8 @@ def submission_process(var: str) -> str | Response:
         user_input = request.form.to_dict(flat=False)
         processing_helper = ProcessingHelper(dump_name=f"{var}.json")
 
-        try:
-            with open(
-                current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")
-            ) as infile:
-                data = json.load(infile)
-            create_validated_parser(data)
-        except Exception as e:
-            current_app.logger.info(
-                f"{var}: Not a valid mite entry - fallback to empty entry: {e!s}"
-            )
-            data = {}
+        with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
+            data = json.load(infile)
 
         try:
             processing_helper.parse_user_input(data=user_input, original_data=data)
