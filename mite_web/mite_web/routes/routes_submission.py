@@ -236,11 +236,8 @@ class ProcessingHelper(BaseModel):
             }
         )
 
-    def validate_user_input(self: Self, initial: str):
+    def validate_user_input(self: Self):
         """Validates the incoming user-submitted and formatted data
-
-        Arguments:
-            initial: a string ("true", "false") indicating if validation has failed previously
 
         Raises:
             RuntimeError: input validation does not pass
@@ -280,18 +277,6 @@ class ProcessingHelper(BaseModel):
                     "At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked."
                 )
 
-        if initial == "true":
-            if (
-                self.data["enzyme"]["databaseIds"].get("genpept")
-                and not self.data["enzyme"]["databaseIds"]["mibig"]
-            ):
-                self.check_mibig()
-
-            if self.data["enzyme"]["databaseIds"].get("uniprot") and not self.data[
-                "enzyme"
-            ]["databaseIds"].get("uniprot").startswith("UPI"):
-                self.check_rhea()
-
         parser = MiteParser()
         parser.parse_mite_json(data=self.data)
 
@@ -300,6 +285,7 @@ class ProcessingHelper(BaseModel):
 
         self.data = parser.to_json()
 
+    # TODO(MMZ 23.7): re-implement as webhook
     def check_mibig(self: Self) -> None:
         """Check if genpept ID can be found in mibig genes
 
@@ -318,6 +304,7 @@ class ProcessingHelper(BaseModel):
                 f"NCBI GenPept Accession '{genpept}' is associated to MIBiG entry '{matches["mibig"].iloc[0]}', but was not added in this form. Please consider adding this cross-reference. This message will appear only once."
             )
 
+    # TODO(MMZ 23.7): re-implement as webhook
     def check_rhea(self: Self) -> None:
         """Check if rhea ids can be found for uniprot and/or are already added
 
@@ -458,7 +445,6 @@ def submission_data(var: str) -> str | Response:
         data=data,
         x=x,
         y=y,
-        initial="true",
         form_vals=get_schema_vals(),
         var=var,
     )
@@ -491,7 +477,7 @@ def submission_process(var: str) -> str | Response:
             return render_template("submission_failure.html", error=str(e))
 
         try:
-            processing_helper.validate_user_input(initial=user_input["initial"][0])
+            processing_helper.validate_user_input()
             processing_helper.dump_json()
             return redirect(url_for("routes.submission_preview", var=var))
         except Exception as e:
