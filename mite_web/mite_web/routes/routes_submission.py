@@ -41,6 +41,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    send_file,
     url_for,
 )
 from flask_mail import Message
@@ -87,10 +88,14 @@ class ProcessingHelper(BaseModel):
     Attributes:
         dump_name: a name under which the file is dumped
         data: the user-submitted data
+        reviewer_tags: registered reviewers
     """
 
     dump_name: str
     data: dict | None = None
+    # TODO(MMZ 24.7.25): add reviewers after briefing
+    reviewer_tags: tuple = ("@mmzdouc",)
+    reviewer_orcids: tuple = ("0000-0001-6534-6609",)
 
     def parse_user_input(self: Self, data: dict, original_data: dict):
         """Reads the user_input json dict and brings it in the mite-format
@@ -216,7 +221,7 @@ class ProcessingHelper(BaseModel):
                 self.data["changelog"].append(version)
 
     def add_changelog(self, form: dict) -> None:
-        """Parses changelog information and adds to existing mite entry
+        """Parses changelog information and adds to existing mite entry changelog
 
         Arguments:
             form: the user-input
@@ -232,6 +237,31 @@ class ProcessingHelper(BaseModel):
                 "comment": form["changelog"],
             }
         )
+
+    def add_reviewer_info(self, form: dict) -> None:
+        """Parses reviewer information and adds to existing mite entry changelog
+
+        Arguments:
+            form: the user-input
+
+        Raises:
+            RuntimeError: reviewer orcid not part of allowed orcids
+        """
+        reviewer = form["reviewer-orcid"]
+        if reviewer not in self.reviewer_orcids:
+            raise RuntimeError(
+                f"ORCID '{reviewer}' is not one of registered reviewer ORCIDs. If you want to become a reviewer for MITE, contact the developers."
+            )
+
+        current_reviewers = set(self.data["changelog"][-1]["reviewers"])
+        current_reviewers.add(reviewer)
+        current_reviewers.discard("BBBBBBBBBBBBBBBBBBBBBBBB")
+        self.data["changelog"][-1]["reviewers"] = list(current_reviewers)
+
+        if form["reviewer-changelog"] != "":
+            self.data["changelog"][-1]["comment"] = (
+                self.data["changelog"][-1]["comment"] + " " + form["reviewer-changelog"]
+            )
 
     def validate_user_input(self: Self) -> None:
         """Validates the incoming user-submitted and formatted data
@@ -396,19 +426,17 @@ class ProcessingHelper(BaseModel):
 
         branch = self.dump_name.split(".")[0]
 
-        # TODO(MMZ 24.7.25): add reviewers after briefing
-        reviewers = "@mmzdouc"
         body = f"""
 A submission was performed via the MITE web portal and needs reviewing.
 
 ## Review requested
 
-{reviewers}
+{", ".join(self.reviewer_tags)}
 
 ## TODO Reviewers
 
 - Assign yourself as reviewer of this PR
-- Review the entry [HERE](https://mite.bioinformatics.nl/preview/{branch}/reviewer)
+- Review the entry [HERE](https://mite.bioinformatics.nl/submission/preview/{branch}/reviewer)
 - Fix any issues, add your ORCID, download the file, and append it to this PR
 - Approve the pull request
 
@@ -491,12 +519,13 @@ def submission() -> str:
     return render_template("submission.html")
 
 
-@bp.route("/submission/<var>/", methods=["GET", "POST"])
-def submission_data(var: str) -> str | Response:
+@bp.route("/submission/<var>/<role>", methods=["GET", "POST"])
+def submission_data(var: str, role: str) -> str | Response:
     """Initiate new submission and render form page
 
     Arguments:
         var: 'new', a mite accession id, or an uuid -> determine which type of data
+        role: 'contributor' or 'reviewer' to indicate the role of data modification
 
     Returns:
         Form page or redirect to 'entry_not_found' or 'retired' pages
@@ -550,21 +579,25 @@ def submission_data(var: str) -> str | Response:
         data=data,
         form_vals=get_schema_vals(),
         var=var,
+        role=role,
     )
 
 
-@bp.route("/submission/process/<var>/", methods=["GET", "POST"])
-def submission_process(var: str) -> str | Response:
+@bp.route("/submission/process/<var>/<role>", methods=["GET", "POST"])
+def submission_process(var: str, role: str) -> str | Response:
     """Process submitted data for preview
 
     Arguments:
         var: an uuid to determine storage location
+        role: 'contributor' or 'reviewer' to indicate the role of data modification
 
     Returns:
         If submission error, show rendered page; else redirect to preview page
     """
     if not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists():
-        return redirect(url_for("routes.submission_data", var="new"))
+        return redirect(
+            url_for("routes.submission_data", var="new", role="contributor")
+        )
 
     if request.method == "POST":
         user_input = request.form.to_dict(flat=False)
@@ -581,28 +614,33 @@ def submission_process(var: str) -> str | Response:
         try:
             processing_helper.validate_user_input()
             processing_helper.dump_json()
-            return redirect(url_for("routes.submission_preview", var=var))
+            return redirect(url_for("routes.submission_preview", var=var, role=role))
         except Exception as e:
             processing_helper.dump_json()
             current_app.logger.critical(
                 f"{var}: Error during validation of submission: {e!s}"
             )
             flash(str(e))
-            return redirect(url_for("routes.submission_data", var=var))
+            return redirect(url_for("routes.submission_data", var=var, role=role))
 
     else:
-        return redirect(url_for("routes.submission_data", var="new"))
+        return redirect(
+            url_for("routes.submission_data", var="new", role="contributor")
+        )
 
 
-@bp.route("/submission/preview/<var>", methods=["GET", "POST"])
-def submission_preview(var: str) -> str | Response:
+@bp.route("/submission/preview/<var>/<role>", methods=["GET", "POST"])
+def submission_preview(var: str, role: str) -> str | Response:
     """Render the preview page
+
+    preview=True triggers preview class in base.html, adding preview watermark
 
     Arguments:
         var: the submission ID
+        role: the client role (contributor or reviewer)
 
     Returns:
-        The entry.html page as string
+        The entry.html page as string or entry not found or submission_success
     """
     src = current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")
 
@@ -625,17 +663,50 @@ def submission_preview(var: str) -> str | Response:
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
             )
         elif user_input.get("contr-modify"):
-            return redirect(url_for("routes.submission_data", var=var))
+            return redirect(
+                url_for("routes.submission_data", var=var, role="contributor")
+            )
+        elif user_input.get("reviewer-modify"):
+            return redirect(url_for("routes.submission_data", var=var, role="reviewer"))
+        elif user_input.get("reviewer-submit"):
+            try:
+                processing_helper.add_reviewer_info(user_input)
+            except RuntimeError as e:
+                flash(str(e))
+                current_app.logger.error(f"{e!s}")
+                return render_template(
+                    "entry.html",
+                    data=render_preview(data),
+                    mode="review",
+                    preview=True,
+                    submission_id=var,
+                )
+            processing_helper.dump_json()
+            return send_file(
+                current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
+                as_attachment=True,
+            )
 
-    return render_template(
-        "entry.html",
-        data=render_preview(data),
-        x=random.randint(1, 9),
-        y=random.randint(1, 9),
-        mode="preview",
-        preview=True,  # preview=True triggers preview class in base.html
-        submission_id=var,
-    )
+        # todo: condition reviewer download -> returns the download as dump with added orcid or reviewer
+
+    if role == "contributor":
+        return render_template(
+            "entry.html",
+            data=render_preview(data),
+            x=random.randint(1, 9),
+            y=random.randint(1, 9),
+            mode="preview",
+            preview=True,
+            submission_id=var,
+        )
+    else:
+        return render_template(
+            "entry.html",
+            data=render_preview(data),
+            mode="review",
+            preview=True,
+            submission_id=var,
+        )
 
 
 @bp.route("/submission/review", methods=["GET", "POST"])

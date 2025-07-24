@@ -118,6 +118,8 @@ def download_identifier(identifier: str) -> Response | None:
     Returns:
         A Response object containing the file or None
     """
+    # TODO(MMZ 24.7.): use current_app variables instead of constructing Paths
+
     if identifier == "smarts":
         return send_file(
             Path(__file__).parent.parent.joinpath("data/download/dump_smarts.csv"),
@@ -141,6 +143,7 @@ def download_identifier(identifier: str) -> Response | None:
             as_attachment=True,
         )
     elif identifier.startswith("MITE"):
+        # TODO(MMZ 24.7.): implement check for existing
         return send_file(
             Path(__file__).parent.parent.joinpath(f"data/data/{identifier}.json"),
             as_attachment=True,

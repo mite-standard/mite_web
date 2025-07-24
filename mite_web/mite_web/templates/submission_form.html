@@ -48,7 +48,7 @@
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
-    <form method="post" action="{{ url_for('routes.submission_process', var=var) }}">
+    <form method="post" action="{{ url_for('routes.submission_process', var=var, role=role) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
         <div class="row my-2" id="row-enzyme">
@@ -145,6 +145,7 @@
         </div>
     </form>
 </div>
+<!--TODO(MMZ 24.7.): Investigate if url_submission needed by anything-->
 <script>const url_submission = {{ url_for('routes.submission') }}</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>

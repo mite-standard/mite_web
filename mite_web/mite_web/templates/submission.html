@@ -24,7 +24,7 @@
     </div>
     <div class="row my-3">
         <div class="col-auto mx-auto d-flex flex-column justify-content-center text-center">
-            <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission_data', var='new') }}">Submit a new Entry</a></div>
+            <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission_data', var='new', role='contributor') }}">Submit a new Entry</a></div>
             <h6 class="my-3">For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h6>
         </div>
     </div>
