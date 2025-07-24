@@ -6,14 +6,6 @@ function testFirefoxMobile() {
     };
 }
 
-// Disable the "submit" button after the first click to prevent multiple submissions
-
-function disableButton(button_id) {
-    const button = document.getElementById(button_id);
-    button.disabled = true;
-}
-
-
 
 // Validates a simple addition on form submission, block submission if invalid
 function validateSumInput(event, x, y) {

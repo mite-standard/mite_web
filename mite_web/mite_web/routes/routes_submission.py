@@ -24,6 +24,8 @@ SOFTWARE.
 import json
 import random
 import re
+import shutil
+import subprocess
 import uuid
 from datetime import date
 from io import BytesIO
@@ -369,6 +371,115 @@ class ProcessingHelper(BaseModel):
                     f"{self.dump_name}: An error occurred during email sending: {e!s}"
                 )
 
+    def create_pr(self) -> None:
+        """Create PR on mite_data using mite_bot's credentials"""
+
+        if not current_app.config.get("ONLINE", False):
+            current_app.logger.warning(
+                f"{self.dump_name}: Prevented PR in offline mode"
+            )
+            return
+
+        # TODO docker: authenticate from GITHUB_TOKEN env variable
+        # TODO docker: remove email
+        # TODO docker: commit must also be from mite_bot
+
+        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
+        trgt = current_app.config["MITE_DATA"].joinpath(
+            f"mite_data/data/{self.dump_name}"
+        )
+        if self.data["accession"] != "MITE9999999":
+            trgt = current_app.config["MITE_DATA"].joinpath(
+                f"mite_data/data/{self.data["accession"]}.json"
+            )
+        shutil.copy(src, trgt)
+
+        branch = self.dump_name.split(".")[0]
+
+        # TODO(MMZ 24.7.25): add reviewers after briefing
+        reviewers = "@mmzdouc"
+        body = f"""
+A submission was performed via the MITE web portal and needs reviewing.
+
+## Review requested
+
+{reviewers}
+
+## TODO Reviewers
+
+- Assign yourself as reviewer of this PR
+- Review the entry [HERE](https://mite.bioinformatics.nl/preview/{branch}/reviewer)
+- Fix any issues, add your ORCID, download the file, and append it to this PR
+- Approve the pull request
+
+*This action was performed by `mite-bot`*
+"""
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-b", branch],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "add", "mite_data/data/"],
+            check=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                current_app.config["MITE_DATA"],
+                "commit",
+                "-m",
+                f"Contributor submission {branch}",
+            ],
+            check=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                current_app.config["MITE_DATA"],
+                "push",
+                "-u",
+                "origin",
+                branch,
+            ],
+            check=True,
+        )
+
+        subprocess.run(
+            [
+                "gh",
+                "pr",
+                "create",
+                "--repo",
+                "mite-standard/mite_data",
+                "--title",
+                f"Contributor submission {branch}",
+                "--body",
+                "Automated submission from webapp",
+                "--draft",  # TODO: remove once it goes into production
+                "--base",
+                "main",
+                "--head",
+                branch,
+                "--body",
+                body,
+            ],
+            check=True,
+        )
+
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "pull"], check=True
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "branch", "-D", branch],
+            check=True,
+        )
+
 
 @bp.route("/submission/")
 def submission() -> str:
@@ -508,6 +619,7 @@ def submission_preview(var: str) -> str | Response:
         if user_input.get("contr-submit"):
             processing_helper.add_changelog(user_input)
             processing_helper.dump_json()
+            processing_helper.create_pr()
             processing_helper.send_email(sub_type="MODIFIED")
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
@@ -562,6 +674,7 @@ def review() -> str:
     return render_template("review.html")
 
 
+# TODO: change the URL to only peptidesmiles
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
 def peptidesmiles() -> str:
     """Render the peptide SMILES page
@@ -590,6 +703,7 @@ def peptidesmiles() -> str:
     return render_template("smiles_peptide.html", data={"peptide_string": ""})
 
 
+# TODO: change the URL to only canonicalizesmiles
 @bp.route("/submission/canonicalizesmiles", methods=["GET", "POST"])
 def canonsmiles() -> str:
     """Render the canonicalize SMILES page

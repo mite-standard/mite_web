@@ -24,6 +24,7 @@ SOFTWARE.
 import json
 import logging
 import os
+import subprocess
 import sys
 from importlib import metadata
 from pathlib import Path
@@ -73,6 +74,7 @@ def configure_app(app: Flask) -> Flask:
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
+    app.config["MITE_DATA"] = Path(__file__).parent.joinpath("mite_data")
 
     config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
     if config_file.exists():
@@ -83,6 +85,17 @@ def configure_app(app: Flask) -> Flask:
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+
+    if not app.config["MITE_DATA"].exists():
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "git@github.com:mite-standard/mite_data.git",
+                app.config["MITE_DATA"],
+            ],
+            check=True,
+        )
 
     csrf = CSRFProtect()
     csrf.init_app(app)
