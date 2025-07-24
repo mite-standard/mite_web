@@ -1,4 +1,3 @@
-from flask_mail import Mail
 from flask_restx import Api
 
 api = Api(
@@ -7,4 +6,3 @@ api = Api(
     doc="/api/",
     version="0.1",
 )
-mail = Mail()

@@ -52,7 +52,6 @@ from mite_schema import SchemaManager
 from pydantic import BaseModel
 from rdkit import Chem
 
-from mite_web.config.extensions import mail
 from mite_web.routes import bp
 
 
@@ -378,31 +377,6 @@ class ProcessingHelper(BaseModel):
         ) as outfile:
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
 
-    def send_email(self: Self, sub_type: str) -> None:
-        """Sends data per email to data processor
-
-        Arguments:
-            sub_type: a string indicating the type of submission (modification of entry or new entry)
-        """
-        # TODO(23.7. MMZ): replace with github CLI
-        if current_app.config.get("ONLINE", False):
-            msg = Message()
-            msg.recipients = [current_app.config.get("MAIL_TARGET")]
-            msg.subject = f"MITE: {sub_type}"
-            msg.body = f"Please find the dump file '{self.dump_name}' attached."
-
-            json_content = json.dumps(self.data, indent=4)
-            json_attachment = BytesIO(json_content.encode("utf-8"))
-            msg.attach(self.dump_name, "application/json", json_attachment.read())
-
-            try:
-                mail.send(msg)
-                current_app.logger.info(f"{self.dump_name}: Email sent successfully")
-            except Exception as e:
-                current_app.logger.error(
-                    f"{self.dump_name}: An error occurred during email sending: {e!s}"
-                )
-
     def create_pr(self) -> None:
         """Create PR on mite_data using mite_bot's credentials"""
 
@@ -413,7 +387,6 @@ class ProcessingHelper(BaseModel):
             return
 
         # TODO docker: authenticate from GITHUB_TOKEN env variable
-        # TODO docker: remove email
         # TODO docker: commit must also be from mite_bot
 
         src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
@@ -668,7 +641,6 @@ def submission_preview(var: str, role: str) -> str | Response:
             processing_helper.add_changelog(user_input)
             processing_helper.dump_json()
             processing_helper.create_pr()
-            processing_helper.send_email(sub_type="MODIFIED")
 
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
