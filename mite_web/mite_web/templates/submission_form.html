@@ -39,7 +39,6 @@
           </div>
       </div>
     </div>
-
     {% endif %}
     {% endwith %}
     <div class="row my-4">
@@ -60,42 +59,44 @@
                         <p class="mb-2 text-center">General information on the tailoring enzyme</p>
                     </div>
                 </div>
-                <div class="row m-2 g-2">
-                    <div class="col">
-                        <div id="enzyme-name"></div>
+                <div class="card card-body">
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-name"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-description"></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div id="enzyme-description"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="comment-general"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="row m-2 g-2">
-                    <div class="col">
-                        <div id="comment-general"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-uniprot"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-genpept"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-mibig"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-wikidata"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="row m-2 g-2">
-                    <div class="col">
-                        <div id="enzyme-uniprot"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-cofactors"></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div id="enzyme-genpept"></div>
-                    </div>
-                    <div class="col">
-                        <div id="enzyme-mibig"></div>
-                    </div>
-                    <div class="col">
-                        <div id="enzyme-wikidata"></div>
-                    </div>
-                </div>
-                <div class="row m-2 g-2">
-                    <div class="col">
-                        <div id="enzyme-cofactors"></div>
-                    </div>
-                </div>
-                <div class="row m-2 g-2">
-                    <div class="col">
-                        <div id="enzyme-ref"></div>
-                        <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-ref"></div>
+                            <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -138,45 +139,6 @@
             </div>
         </div>
         <div class="row my-3">
-            <div class="col">
-                <h3 class="fw-semibold lh-2 text-center">General Information</h3>
-                <p class="mb-2 text-center">Submitter details and other information</p>
-            </div>
-        </div>
-        <div class="card card-body mb-2">
-            <div class="row m-2 g-2">
-                <div class="col">
-                    <div class="form-floating">
-                        <input id="orcid" minlength="19" maxlength="19" name="orcid" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID or leave empty for an anonymous submission. If you enter your ORCID, be aware that it will be made visible on our website, as described in our Terms of Use.">
-                        <label for="orcid" class="form-label">ORCID <i class="bi bi-question-circle"></i></label>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-floating">
-                        <input id="changelog" name="changelog" class="form-control" placeholder="n/a" type="text" required title="Briefly describe your changes. If you submit a new entry, simply state 'New entry'">
-                        <label for="changelog" class="form-label">Changelog <span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
-                    </div>
-                </div>
-            </div>
-            <div class="row m-2 g-2">
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">Math Challenge<span class="mandatory">*</span></h6>
-                    <div class="form-floating">
-                        <input id="usersum" name="usersum" class="form-control" placeholder="n/a" type="number" required title="Validation form to prevent automated submissions">
-                        <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
-                    </div>
-                    <p class="lead" id="usersum-error-message" style="color: red;"></p>
-                </div>
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">Terms of Use<span class="mandatory">*</span></h6>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
-                      <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row my-3">
             <div class="col text-center mx-auto">
                 <button id="submit" type="submit" class="btn btn-primary">Preview entry</button>
             </div>
@@ -186,10 +148,6 @@
 <script>const url_submission = {{ url_for('routes.submission') }}</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
-        validateSumInput(event, {{ x }}, {{ y }});
-    });
-
     const formVals = {{ form_vals | tojson | safe }};
     document.getElementById('add-reaction-btn').addEventListener('click', () => {
         const container = document.getElementById('reactions');

@@ -90,15 +90,6 @@ class ProcessingHelper(BaseModel):
     dump_name: str
     data: dict | None = None
 
-    @staticmethod
-    def random_numbers() -> tuple[int, int]:
-        """Generate two random numbers and return them
-
-        Returns:
-            A tuple of two single-digit numbers
-        """
-        return random.randint(1, 9), random.randint(1, 9)
-
     def parse_user_input(self: Self, data: dict, original_data: dict):
         """Reads the user_input json dict and brings it in the mite-format
 
@@ -222,21 +213,25 @@ class ProcessingHelper(BaseModel):
             for version in original_data["changelog"]:
                 self.data["changelog"].append(version)
 
+    def add_changelog(self, form: dict) -> None:
+        """Parses changelog information and adds to existing mite entry
+
+        Arguments:
+            form: the user-input
+        """
         self.data["changelog"].append(
             {
                 "version": f"{len(self.data["changelog"]) + 1}",
                 "date": date.today().strftime("%Y-%m-%d"),
                 "contributors": [
-                    data["orcid"][0]
-                    if data["orcid"][0] != ""
-                    else "AAAAAAAAAAAAAAAAAAAAAAAA"
+                    form["orcid"] if form["orcid"] != "" else "AAAAAAAAAAAAAAAAAAAAAAAA"
                 ],
                 "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
-                "comment": data["changelog"][0],
+                "comment": form["changelog"],
             }
         )
 
-    def validate_user_input(self: Self):
+    def validate_user_input(self: Self) -> None:
         """Validates the incoming user-submitted and formatted data
 
         Raises:
@@ -439,16 +434,12 @@ def submission_data(var: str) -> str | Response:
     with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
         data = json.load(infile)
 
-    x, y = ProcessingHelper(dump_name=f"{var}.json").random_numbers()
     return render_template(
         "submission_form.html",
         data=data,
-        x=x,
-        y=y,
         form_vals=get_schema_vals(),
         var=var,
     )
-    # TODO: move forms to preview page
 
 
 @bp.route("/submission/process/<var>/", methods=["GET", "POST"])
@@ -514,19 +505,24 @@ def submission_preview(var: str) -> str | Response:
         user_input = request.form.to_dict()
         processing_helper = ProcessingHelper(dump_name=f"{var}.json", data=data)
 
-        if user_input.get("submit"):
+        if user_input.get("contr-submit"):
+            processing_helper.add_changelog(user_input)
+            processing_helper.dump_json()
             processing_helper.send_email(sub_type="MODIFIED")
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
             )
-        else:
-            processing_helper.data["changelog"].pop()
-            processing_helper.dump_json()
-
+        elif user_input.get("contr-modify"):
             return redirect(url_for("routes.submission_data", var=var))
 
     return render_template(
-        "entry.html", data=render_preview(data), preview=True, submission_id=var
+        "entry.html",
+        data=render_preview(data),
+        x=random.randint(1, 9),
+        y=random.randint(1, 9),
+        mode="preview",
+        preview=True,  # preview=True triggers preview class in base.html
+        submission_id=var,
     )
 
 
