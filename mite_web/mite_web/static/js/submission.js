@@ -270,12 +270,13 @@ function createHtmlRef(data, className, jsonID) {
 
 // Creates the auxilary enzyme field; index is used to keep track of the instance that is opened
 function createHtmlAuxEnyzme(data = {}, index) {
+    let displayIndex = index + 1;
     return `
         <div class="aux_enzyme">
             <div class="card card-body mb-2">
                 <div class="row d-flex align-items-center m-2 g-2">
                     <div class="col">
-                        <h6 class="mb-0">Auxiliary Enzyme #${index}</h6>
+                        <h6 class="mb-0">Auxiliary Enzyme #${displayIndex}</h6>
                     </div>
                     <div class="col-auto mx-auto">
                         <button type="button" class="btn btn-danger" onclick="removeField(this, '.aux_enzyme')">Remove</button>
@@ -324,11 +325,12 @@ function createHtmlAuxEnyzme(data = {}, index) {
 function createHtmlReaction(data = {}, index, form_vals) {
     const reactionEntry = document.createElement('div')
     reactionEntry.classList.add('reaction')
+    let displayIndex = index + 1;
     reactionEntry.innerHTML = `
         <div class="card card-body">
             <div class="row mb-2 align-items-center">
                 <div class="col">
-                    <h5 class="fw-semibold lh-2 m-0">Reaction #${index}</h5>
+                    <h5 class="fw-semibold lh-2 m-0">Reaction #${displayIndex}</h5>
                 </div>
                 <div class="col-auto mx-auto">
                     <button type="button" class="btn btn-danger" onclick="removeField(this, '.reaction')">Remove</button>
@@ -507,13 +509,14 @@ function addUntickedCheckbox(container_id, qualifier) {
 
 // Inserts a KnownReaction Form into an existing Reaction form; outer index tracks the instance of the Reaction, the inner index the instance of the Known reaction inside the Reaction
 function addHtmlKnownReaction(data, index_outer, index_inner) {
+    let displayInnerIndex = index_inner + 1;
     const knownReactionEntry = document.createElement('div');
     knownReactionEntry.classList.add('knownreaction');
     knownReactionEntry.innerHTML = `
         <div class="card card-body">
             <div class="row align-items-center m-2 g-2">
                 <div class="col">
-                    <h6 class="lh-2 mb-0">Known Reaction #${index_inner}</h6>
+                    <h6 class="lh-2 mb-0">Known Reaction #${displayInnerIndex}</h6>
                 </div>
                 <div class="col-auto mx-auto">
                     <button type="button" class="btn btn-danger" onclick="removeField(this, '.knownreaction')">Remove</button>
