@@ -48,7 +48,7 @@
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
-    <form method="post" action="{{ url_for('routes.submission_process', var=var, role=role) }}">
+    <form id="miteForm" method="post" action="{{ url_for('routes.submission_process', var=var, role=role) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
         <div class="row my-2" id="row-enzyme">
@@ -140,7 +140,7 @@
         </div>
         <div class="row my-3">
             <div class="col text-center mx-auto">
-                <button id="submit" type="submit" class="btn btn-primary" onclick="setTimeout(() => { this.disabled = true; }, 0);"><i class="bi bi-search"></i> Preview entry</button>
+                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Preview entry</button>
             </div>
         </div>
     </form>
@@ -172,6 +172,9 @@
         populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
         populateReactionForm(document.getElementById('reactions'), data, formVals)
         testFirefoxMobile()
+
+        disableButton(document.getElementById('miteForm'), document.getElementById('submit'))
     });
 </script>
+
 {% endblock %}

@@ -15,9 +15,9 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form method="post" enctype="multipart/form-data" action="">
+            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary" onclick="setTimeout(() => { this.disabled = true; }, 0);"><i class="bi bi-pen"></i> Edit data</button>
+                <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
     </div>
@@ -46,7 +46,7 @@
     </div>
     {% endif %}
     {% endwith %}
-    <form method="post" enctype="multipart/form-data" action="">
+    <form id="form-reviewer-submit" method="post" enctype="multipart/form-data" action="">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="row flex justify-content-center">
             <div class="col-6">
@@ -70,7 +70,7 @@
         </div>
         <div class="row flex justify-content-center">
             <div class="col-auto">
-                <button id="reviewer-submit" name="reviewer-submit" value="reviewer-submit" type="submit" class="btn btn-primary" onclick="setTimeout(() => { this.disabled = true; }, 0);">Download reviewed entry</button>
+                <button id="reviewer-submit" name="reviewer-submit" value="reviewer-submit" type="submit" class="btn btn-primary">Download reviewed entry</button>
             </div>
         </div>
     </form>
@@ -87,14 +87,15 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form method="post" enctype="multipart/form-data" action="">
+            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary" onclick="setTimeout(() => { this.disabled = true; }, 0);"><i class="bi bi-pen"></i> Edit data</button>
+                <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
     </div>
-    <form method="post" enctype="multipart/form-data" action="">
+    <form id="form-contr-submit" method="post" enctype="multipart/form-data" action="">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="email_confirm" style="display: none" tabindex="-1" autocomplete="off">
         <div class="row flex justify-content-center">
             <div class="col-6">
                 <div class="card card-body mb-2">
@@ -111,15 +112,6 @@
                                 <label for="changelog" class="form-label">Changelog<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-floating">
-                                <input id="usersum" name="usersum" class="form-control" placeholder="n/a" type="number" required title="Math Challenge - prevents automated submissions">
-                                <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
-                            </div>
-                            <p class="lead" id="usersum-error-message" style="color: red;"></p>
-                        </div>
                         <div class="col">
                             <div class="form-check">
                               <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
@@ -132,7 +124,7 @@
         </div>
         <div class="row flex justify-content-center">
             <div class="col-auto">
-                <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary" onclick="setTimeout(() => { this.disabled = true; }, 0);">Submit entry for review</button>
+                <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary">Submit entry for review</button>
             </div>
         </div>
     </form>
@@ -171,11 +163,21 @@
     {% include 'active.html' %}
 {% endif %}
 </div>
-<script>
-    document.querySelector('form').addEventListener('submit', function(event) {
-        validateSumInput(event, {{ x }}, {{ y }});
-    });
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
+{% if mode == "review" %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('form-reviewer-modify'), document.getElementById('reviewer-modify'))
+    });
+</script>
+{% elif mode == "preview" %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('form-contr-modify'), document.getElementById('contr-modify'))
+        disableButton(document.getElementById('form-contr-submit'), document.getElementById('contr-submit'))
+    });
+</script>
+{% endif %}
 {% endblock %}

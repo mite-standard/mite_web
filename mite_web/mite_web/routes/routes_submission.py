@@ -22,10 +22,10 @@ SOFTWARE.
 """
 
 import json
-import random
 import re
 import shutil
 import subprocess
+import time
 import uuid
 from datetime import date
 from io import BytesIO
@@ -36,12 +36,14 @@ import pandas as pd
 import requests
 from flask import (
     Response,
+    abort,
     current_app,
     flash,
     redirect,
     render_template,
     request,
     send_file,
+    session,
     url_for,
 )
 from flask_mail import Message
@@ -655,10 +657,19 @@ def submission_preview(var: str, role: str) -> str | Response:
         processing_helper = ProcessingHelper(dump_name=f"{var}.json", data=data)
 
         if user_input.get("contr-submit"):
+            if request.form.get("email_confirm"):
+                # This is a bot (field should be empty)
+                abort(400)
+
+            elapsed = time.time() - session.get("form_start", 0)
+            if elapsed < 2:  # less than 2 seconds? likely a bot
+                abort(400)
+
             processing_helper.add_changelog(user_input)
             processing_helper.dump_json()
             processing_helper.create_pr()
             processing_helper.send_email(sub_type="MODIFIED")
+
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
             )
@@ -690,11 +701,10 @@ def submission_preview(var: str, role: str) -> str | Response:
         # todo: condition reviewer download -> returns the download as dump with added orcid or reviewer
 
     if role == "contributor":
+        session["form_start"] = time.time()
         return render_template(
             "entry.html",
             data=render_preview(data),
-            x=random.randint(1, 9),
-            y=random.randint(1, 9),
             mode="preview",
             preview=True,
             submission_id=var,

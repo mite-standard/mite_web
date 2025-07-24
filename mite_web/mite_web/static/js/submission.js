@@ -6,25 +6,18 @@ function testFirefoxMobile() {
     };
 }
 
-
-// Validates a simple addition on form submission, block submission if invalid
-function validateSumInput(event, x, y) {
-    const userSum = parseInt(document.getElementById('usersum').value, 10);
-    const correctSum = +x + +y;
-
-    const sumInputForm = document.getElementById('usersum');
-
-    if (userSum !== correctSum) {
-        sumInputForm.style.borderColor = 'red';
-        document.getElementById('usersum-error-message').textContent = "Incorrect sum! Please check your answer.";
-        event.preventDefault();
-    } else {
-        sumInputForm.style.borderColor = '';
-        document.getElementById('usersum-error-message').textContent = "";
-        disableButton(document.getElementById('submit'));
-    }
+// prevents repeated POST requests
+function disableButton(form, button) {
+  form.addEventListener('submit', function (event) {
+      if (!form.checkValidity()) {
+          return;
+      }
+      setTimeout(() => {
+            button.disabled = true;
+            button.innerText = 'Submitting...';
+        }, 0);
+  });
 }
-
 
 
 // Removes a Div of a specified class closest to the button; used by all elements that can be added/removed by user-input
