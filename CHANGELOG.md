@@ -17,6 +17,9 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Forms: options for tailoring, evidence etc. now directly from `mite_schema` data model
 - Removed redundant user input sanitation (already performed by `mite_extras`)
+- Reworked data submision - changed to direct pull requests to GitHub
+- Removed email functionality
+- Updated api to be properly url-versioned
 
 
 ## [1.3.1] 02-06-2025

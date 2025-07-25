@@ -53,7 +53,7 @@ def create_app() -> Flask:
     app.register_blueprint(bp)
 
     api.init_app(app)
-    api.add_namespace(mite_ns, path="/api")
+    api.add_namespace(mite_ns, path="/api/v1/mite")
 
     return app
 
