@@ -3,7 +3,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Get required libraries
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y \
+RUN apt-get install -y --fix-missing \
     software-properties-common \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
