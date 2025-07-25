@@ -85,17 +85,6 @@ def configure_app(app: Flask) -> Flask:
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
 
-    if not app.config["MITE_DATA"].exists():
-        subprocess.run(
-            [
-                "git",
-                "clone",
-                "git@github.com:mite-standard/mite_data.git",
-                app.config["MITE_DATA"],
-            ],
-            check=True,
-        )
-
     csrf = CSRFProtect()
     csrf.init_app(app)
 

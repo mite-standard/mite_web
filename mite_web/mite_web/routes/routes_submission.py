@@ -22,13 +22,13 @@ SOFTWARE.
 """
 
 import json
+import os
 import re
 import shutil
 import subprocess
 import time
 import uuid
 from datetime import date
-from io import BytesIO
 from pathlib import Path
 from typing import Self
 
@@ -46,7 +46,6 @@ from flask import (
     session,
     url_for,
 )
-from flask_mail import Message
 from mite_extras.processing.mite_parser import MiteParser
 from mite_schema import SchemaManager
 from pydantic import BaseModel
@@ -386,9 +385,6 @@ class ProcessingHelper(BaseModel):
             )
             return
 
-        # TODO docker: authenticate from GITHUB_TOKEN env variable
-        # TODO docker: commit must also be from mite_bot
-
         src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
         trgt = current_app.config["MITE_DATA"].joinpath(
             f"mite_data/data/{self.dump_name}"
@@ -410,10 +406,8 @@ A submission was performed via the MITE web portal and needs reviewing.
 
 ## TODO Reviewers
 
-- Assign yourself as reviewer of this PR
 - Review the entry [HERE](https://mite.bioinformatics.nl/submission/preview/{branch}/reviewer)
 - Fix any issues, add your ORCID, download the file, and append it to this PR
-- Approve the pull request
 
 *This action was performed by `mite-bot`*
 """
@@ -432,10 +426,24 @@ A submission was performed via the MITE web portal and needs reviewing.
                 current_app.config["MITE_DATA"],
                 "commit",
                 "-m",
-                f"Contributor submission {branch}",
+                f"Contributor submission {self.data['enzyme']['name']}",
             ],
             check=True,
         )
+
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                current_app.config["MITE_DATA"],
+                "remote",
+                "set-url",
+                "origin",
+                f"https://{os.environ['GITHUB_TOKEN']}@github.com/mite-standard/mite_data.git",
+            ],
+            check=True,
+        )
+
         subprocess.run(
             [
                 "git",
@@ -460,7 +468,7 @@ A submission was performed via the MITE web portal and needs reviewing.
                 f"Contributor submission {branch}",
                 "--body",
                 "Automated submission from webapp",
-                "--draft",  # TODO: remove once it goes into production
+                "--draft",
                 "--base",
                 "main",
                 "--head",
