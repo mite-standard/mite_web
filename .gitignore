@@ -1,10 +1,13 @@
 # Config
 mite_web/mite_web/dumps
 mite_web/mite_web/data
+mite_web/mite_web/mite_data
 mite_web/mite_web/static/img
+mite_web/mite_web/submissions
 config.py
 .idea
 .ruff-cache
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

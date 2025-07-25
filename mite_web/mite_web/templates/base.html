@@ -12,7 +12,7 @@
       <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
-  <body class="d-flex flex-column vh-100">
+  <body class="d-flex flex-column vh-100 {% if preview %}preview-mode{% endif %}">
     {% block header%}
       <header>
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark navbar-custom p-1">

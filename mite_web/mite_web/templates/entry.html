@@ -2,7 +2,133 @@
 {% import '_macro_navigation.html' as macro %}
 {% block content %}
 <div class="container-fluid mt-2">
-    {% if ret_acc %}
+    {% if mode == "review" %}
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <h2 class="mb-0 fw-semibold">Reviewer mode</h2>
+        </div>
+    </div>
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <h6 class="fw-semibold mb-0">Submission ID: {{ submission_id }}</h6>
+        </div>
+    </div>
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
+            </form>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="alert alert-light" role="alert">
+                <div class="row">
+                  <div class="col-8">
+                    <h5 class="mb-0"> Error during review!</h5>
+                  </div>
+                  <div class="col-4">
+                    <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                </div>
+                  <div class="row my-2">
+                  <div class="text-center mx-auto">
+                    {% for message in messages %}
+                    <p class="lead">{{ message }}</p>
+                    {% endfor %}
+                  </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+    <form id="form-reviewer-submit" method="post" enctype="multipart/form-data" action="">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row flex justify-content-center">
+            <div class="col-6">
+                <div class="card card-body mb-2">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input id="reviewer-orcid" minlength="19" maxlength="19" name="reviewer-orcid" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID." required>
+                                <label for="reviewer-orcid" class="form-label">ORCID<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input id="reviewer-changelog" name="reviewer-changelog" class="form-control" placeholder="n/a" type="text" title="Briefly describe your changes, or leave empty.">
+                                <label for="reviewer-changelog" class="form-label">Changelog <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row flex justify-content-center">
+            <div class="col-auto">
+                <button id="reviewer-submit" name="reviewer-submit" value="reviewer-submit" type="submit" class="btn btn-primary">Download reviewed entry</button>
+            </div>
+        </div>
+    </form>
+    {% elif mode == "preview" %}
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <h2 class="mb-0 fw-semibold">Preview entry</h2>
+        </div>
+    </div>
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <h6 class="fw-semibold mb-0">Submission ID: {{ submission_id }}</h6>
+        </div>
+    </div>
+    <div class="row mb-2 justify-content-center">
+        <div class="col-auto">
+            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
+            </form>
+        </div>
+    </div>
+    <form id="form-contr-submit" method="post" enctype="multipart/form-data" action="">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="text" name="email_confirm" style="display: none" tabindex="-1" autocomplete="off">
+        <div class="row flex justify-content-center">
+            <div class="col-6">
+                <div class="card card-body mb-2">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input id="orcid" minlength="19" maxlength="19" name="orcid" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID or leave empty for an anonymous submission. If you enter your ORCID, be aware that it will be made visible on our website, as described in our Terms of Use.">
+                                <label for="orcid" class="form-label">ORCID <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input id="changelog" name="changelog" class="form-control" placeholder="n/a" type="text" required title="Briefly describe your changes. If you submit a new entry, simply state 'New entry'">
+                                <label for="changelog" class="form-label">Changelog<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
+                              <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row flex justify-content-center">
+            <div class="col-auto">
+                <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary">Submit entry for review</button>
+            </div>
+        </div>
+    </form>
+    {% else %}
     <div class="row mb-2">
         {% if ret_acc == "MITE0000000" %}
         <div class="col-2 d-flex justify-content-start align-items-center"></div>
@@ -24,17 +150,10 @@
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <a href="{{ url_for('routes.submission_existing', mite_acc=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
+            <a href="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
         </div>
         <div class="col-auto">
             <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-download"></i> Download entry</button></a>
-        </div>
-    </div>
-</div>
-    {% else %}
-    <div class="row mb-2">
-        <div class="col d-flex justify-content-center align-items-center">
-            <h1 class="fw-semibold lh-2">Reviewer Mode</h1>
         </div>
     </div>
     {% endif %}
@@ -43,6 +162,22 @@
 {% else %}
     {% include 'active.html' %}
 {% endif %}
+</div>
+<script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
+{% if mode == "review" %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('form-reviewer-modify'), document.getElementById('reviewer-modify'))
+    });
+</script>
+{% elif mode == "preview" %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('form-contr-modify'), document.getElementById('contr-modify'))
+        disableButton(document.getElementById('form-contr-submit'), document.getElementById('contr-submit'))
+    });
+</script>
+{% endif %}
 {% endblock %}

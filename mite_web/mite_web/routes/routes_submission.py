@@ -22,11 +22,13 @@ SOFTWARE.
 """
 
 import json
-import random
+import os
 import re
+import shutil
+import subprocess
+import time
 import uuid
 from datetime import date
-from io import BytesIO
 from pathlib import Path
 from typing import Self
 
@@ -34,21 +36,50 @@ import pandas as pd
 import requests
 from flask import (
     Response,
+    abort,
     current_app,
     flash,
     redirect,
     render_template,
     request,
+    send_file,
+    session,
     url_for,
 )
-from flask_mail import Message
 from mite_extras.processing.mite_parser import MiteParser
 from mite_schema import SchemaManager
 from pydantic import BaseModel
 from rdkit import Chem
 
-from mite_web.config.extensions import mail
 from mite_web.routes import bp
+
+
+def get_schema_vals() -> dict:
+    """Extract values from MITE JSON Schema"""
+    with open(SchemaManager().entry) as f:
+        schema = json.load(f)
+
+    return {
+        "evidence": schema["$defs"]["evidence"]["enum"],
+        "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
+        "inorganic": schema["$defs"]["inorganic"]["enum"],
+        "organic": schema["$defs"]["organic"]["enum"],
+    }
+
+
+def create_validated_parser(data: dict) -> MiteParser:
+    """Creates validated MiteParser instance"""
+    parser = MiteParser()
+    parser.parse_mite_json(data=data)
+    schema_manager = SchemaManager()
+    schema_manager.validate_mite(instance=parser.to_json())
+    return parser
+
+
+def render_preview(data: dict) -> dict:
+    """Run validations and render html-json"""
+    parser = create_validated_parser(data)
+    return parser.to_html()
 
 
 class ProcessingHelper(BaseModel):
@@ -57,19 +88,14 @@ class ProcessingHelper(BaseModel):
     Attributes:
         dump_name: a name under which the file is dumped
         data: the user-submitted data
+        reviewer_tags: registered reviewers
     """
 
     dump_name: str
     data: dict | None = None
-
-    @staticmethod
-    def random_numbers() -> tuple[int, int]:
-        """Generate two random numbers and return them
-
-        Returns:
-            A tuple of two single-digit numbers
-        """
-        return random.randint(1, 9), random.randint(1, 9)
+    # TODO(MMZ 24.7.25): add reviewers after briefing
+    reviewer_tags: tuple = ("@mmzdouc",)
+    reviewer_orcids: tuple = ("0000-0001-6534-6609",)
 
     def parse_user_input(self: Self, data: dict, original_data: dict):
         """Reads the user_input json dict and brings it in the mite-format
@@ -118,6 +144,13 @@ class ProcessingHelper(BaseModel):
                     "mibig": data.get("enzyme_mibig", [""])[0]
                     if data.get("enzyme_mibig", [""])[0] != ""
                     else None,
+                    "wikidata": data.get("enzyme_wikidata", [""])[0]
+                    if data.get("enzyme_wikidata", [""])[0] != ""
+                    else None,
+                },
+                "cofactors": {
+                    "organic": data.get(f"enzyme-cofactors-organic-check[]", []),
+                    "inorganic": data.get(f"enzyme-cofactors-inorganic-check[]", []),
                 },
             },
             "reactions": [],
@@ -137,6 +170,7 @@ class ProcessingHelper(BaseModel):
                     "databaseIds": {
                         "uniprot": data.get(f"auxenzyme[{index}]uniprot", [""])[0],
                         "genpept": data.get(f"auxenzyme[{index}]genpept", [""])[0],
+                        "wikidata": data.get(f"auxenzyme[{index}]wikidata", [""])[0],
                     },
                 }
             )
@@ -186,25 +220,51 @@ class ProcessingHelper(BaseModel):
             for version in original_data["changelog"]:
                 self.data["changelog"].append(version)
 
+    def add_changelog(self, form: dict) -> None:
+        """Parses changelog information and adds to existing mite entry changelog
+
+        Arguments:
+            form: the user-input
+        """
         self.data["changelog"].append(
             {
                 "version": f"{len(self.data["changelog"]) + 1}",
                 "date": date.today().strftime("%Y-%m-%d"),
                 "contributors": [
-                    data["orcid"][0]
-                    if data["orcid"][0] != ""
-                    else "AAAAAAAAAAAAAAAAAAAAAAAA"
+                    form["orcid"] if form["orcid"] != "" else "AAAAAAAAAAAAAAAAAAAAAAAA"
                 ],
                 "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
-                "comment": data["changelog"][0],
+                "comment": form["changelog"],
             }
         )
 
-    def validate_user_input(self: Self, initial: str):
-        """Validates the incoming user-submitted and formatted data
+    def add_reviewer_info(self, form: dict) -> None:
+        """Parses reviewer information and adds to existing mite entry changelog
 
         Arguments:
-            initial: a string ("true", "false") indicating if validation has failed previously
+            form: the user-input
+
+        Raises:
+            RuntimeError: reviewer orcid not part of allowed orcids
+        """
+        reviewer = form["reviewer-orcid"]
+        if reviewer not in self.reviewer_orcids:
+            raise RuntimeError(
+                f"ORCID '{reviewer}' is not one of registered reviewer ORCIDs. If you want to become a reviewer for MITE, contact the developers."
+            )
+
+        current_reviewers = set(self.data["changelog"][-1]["reviewers"])
+        current_reviewers.add(reviewer)
+        current_reviewers.discard("BBBBBBBBBBBBBBBBBBBBBBBB")
+        self.data["changelog"][-1]["reviewers"] = list(current_reviewers)
+
+        if form["reviewer-changelog"] != "":
+            self.data["changelog"][-1]["comment"] = (
+                self.data["changelog"][-1]["comment"] + " " + form["reviewer-changelog"]
+            )
+
+    def validate_user_input(self: Self) -> None:
+        """Validates the incoming user-submitted and formatted data
 
         Raises:
             RuntimeError: input validation does not pass
@@ -213,8 +273,8 @@ class ProcessingHelper(BaseModel):
             raise RuntimeError("Please provide at least one reaction entry!")
 
         enzyme_db_ids = [
-            self.data["enzyme"]["databaseIds"]["uniprot"],
-            self.data["enzyme"]["databaseIds"]["genpept"],
+            self.data["enzyme"]["databaseIds"].get("uniprot"),
+            self.data["enzyme"]["databaseIds"].get("genpept"),
         ]
         if all(item is None for item in enzyme_db_ids):
             raise RuntimeError(
@@ -243,22 +303,6 @@ class ProcessingHelper(BaseModel):
                 raise RuntimeError(
                     "At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked."
                 )
-            if re.search(r"\|", reaction.get("reactionSMARTS")):
-                raise RuntimeError(
-                    f"Reaction SMARTS with CXSMARTS (Chemaxon SMARTS) elements detected which are not supported by MITE. The offending reaction SMARTS is: '{reaction.get("reactionSMARTS")}'"
-                )
-
-        if initial == "true":
-            if (
-                self.data["enzyme"]["databaseIds"].get("genpept")
-                and not self.data["enzyme"]["databaseIds"]["mibig"]
-            ):
-                self.check_mibig()
-
-            if self.data["enzyme"]["databaseIds"].get("uniprot") and not self.data[
-                "enzyme"
-            ]["databaseIds"].get("uniprot").startswith("UPI"):
-                self.check_rhea()
 
         parser = MiteParser()
         parser.parse_mite_json(data=self.data)
@@ -268,6 +312,7 @@ class ProcessingHelper(BaseModel):
 
         self.data = parser.to_json()
 
+    # TODO(MMZ 23.7): re-implement as webhook
     def check_mibig(self: Self) -> None:
         """Check if genpept ID can be found in mibig genes
 
@@ -286,6 +331,7 @@ class ProcessingHelper(BaseModel):
                 f"NCBI GenPept Accession '{genpept}' is associated to MIBiG entry '{matches["mibig"].iloc[0]}', but was not added in this form. Please consider adding this cross-reference. This message will appear only once."
             )
 
+    # TODO(MMZ 23.7): re-implement as webhook
     def check_rhea(self: Self) -> None:
         """Check if rhea ids can be found for uniprot and/or are already added
 
@@ -323,38 +369,114 @@ class ProcessingHelper(BaseModel):
 
     def dump_json(self: Self):
         """Dumps dict as JSON to disk"""
-        target = Path(__file__).parent.parent.joinpath("dumps")
-        target.mkdir(parents=True, exist_ok=True)
-
-        with open(target.joinpath(self.dump_name), "w", encoding="utf-8") as outfile:
+        with open(
+            current_app.config["DATA_DUMPS"].joinpath(self.dump_name),
+            "w",
+            encoding="utf-8",
+        ) as outfile:
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
 
-    def send_email(self: Self, sub_type: str) -> None:
-        """Sends data per email to data processor
+    def create_pr(self) -> None:
+        """Create PR on mite_data using mite_bot's credentials"""
 
-        Arguments:
-            sub_type: a string indicating the type of submission (modification of entry or new entry)
-        """
+        if not current_app.config.get("ONLINE", False):
+            current_app.logger.warning(
+                f"{self.dump_name}: Prevented PR in offline mode"
+            )
+            return
 
-        if current_app.config.get("ONLINE", False):
-            msg = Message()
-            msg.recipients = [current_app.config.get("MAIL_TARGET")]
-            msg.subject = f"MITE: {sub_type}"
-            msg.body = f"Please find the dump file '{self.dump_name}' attached."
+        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
+        trgt = current_app.config["MITE_DATA"].joinpath(
+            f"mite_data/data/{self.dump_name}"
+        )
+        if self.data["accession"] != "MITE9999999":
+            trgt = current_app.config["MITE_DATA"].joinpath(
+                f"mite_data/data/{self.data["accession"]}.json"
+            )
+        shutil.copy(src, trgt)
 
-            json_content = json.dumps(self.data, indent=4)
-            json_attachment = BytesIO(json_content.encode("utf-8"))
-            msg.attach(self.dump_name, "application/json", json_attachment.read())
+        branch = self.dump_name.split(".")[0]
 
-            try:
-                mail.send(msg)
-                current_app.logger.info(
-                    f"Data of file {self.dump_name} was emailed successfully"
-                )
-            except Exception as e:
-                current_app.logger.error(
-                    f"An error occurred during sending of data of file {self.dump_name}: {e}."
-                )
+        body = f"""
+A submission was performed via the MITE web portal and needs reviewing.
+
+## Review requested
+
+{", ".join(self.reviewer_tags)}
+
+## TODO Reviewers
+
+- Review the entry [HERE](https://mite.bioinformatics.nl/submission/preview/{branch}/reviewer)
+- Fix any issues, add your ORCID, download the file, and append it to this PR
+
+*This action was performed by `mite-bot`*
+"""
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-b", branch],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "add", "mite_data/data/"],
+            check=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                current_app.config["MITE_DATA"],
+                "commit",
+                "-m",
+                f"Contributor submission {self.data['enzyme']['name']}",
+            ],
+            check=True,
+        )
+
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                current_app.config["MITE_DATA"],
+                "push",
+                "-u",
+                "origin",
+                branch,
+            ],
+            check=True,
+        )
+
+        subprocess.run(
+            [
+                "gh",
+                "pr",
+                "create",
+                "--repo",
+                "mite-standard/mite_data",
+                "--title",
+                f"Contributor submission {branch}",
+                "--body",
+                "Automated submission from webapp",
+                "--draft",
+                "--base",
+                "main",
+                "--head",
+                branch,
+                "--body",
+                body,
+            ],
+            check=True,
+        )
+
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "pull"], check=True
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "branch", "-D", branch],
+            check=True,
+        )
 
 
 @bp.route("/submission/")
@@ -367,31 +489,92 @@ def submission() -> str:
     return render_template("submission.html")
 
 
-@bp.route("/submission/<mite_acc>", methods=["GET", "POST"])
-def submission_existing(mite_acc: str) -> str | Response:
-    """Render the submission forms for an existing entry mite_acc
+@bp.route("/submission/<var>/<role>", methods=["GET", "POST"])
+def submission_data(var: str, role: str) -> str | Response:
+    """Initiate new submission and render form page
 
     Arguments:
-        mite_acc: the mite accession, provided by the URL variable
+        var: 'new', a mite accession id, or an uuid -> determine which type of data
+        role: 'contributor' or 'reviewer' to indicate the role of data modification
 
     Returns:
-        The submission_existing.html page as string or a redirect to another page
+        Form page or redirect to 'entry_not_found' or 'retired' pages
     """
-    src = current_app.config["DATA_JSON"].joinpath(f"{mite_acc}.json")
+    if var.startswith("MITE"):
+        src = current_app.config["DATA_JSON"].joinpath(f"{var}.json")
+        if not src.exists():
+            return render_template("entry_not_found.html", mite_acc=var)
 
-    if not src.exists():
-        return render_template("entry_not_found.html", mite_acc=mite_acc)
+        with open(src) as infile:
+            data = json.load(infile)
+            if data.get("status") == "retired":
+                return redirect(url_for("routes.repository", mite_acc=var))
 
-    with open(src) as infile:
+        var = uuid.uuid1()
+        with open(
+            current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
+            "w",
+            encoding="utf-8",
+        ) as h:
+            h.write(json.dumps(data, indent=4, ensure_ascii=False))
+
+    elif var == "new":
+        data = {
+            "changelog": [],
+            "enzyme": {"references": ["doi:"]},
+            "reactions": [
+                {
+                    "evidence": {"evidenceCode": [], "references": ["doi:"]},
+                    "reactions": [{"products": [""]}],
+                }
+            ],
+        }
+        var = uuid.uuid1()
+        with open(
+            current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
+            "w",
+            encoding="utf-8",
+        ) as h:
+            h.write(json.dumps(data, indent=4, ensure_ascii=False))
+
+    else:
+        if not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists():
+            return redirect(url_for("routes.submission_data", var="new"))
+
+    with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
         data = json.load(infile)
 
-    if data.get("status") != "active":
-        return redirect(url_for("routes.repository", mite_acc=mite_acc))
+    return render_template(
+        "submission_form.html",
+        data=data,
+        form_vals=get_schema_vals(),
+        var=var,
+        role=role,
+    )
+
+
+@bp.route("/submission/process/<var>/<role>", methods=["GET", "POST"])
+def submission_process(var: str, role: str) -> str | Response:
+    """Process submitted data for preview
+
+    Arguments:
+        var: an uuid to determine storage location
+        role: 'contributor' or 'reviewer' to indicate the role of data modification
+
+    Returns:
+        If submission error, show rendered page; else redirect to preview page
+    """
+    if not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists():
+        return redirect(
+            url_for("routes.submission_data", var="new", role="contributor")
+        )
 
     if request.method == "POST":
         user_input = request.form.to_dict(flat=False)
+        processing_helper = ProcessingHelper(dump_name=f"{var}.json")
 
-        processing_helper = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json")
+        with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
+            data = json.load(infile)
 
         try:
             processing_helper.parse_user_input(data=user_input, original_data=data)
@@ -399,77 +582,108 @@ def submission_existing(mite_acc: str) -> str | Response:
             return render_template("submission_failure.html", error=str(e))
 
         try:
-            processing_helper.validate_user_input(initial=user_input["initial"][0])
+            processing_helper.validate_user_input()
             processing_helper.dump_json()
-            processing_helper.send_email(sub_type="MODIFIED")
-            return render_template(
-                "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
-            )
+            return redirect(url_for("routes.submission_preview", var=var, role=role))
         except Exception as e:
-            current_app.logger.critical(e)
-            flash(str(e))
-            x, y = processing_helper.random_numbers()
-            return render_template(
-                "submission_form.html",
-                data=processing_helper.data,
-                x=x,
-                y=y,
-                initial="false",
+            processing_helper.dump_json()
+            current_app.logger.critical(
+                f"{var}: Error during validation of submission: {e!s}"
             )
+            flash(str(e))
+            return redirect(url_for("routes.submission_data", var=var, role=role))
 
-    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
+    else:
+        return redirect(
+            url_for("routes.submission_data", var="new", role="contributor")
+        )
 
-    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
 
+@bp.route("/submission/preview/<var>/<role>", methods=["GET", "POST"])
+def submission_preview(var: str, role: str) -> str | Response:
+    """Render the preview page
 
-@bp.route("/submission/new", methods=["GET", "POST"])
-def submission_new() -> str | Response:
-    """Render the submission forms for a new entry
+    preview=True triggers preview class in base.html, adding preview watermark
+
+    Arguments:
+        var: the submission ID
+        role: the client role (contributor or reviewer)
 
     Returns:
-        The submission_existing.html page as string or redirect to another page
+        The entry.html page as string or entry not found or submission_success
     """
+    src = current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")
+
+    if not src.exists():
+        return render_template("entry_not_found.html", mite_acc=var)
+
+    with open(src) as infile:
+        data = json.load(infile)
+
     if request.method == "POST":
-        user_input = request.form.to_dict(flat=False)
+        user_input = request.form.to_dict()
+        processing_helper = ProcessingHelper(dump_name=f"{var}.json", data=data)
 
-        processing_helper = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json")
+        if user_input.get("contr-submit"):
+            if request.form.get("email_confirm"):
+                # This is a bot (field should be empty)
+                abort(400)
 
-        try:
-            processing_helper.parse_user_input(data=user_input, original_data={})
-        except Exception as e:
-            return render_template("submission_failure.html", error=str(e))
+            elapsed = time.time() - session.get("form_start", 0)
+            if elapsed < 2:  # less than 2 seconds? likely a bot
+                abort(400)
 
-        try:
-            processing_helper.validate_user_input(initial=user_input["initial"][0])
+            processing_helper.add_changelog(user_input)
             processing_helper.dump_json()
-            processing_helper.send_email(sub_type="NEW")
+            processing_helper.create_pr()
+
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
             )
-        except Exception as e:
-            current_app.logger.critical(e)
-            flash(str(e))
-            x, y = processing_helper.random_numbers()
-            return render_template(
-                "submission_form.html",
-                data=processing_helper.data,
-                x=x,
-                y=y,
-                initial="false",
+        elif user_input.get("contr-modify"):
+            return redirect(
+                url_for("routes.submission_data", var=var, role="contributor")
+            )
+        elif user_input.get("reviewer-modify"):
+            return redirect(url_for("routes.submission_data", var=var, role="reviewer"))
+        elif user_input.get("reviewer-submit"):
+            try:
+                processing_helper.add_reviewer_info(user_input)
+            except RuntimeError as e:
+                flash(str(e))
+                current_app.logger.error(f"{e!s}")
+                return render_template(
+                    "entry.html",
+                    data=render_preview(data),
+                    mode="review",
+                    preview=True,
+                    submission_id=var,
+                )
+            processing_helper.dump_json()
+            return send_file(
+                current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
+                as_attachment=True,
             )
 
-    x, y = ProcessingHelper(dump_name=f"{uuid.uuid1()}.json").random_numbers()
-    data = {
-        "enzyme": {"references": ["doi:"]},
-        "reactions": [
-            {
-                "evidence": {"evidenceCode": [], "references": ["doi:"]},
-                "reactions": [{"products": [""]}],
-            }
-        ],
-    }
+        # todo: condition reviewer download -> returns the download as dump with added orcid or reviewer
 
-    return render_template("submission_form.html", data=data, x=x, y=y, initial="true")
+    if role == "contributor":
+        session["form_start"] = time.time()
+        return render_template(
+            "entry.html",
+            data=render_preview(data),
+            mode="preview",
+            preview=True,
+            submission_id=var,
+        )
+    else:
+        return render_template(
+            "entry.html",
+            data=render_preview(data),
+            mode="review",
+            preview=True,
+            submission_id=var,
+        )
 
 
 @bp.route("/submission/review", methods=["GET", "POST"])
@@ -479,15 +693,7 @@ def review() -> str:
     Returns:
         The entry.html page as string
     """
-
-    def _render(data: dict) -> dict:
-        """Run validations and render html-json"""
-        parser = MiteParser()
-        parser.parse_mite_json(data=data)
-        schema_manager = SchemaManager()
-        schema_manager.validate_mite(instance=parser.to_json())
-        return parser.to_html()
-
+    # TODO(23.7. MMZ): remove the review route
     if request.method == "POST":
         try:
             json_data = ""
@@ -504,7 +710,9 @@ def review() -> str:
                     f"Neither MITE file nor content provided. Please try again."
                 )
 
-            return render_template("entry.html", data=_render(json_data))
+            return render_template(
+                "entry.html", data=render_preview(json_data), preview=True, review=True
+            )
 
         except Exception as e:
             current_app.logger.critical(e)
@@ -514,6 +722,7 @@ def review() -> str:
     return render_template("review.html")
 
 
+# TODO: change the URL to only peptidesmiles
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
 def peptidesmiles() -> str:
     """Render the peptide SMILES page
@@ -542,6 +751,7 @@ def peptidesmiles() -> str:
     return render_template("smiles_peptide.html", data={"peptide_string": ""})
 
 
+# TODO: change the URL to only canonicalizesmiles
 @bp.route("/submission/canonicalizesmiles", methods=["GET", "POST"])
 def canonsmiles() -> str:
     """Render the canonicalize SMILES page

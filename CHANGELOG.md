@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] 25-07-2025
+
+### Added
+
+- Additional source info in overview table (e.g. Domain, Kingdom, ...)
+- Download of overview table as .csv
+- Forms: added cofactor selection and wikidata cross-link for enzyme info
+
+### Changed
+
+- Forms: options for tailoring, evidence etc. now directly from `mite_schema` data model
+- Removed redundant user input sanitation (already performed by `mite_extras`)
+- Reworked data submission - changed to direct pull requests to GitHub
+- Removed email functionality
+- Updated api to be properly url-versioned
+
 ## [1.3.1] 02-06-2025
 
 ### Fixed

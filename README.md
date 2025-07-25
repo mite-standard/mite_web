@@ -12,12 +12,9 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 **Nota bene: this application is only tested on Linux and not intended to be run locally. For an online version, see [here](https://mite.bioinformatics.nl/).**
 
-## Deploy Docker
-
-### Quick start
+## Deploy Docker locally
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Create a file `mite_web/instance/config.py` with the content indicated below
 - Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
 - Start the docker `docker-compose up -d` (potentially with `sudo`)
 - Open the application in any browser with the URL http://0.0.0.0:8004/
@@ -40,15 +37,26 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Run the script `./run_pymol.sh` to generate enzyme visualizations
 - Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
 
-## Config-file
+### Deploy Docker to production
 
+- Download or clone this [repository](https://github.com/mite-standard/mite_web)
+- Create a file `mite_web/instance/config.py` with the content indicated below
+- Add the `.env` file with content indicated below
+- Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
+- Start the docker `docker-compose up -d` (potentially with `sudo`)
+- To stop the application, run `docker-compose stop` (potentially with `sudo`)
+
+#### Config files
+
+`config.py`
 ```python
 SECRET_KEY: str = "your_secret_key"
-ONLINE: bool = False
-MAIL_TARGET: str = "email_target"
-MAIL_DEFAULT_SENDER: str = "sender"
-MAIL_SERVER: str = "server"
-MAIL_PORT: int = "port"
-MAIL_USE_TLS: bool = False
-MAIL_USE_SSL: bool = False
+ONLINE: bool = True
+```
+
+`.env`
+```commandline
+GITHUB_TOKEN=<personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo')>
+GITHUB_NAME=<gh-acc name>
+GITHUB_MAIL=<gh-acc mail>
 ```

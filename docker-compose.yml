@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
   mite_web:
+    env_file: .env
     build:
       context: .
       dockerfile: ./compose/mite_web/Dockerfile

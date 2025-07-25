@@ -67,9 +67,16 @@
             </div>
         </div>
     </form>
-    <div class="row mt-4">
+    <div class="row mt-4 justify-content-end">
         <div class="col">
             <h3 class="fw-semibold lh-2">Overview</h3>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('routes.download_identifier', identifier='mite_overview') }}">
+                <button class="btn btn-secondary" type="button" aria-label="Download the overview table" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Table download">
+                <i class="bi bi-download"></i>
+                </button>
+            </a>
         </div>
     </div>
     <div class="row">
@@ -77,7 +84,7 @@
             <div id="search-count" class="lead"></div>
         </div>
     </div>
-    <table id="table" class="my-3 table-striped" data-toggle="table" data-search="true">
+    <table id="table" class="my-3 table-striped" data-toggle="table" data-search="true" data-show-columns-toggle-all="true" data-show-columns="true" >
         <thead>
             <tr>
                 <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
@@ -100,8 +107,16 @@
                 <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
                 <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
                 <th scope="col" data-sortable="true" data-field="description">Enzyme Type</th>
-                <th scope="col" data-sortable="true" data-field="organism">Organism of Origin</th>
                 <th scope="col" data-sortable="false" data-field="reaction_description">Reaction Description</th>
+                <th scope="col" data-sortable="true" data-field="cofactors_organic">Cofactors (organic)</th>
+                <th scope="col" data-sortable="true" data-field="cofactors_inorganic">Cofactors (inorganic)</th>
+                <th scope="col" data-sortable="true" data-field="organism">Organism</th>
+                <th scope="col" data-sortable="true" data-field="domain">Domain</th>
+                <th scope="col" data-sortable="true" data-field="kingdom">Kingdom</th>
+                <th scope="col" data-sortable="true" data-field="phylum">Phylum</th>
+                <th scope="col" data-sortable="true" data-field="class">Class</th>
+                <th scope="col" data-sortable="true" data-field="order">Order</th>
+                <th scope="col" data-sortable="true" data-field="family">Family</th>
             </tr>
         </thead>
         <tbody>
@@ -126,8 +141,16 @@
                     <td>{{ value.name }}</td>
                     <td>{{ value.tailoring }}</td>
                     <td>{{ value.description | truncate(75, True) }}</td>
-                    <td>{{ value.organism }}</td>
                     <td>{{ value.reaction_description | truncate(75, True) }}</td>
+                    <td>{{ value.cofactors_organic }}</td>
+                    <td>{{ value.cofactors_inorganic }}</td>
+                    <td>{{ value.organism }}</td>
+                    <td>{{ value.domain }}</td>
+                    <td>{{ value.kingdom }}</td>
+                    <td>{{ value.phylum }}</td>
+                    <td>{{ value.class }}</td>
+                    <td>{{ value.order }}</td>
+                    <td>{{ value.family }}</td>
                 </tr>
             {% endfor %}
         </tbody>

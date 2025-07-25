@@ -24,6 +24,7 @@ SOFTWARE.
 import json
 import logging
 import os
+import subprocess
 import sys
 from importlib import metadata
 from pathlib import Path
@@ -33,7 +34,7 @@ from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 
 from mite_web.api.mite_api import mite_ns
-from mite_web.config.extensions import api, mail
+from mite_web.config.extensions import api
 from mite_web.routes import bp
 
 
@@ -51,9 +52,8 @@ def create_app() -> Flask:
     register_context_processors(app)
     app.register_blueprint(bp)
 
-    mail.init_app(app)
     api.init_app(app)
-    api.add_namespace(mite_ns, path="/api")
+    api.add_namespace(mite_ns, path="/api/v1/mite")
 
     return app
 
@@ -70,8 +70,10 @@ def configure_app(app: Flask) -> Flask:
 
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
+    app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
+    app.config["MITE_DATA"] = Path(__file__).parent.joinpath("mite_data")
 
     config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
     if config_file.exists():
@@ -80,6 +82,8 @@ def configure_app(app: Flask) -> Flask:
     else:
         app.logger.warning("No 'config.py' file found. Default to dev settings.")
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
+
+    app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
 
     csrf = CSRFProtect()
     csrf.init_app(app)

@@ -9,23 +9,35 @@
             {% else %}
             <h1 class="fw-semibold lh-2">Create New Entry</h1>
             {% endif %}
+            <h5>Submission ID: {{ var }}</h5>
         </div>
     </div>
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-    <div class="row">
-        <div class="card card-body">
-            <div class="col text-center mx-auto">
-                <h4 class="fw-semibold lh-2">Error during automated validation!</h4>
-                <ul class="lh-base list-unstyled">
-                {% for message in messages %}
-                    <li><p class="lead mb-1">{{ message }}</p></li>
-                {% endfor %}
-                </ul>
-                <h5>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}">canonicalize your substrate/product SMILES</a>.</h5>
-                <h5>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting page</a>.</h5>
-            </div>
+    <div class="mx-4 my-2">
+      <div class="alert alert-light" role="alert">
+        <div class="row">
+          <div class="col-8">
+            <h5 class="mb-0"> Error during validation!</h5>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
         </div>
+          <div class="row my-4">
+          <div class="text-center mx-auto">
+            {% for message in messages %}
+            <textarea readonly class="form-control" rows="5">{{ message }}</textarea>
+            {% endfor %}
+          </div>
+          </div>
+          <div class="row">
+          <div class="text-center mx-auto">
+            <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}">canonicalize your substrate/product SMILES</a>.</h6>
+            <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.troubleshooting') }}">troubleshooting page</a>.</h6>
+          </div>
+          </div>
+      </div>
     </div>
     {% endif %}
     {% endwith %}
@@ -36,10 +48,9 @@
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
-    <form method="post">
+    <form id="miteForm" method="post" action="{{ url_for('routes.submission_process', var=var, role=role) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
-        <input type="hidden" name="initial" value="{{ initial }}">
         <div class="row my-2" id="row-enzyme">
             <div class="col-md-6" id="col-enzyme">
                 <div class="row">
@@ -48,29 +59,44 @@
                         <p class="mb-2 text-center">General information on the tailoring enzyme</p>
                     </div>
                 </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        <div id="enzyme-name"></div>
+                <div class="card card-body">
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-name"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-description"></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div id="enzyme-description"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="comment-general"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        <div id="enzyme-uniprot"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-uniprot"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-genpept"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-mibig"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-wikidata"></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div id="enzyme-genpept"></div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-cofactors"></div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <div id="enzyme-mibig"></div>
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="col">
-                        <div id="enzyme-ref"></div>
-                        <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-ref"></div>
+                            <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,7 +108,7 @@
                     </div>
                 </div>
                 <div class="card card-body">
-                    <div class="row mb-2">
+                    <div class="row">
                         <div class="col">
                             <div id="aux-enzymes"></div>
                             <button type="button" class="btn btn-secondary my-2" onclick="insertAuxEnzymeForm(document.getElementById('aux-enzymes'))">Add Auxiliary Enzyme</button>
@@ -107,90 +133,48 @@
                 <div class="row mb-2">
                     <div class="col">
                         <div id="reactions"></div>
-                        <button type="button" class="btn btn-secondary my-2" onclick="insertReactionForm(document.getElementById('reactions'))">Add Reaction</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row my-3">
-            <div class="col">
-                <h3 class="fw-semibold lh-2 text-center">General Information</h3>
-                <p class="mb-2 text-center">Submitter details and other information</p>
-            </div>
-        </div>
-        <div class="card card-body mb-2">
-            <div class="row mb-2">
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">General Comment</h6>
-                    <div class="form-floating">
-                        <input id="comment" maxlength="300" name="comment" class="form-control" aria-describedby="CommentHelp" type="text" value="{{ data.get('comment', '') }}">
-                        <label for="comment" class="form-label">Optional general comment</label>
-                        <div id="CommentHelp" class="form-text">Briefly comment on enzyme and/or reaction details that did not fit any of the other form fields.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">ORCID</h6>
-                    <div class="form-floating">
-                        <input id="orcid" minlength="19" maxlength="19" name="orcid" class="form-control" aria-describedby="OrcidHelp" type="text">
-                        <label for="orcid" class="form-label">ORCID</label>
-                        <div id="OrcidHelp" class="form-text">Enter your ORCID or leave empty for an anonymous submission. If you enter your ORCID, be aware of the <a class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>.</div>
-                    </div>
-                </div>
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">Changelog<span class="mandatory">*</span></h6>
-                    <div class="form-floating">
-                        <input id="changelog" name="changelog" class="form-control" aria-describedby="ChangeLogHelp" type="text" required>
-                        <label for="changelog" class="form-label">Changelog</label>
-                        <div id="ChangeLogHelp" class="form-text">Briefly describe your changes. If you submit a new entry, simply state 'New entry'.</div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">Math Challenge<span class="mandatory">*</span></h6>
-                    <div class="form-floating">
-                        <input id="usersum" name="usersum" class="form-control" aria-describedby="UserSumHelp" type="number" required>
-                        <label for="usersum" class="form-label">What is the sum of <b>{{ x }}</b> and <b>{{ y }}</b>?</label>
-                        <div id="UserSumHelp" class="form-text">Validation form to prevent automated submissions</div>
-                    </div>
-                    <p class="lead" id="usersum-error-message" style="color: red;"></p>
-                </div>
-                <div class="col">
-                    <h6 class="fw-semibold lh-2">Terms of Use<span class="mandatory">*</span></h6>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
-                      <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
+                        <button type="button" class="btn btn-secondary my-2" id="add-reaction-btn">Add Reaction</button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="row my-3">
             <div class="col text-center mx-auto">
-                <button id="submit" type="submit" class="btn btn-primary">Submit Data For Review</button>
+                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Preview entry</button>
             </div>
         </div>
     </form>
 </div>
+<!--TODO(MMZ 24.7.): Investigate if url_submission needed by anything-->
 <script>const url_submission = {{ url_for('routes.submission') }}</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
-        validateSumInput(event, {{ x }}, {{ y }});
+    const formVals = {{ form_vals | tojson | safe }};
+    document.getElementById('add-reaction-btn').addEventListener('click', () => {
+        const container = document.getElementById('reactions');
+        insertReactionForm(container, formVals);
     });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        createHtmlEnzymeName(document.getElementById('enzyme-name'), {{ data | tojson }})
-        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), {{ data | tojson }})
-        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), {{ data | tojson }})
-        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), {{ data | tojson }})
-        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), {{ data | tojson }})
-        populateEnzymeRefForm(document.getElementById('enzyme-ref'), {{ data | tojson }})
-        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), {{ data | tojson }})
-        populateReactionForm(document.getElementById('reactions'), {{ data | tojson }})
+        const data = {{ data | tojson | safe }};
+        const formVals = {{ form_vals | tojson | safe }};
+    
+        createHtmlEnzymeName(document.getElementById('enzyme-name'), data)
+        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), data)
+        createGeneralComment(document.getElementById('comment-general'), data)
+        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), data)
+        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), data)
+        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), data)
+        createHtmlEnzymeWikidata(document.getElementById('enzyme-wikidata'), data)
+        createHtmlEnzymeCofactors(document.getElementById('enzyme-cofactors'), data, formVals)
+        populateEnzymeRefForm(document.getElementById('enzyme-ref'), data)
+        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
+        populateReactionForm(document.getElementById('reactions'), data, formVals)
         testFirefoxMobile()
+
+        disableButton(document.getElementById('miteForm'), document.getElementById('submit'))
     });
 </script>
+
 {% endblock %}
