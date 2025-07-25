@@ -436,19 +436,6 @@ A submission was performed via the MITE web portal and needs reviewing.
                 "git",
                 "-C",
                 current_app.config["MITE_DATA"],
-                "remote",
-                "set-url",
-                "origin",
-                f"https://{os.environ['GITHUB_TOKEN']}@github.com/mite-standard/mite_data.git",
-            ],
-            check=True,
-        )
-
-        subprocess.run(
-            [
-                "git",
-                "-C",
-                current_app.config["MITE_DATA"],
                 "push",
                 "-u",
                 "origin",

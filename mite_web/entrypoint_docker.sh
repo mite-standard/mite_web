@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "$GITHUB_TOKEN" | gh auth login --with-token
+echo "$GITHUB_TOKEN" | gh auth login --with-token --git-protocol https
+git config --global credential.helper '!gh auth git-credential'
 gh repo clone https://github.com/mite-standard/mite_data.git /mite_web/mite_web/mite_data
 git config --global user.name "$GITHUB_NAME"
 git config --global user.email "$GITHUB_MAIL"
