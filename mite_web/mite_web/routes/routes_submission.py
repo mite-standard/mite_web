@@ -686,42 +686,6 @@ def submission_preview(var: str, role: str) -> str | Response:
         )
 
 
-@bp.route("/submission/review", methods=["GET", "POST"])
-def review() -> str:
-    """Render the review page
-
-    Returns:
-        The entry.html page as string
-    """
-    # TODO(23.7. MMZ): remove the review route
-    if request.method == "POST":
-        try:
-            json_data = ""
-            user_input = request.form.to_dict(flat=True)
-
-            if user_input.get("jsonText") and user_input.get("jsonText") != "":
-                json_data = json.loads(user_input.get("jsonText"))
-            elif "jsonFile" in request.files:
-                json_file = request.files["jsonFile"]
-                if json_file.filename.endswith(".json"):
-                    json_data = json.load(json_file)
-            else:
-                raise RuntimeError(
-                    f"Neither MITE file nor content provided. Please try again."
-                )
-
-            return render_template(
-                "entry.html", data=render_preview(json_data), preview=True, review=True
-            )
-
-        except Exception as e:
-            current_app.logger.critical(e)
-            flash(str(e))
-            return render_template("review.html")
-
-    return render_template("review.html")
-
-
 # TODO: change the URL to only peptidesmiles
 @bp.route("/submission/peptidesmiles", methods=["GET", "POST"])
 def peptidesmiles() -> str:

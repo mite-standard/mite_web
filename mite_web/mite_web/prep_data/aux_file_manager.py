@@ -197,24 +197,6 @@ class SummaryManager(Locations):
             "family": "Not found",
         }
 
-        if acc := data["enzyme"]["databaseIds"].get("genpept"):
-            handle = Entrez.efetch(db="protein", id=acc, rettype="gb", retmode="text")
-            record = SeqIO.read(handle, "genbank")
-            try:
-                origin["domain"] = record.annotations.get("taxonomy")[0] or "Not found"
-                origin["kingdom"] = record.annotations.get("taxonomy")[1] or "Not found"
-                origin["phylum"] = record.annotations.get("taxonomy")[2] or "Not found"
-                origin["class"] = record.annotations.get("taxonomy")[3] or "Not found"
-                origin["order"] = record.annotations.get("taxonomy")[4] or "Not found"
-                origin["family"] = record.annotations.get("taxonomy")[5] or "Not found"
-                origin["organism"] = record.annotations.get("organism") or "Not found"
-            except Exception as e:
-                logger.warning(
-                    f"Did not find organism information for '{acc}' ({data["accession"]}): {e!s}"
-                )
-            handle.close()
-            return origin
-
         if acc := data["enzyme"]["databaseIds"].get("uniprot"):
             if (
                 response := requests.get(
@@ -240,6 +222,26 @@ class SummaryManager(Locations):
                         f"Did not find organism information for '{acc}' ({data["accession"]}): {e!s}"
                     )
                 return origin
+
+        if acc := data["enzyme"]["databaseIds"].get("genpept"):
+            try:
+                handle = Entrez.efetch(
+                    db="protein", id=acc, rettype="gb", retmode="text"
+                )
+                record = SeqIO.read(handle, "genbank")
+                origin["domain"] = record.annotations.get("taxonomy")[0] or "Not found"
+                origin["kingdom"] = record.annotations.get("taxonomy")[1] or "Not found"
+                origin["phylum"] = record.annotations.get("taxonomy")[2] or "Not found"
+                origin["class"] = record.annotations.get("taxonomy")[3] or "Not found"
+                origin["order"] = record.annotations.get("taxonomy")[4] or "Not found"
+                origin["family"] = record.annotations.get("taxonomy")[5] or "Not found"
+                origin["organism"] = record.annotations.get("organism") or "Not found"
+                handle.close()
+            except Exception as e:
+                logger.warning(
+                    f"Did not find organism information for '{acc}' ({data["accession"]}): {e!s}"
+                )
+            return origin
 
         return origin
 
