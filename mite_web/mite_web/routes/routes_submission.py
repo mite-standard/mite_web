@@ -234,7 +234,8 @@ class ProcessingHelper(BaseModel):
                     form["orcid"] if form["orcid"] != "" else "AAAAAAAAAAAAAAAAAAAAAAAA"
                 ],
                 "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
-                "comment": form["changelog"],
+                "comment": form["changelog"]
+                + ("" if form["changelog"].endswith(".") else "."),
             }
         )
 
@@ -260,7 +261,10 @@ class ProcessingHelper(BaseModel):
 
         if form["reviewer-changelog"] != "":
             self.data["changelog"][-1]["comment"] = (
-                self.data["changelog"][-1]["comment"] + " " + form["reviewer-changelog"]
+                self.data["changelog"][-1]["comment"]
+                + " "
+                + form["reviewer-changelog"]
+                + ("" if form["reviewer-changelog"].endswith(".") else ".")
             )
 
     def validate_user_input(self: Self) -> None:
