@@ -17,7 +17,7 @@
         <div class="col-auto">
             <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
+                <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
     </div>
@@ -70,7 +70,7 @@
         </div>
         <div class="row flex justify-content-center">
             <div class="col-auto">
-                <button id="reviewer-submit" name="reviewer-submit" value="reviewer-submit" type="submit" class="btn btn-primary">Download reviewed entry</button>
+                <button id="reviewer-submit" name="reviewer-submit" value="reviewer-submit" type="submit" class="btn btn-primary btn-sm">Download reviewed entry</button>
             </div>
         </div>
     </form>
@@ -89,7 +89,7 @@
         <div class="col-auto">
             <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary"><i class="bi bi-pen"></i> Edit data</button>
+                <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
     </div>
@@ -124,36 +124,40 @@
         </div>
         <div class="row flex justify-content-center">
             <div class="col-auto">
-                <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary">Submit entry for review</button>
+                <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary btn-sm">Submit entry for review</button>
             </div>
         </div>
     </form>
     {% else %}
-    <div class="row mb-2">
+    <div class="row mb-2 text-center align-items-center ">
         {% if ret_acc == "MITE0000000" %}
-        <div class="col-2 d-flex justify-content-start align-items-center"></div>
+        <div class="col-auto text-start invisible">
+            {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+        </div>
         {% else %}
-        <div class="col-2 d-flex justify-content-start align-items-center">
+        <div class="col-auto text-start">
             {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
         </div>
         {% endif %}
-        <div class="col-8 d-flex justify-content-center align-items-center">
-            <h1 class="fw-semibold lh-2">{{ data.accession }}</h1>
+        <div class="col">
+            <h1 class="fw-semibold lh-2 mb-0">{{ data.accession }}</h1>
         </div>
         {% if max_entry_reached %}
-            <div class="col-2 d-flex justify-content-start align-items-center"></div>
+        <div class="col-auto text-end invisible">
+            {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+        </div>
         {% else %}
-        <div class="col-2 d-flex justify-content-end align-items-center">
+        <div class="col-auto text-end">
             {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
         </div>
         {% endif %}
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <a href="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}"><button type="button" class="btn btn-secondary"><i class="bi bi-pen"></i> Modify entry</button></a>
+            <a href="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Modify entry</button></a>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary"><i class="bi bi-download"></i> Download entry</button></a>
+            <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
         </div>
     </div>
     {% endif %}
