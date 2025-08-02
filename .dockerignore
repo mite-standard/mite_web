@@ -1,6 +1,8 @@
-mite_web/.venv
 .git
+.idea/
+mite_web/.venv
 mite_web/tests
 mite_web/mite_web/dumps
 mite_web/.pre-commit-config.yaml
-.idea/
+mite_web/.pytest_cache/
+mite_web/.ruff_cache/
