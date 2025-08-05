@@ -10,7 +10,6 @@ name = "mite_web"
 version = "1.5.0"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
-license-files = { paths = ["LICENSE"] }
 authors = [
     { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
 ]
@@ -42,31 +41,8 @@ dependencies = [
     "rdkit==2024.3.6"
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pre-commit",
-    "pytest~=7.4",
-    "ruff"
-]
-
 [tool.hatch.envs.default]
 installer = "uv"
-
-[tool.hatch.envs.dev]
-installer = "uv"
-features = [
-    "dev"
-]
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q"
-testpaths = [
-    "tests/",
-]
-pythonpath = [
-    "mite_web/"
-]
 
 [tool.ruff]
 line-length = 88
