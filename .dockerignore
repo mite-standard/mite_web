@@ -1,8 +1,14 @@
 .git
 .idea/
+.venv
 mite_web/.venv
+tests
 mite_web/tests
+mite_web/dumps
 mite_web/mite_web/dumps
+.pre-commit-config.yaml
 mite_web/.pre-commit-config.yaml
+.pytest_cache/
 mite_web/.pytest_cache/
+.ruff_cache/
 mite_web/.ruff_cache/

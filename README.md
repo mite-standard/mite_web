@@ -59,4 +59,6 @@ ONLINE: bool = True
 GITHUB_TOKEN=<personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo')>
 GITHUB_NAME=<gh-acc name>
 GITHUB_MAIL=<gh-acc mail>
+POSTGRES_PASSWORD=<yoursecurepassword>
+POSTGRES_DB=mite_database
 ```

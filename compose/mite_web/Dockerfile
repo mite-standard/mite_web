@@ -28,10 +28,10 @@ RUN (type -p wget >/dev/null || (apt update && apt install wget -y)) \
 RUN add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y python3.12 python3.12-dev python3-pip
 RUN pip install --upgrade pip
 RUN pip install hatch
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONUNBUFFERED=1
 
 # Set up data and variables
-ENV INSTALL_PATH /mite_web
+ENV INSTALL_PATH=/mite_web
 RUN mkdir -p $INSTALL_PATH
 WORKDIR $INSTALL_PATH
 COPY ./mite_web/pyproject.toml .
