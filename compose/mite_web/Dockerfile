@@ -8,6 +8,7 @@ RUN apt-get update && apt-get upgrade -y && \
     build-essential \
     libxrender1 \
     libxtst6 \
+    netcat \
     ncbi-blast+ \
     pymol \
     wget && \

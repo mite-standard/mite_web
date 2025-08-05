@@ -9,6 +9,17 @@ services:
       - 8004:8004
     volumes:
       - ./mite_web:/mite_web
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
   nginx:
     build:
       context: .
