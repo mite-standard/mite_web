@@ -24,17 +24,17 @@ SOFTWARE.
 import json
 import logging
 import os
-import subprocess
 import sys
 from importlib import metadata
 from pathlib import Path
 
 import coloredlogs
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
 from mite_web.api.mite_api import mite_ns
-from mite_web.config.extensions import api
+from mite_web.config.extensions import api, db
 from mite_web.routes import bp
 
 
@@ -46,6 +46,14 @@ def create_app() -> Flask:
     """
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
+
+    db.init_app(app)
+    from mite_web.seed import seed_data
+
+    with app.app_context():
+        db.create_all()
+        seed_data()
+
     app.url_map.strict_slashes = False
     verify_data(app)
 
@@ -84,6 +92,9 @@ def configure_app(app: Flask) -> Flask:
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     csrf = CSRFProtect()
     csrf.init_app(app)

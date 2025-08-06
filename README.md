@@ -22,20 +22,17 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 ## For developers
 
-### Install and quick start
+*Nota bene: since version `1.5.0`, development is only possible using the docker-container*
 
-*Nota bene: This installation will only work on (Ubuntu) Linux.*
+### Development
 
-- Install `python3`
-- Install `hatch` using one of the methods described [here](https://hatch.pypa.io/1.12/install/)
-- Download or clone this [repository](https://github.com/mite-standard/mite_web) and change into `mite_dev` (where the `pyproject.toml` file resides)
-- Run `hatch -v env create dev`
-- Run `hatch run dev:pre-commit install`. This will set up `pre-commit`
-- Install BLAST+ by running `sudo apt-get install ncbi-blast+`
-- Install Pymol by running `sudo apt-get install pymol`
-- Run the script `hatch run dev:python mite_web/prepare_mite_data.py` to populate the application with data
-- Run the script `./run_pymol.sh` to generate enzyme visualizations
-- Move into the `mite_web` directory and run `hatch run dev:flask --app mite_web run --debug`
+- Download or clone this [repository](https://github.com/mite-standard/mite_web)
+- Create a file `mite_web/instance/config.py` with the content indicated below. Set `Online` to `False`
+- Add the `.env` file with content indicated below
+- Build the docker image `docker-compose build`
+- Start the docker image with `docker-compose up`
+- Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container (`gunicorn` does not support reloading on change with the current build)
+- Changes in the PostgreSQL DB will only be applied if old tables are dropped with `docker-compose down -v`
 
 ### Deploy Docker to production
 
