@@ -34,6 +34,7 @@ class Entry(db.Model):
     comment = db.Column(db.Text, nullable=True)
 
     changelogs = db.relationship("ChangeLog", back_populates="entry")
+    enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
 
 
 class Person(db.Model):
@@ -65,14 +66,72 @@ class ChangeLog(db.Model):
     )
 
 
+# TODO: why not primary_key=True?
 changelog_contributors = db.Table(
     "changelog_contributors",
     db.Column("person_id", db.Integer, db.ForeignKey("person.id")),
     db.Column("changelog_id", db.Integer, db.ForeignKey("change_log.id")),
 )
-
+# TODO: why not primary_key=True?
 changelog_reviewers = db.Table(
     "changelog_reviewers",
     db.Column("person_id", db.Integer, db.ForeignKey("person.id")),
     db.Column("changelog_id", db.Integer, db.ForeignKey("change_log.id")),
+)
+
+
+class Cofactor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cofactor_name = db.Column(db.String, unique=True)
+    cofactor_type = db.Column(db.String)
+
+    enzymes = db.relationship(
+        "Enzyme", secondary="enzyme_cofactors", back_populates="cofactors"
+    )
+
+
+class Reference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    doi = db.Column(db.String, unique=True)
+
+    enzymes = db.relationship(
+        "Enzyme", secondary="enzyme_references", back_populates="references"
+    )
+
+
+class Enzyme(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
+    entry = db.relationship("Entry", back_populates="enzyme")
+
+    name = db.Column(db.Text)
+    enzyme_description = db.Column(db.Text, nullable=True)
+    uniprot_id = db.Column(db.String, nullable=True, index=True)
+    genpept_id = db.Column(db.String, nullable=True, index=True)
+    mibig_id = db.Column(db.String, nullable=True, index=True)
+    wikidata_id = db.Column(db.String, nullable=True, index=True)
+    has_auxenzymes = db.Column(db.Boolean, default=False)
+
+    cofactors = db.relationship(
+        "Cofactor", secondary="enzyme_cofactors", back_populates="enzymes"
+    )
+    references = db.relationship(
+        "Reference", secondary="enzyme_references", back_populates="enzymes"
+    )
+
+
+enzyme_cofactors = db.Table(
+    "enzyme_cofactors",
+    db.Column(
+        "cofactor_id", db.Integer, db.ForeignKey("cofactor.id"), primary_key=True
+    ),
+    db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
+)
+
+enzyme_references = db.Table(
+    "enzyme_references",
+    db.Column(
+        "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
+    ),
+    db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
 )
