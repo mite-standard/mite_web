@@ -88,8 +88,8 @@ class Cofactor(db.Model):
     cofactor_name = db.Column(db.String, unique=True)
     cofactor_type = db.Column(db.String)
 
-    enzymes = db.relationship(
-        "Enzyme", secondary="enzyme_cofactors", back_populates="cofactors"
+    enzyme = db.relationship(
+        "Enzyme", secondary="enzyme_cofactor", back_populates="cofactors"
     )
 
 
@@ -97,8 +97,11 @@ class Reference(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     doi = db.Column(db.String, unique=True)
 
-    enzymes = db.relationship(
-        "Enzyme", secondary="enzyme_references", back_populates="references"
+    enzyme = db.relationship(
+        "Enzyme", secondary="enzyme_reference", back_populates="references"
+    )
+    reaction = db.relationship(
+        "Reaction", secondary="reaction_reference", back_populates="references"
     )
 
 
@@ -116,23 +119,23 @@ class Enzyme(db.Model):
     has_auxenzymes = db.Column(db.Boolean, default=False)
 
     cofactors = db.relationship(
-        "Cofactor", secondary="enzyme_cofactors", back_populates="enzymes"
+        "Cofactor", secondary="enzyme_cofactor", back_populates="enzyme"
     )
     references = db.relationship(
-        "Reference", secondary="enzyme_references", back_populates="enzymes"
+        "Reference", secondary="enzyme_reference", back_populates="enzyme"
     )
 
 
-enzyme_cofactors = db.Table(
-    "enzyme_cofactors",
+enzyme_cofactor = db.Table(
+    "enzyme_cofactor",
     db.Column(
         "cofactor_id", db.Integer, db.ForeignKey("cofactor.id"), primary_key=True
     ),
     db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
 )
 
-enzyme_references = db.Table(
-    "enzyme_references",
+enzyme_reference = db.Table(
+    "enzyme_reference",
     db.Column(
         "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
     ),
@@ -145,7 +148,7 @@ class Tailoring(db.Model):
     tailoring = db.Column(db.String, unique=True)
 
     reaction = db.relationship(
-        "Reaction", secondary="reaction_tailoring", back_populates="tailoring"
+        "Reaction", secondary="reaction_tailoring", back_populates="tailorings"
     )
 
 
@@ -154,7 +157,7 @@ class Evidence(db.Model):
     evidence = db.Column(db.Text, unique=True)
 
     reaction = db.relationship(
-        "Reaction", secondary="reaction_evidence", back_populates="evidence"
+        "Reaction", secondary="reaction_evidence", back_populates="evidences"
     )
 
 
@@ -168,14 +171,15 @@ class Reaction(db.Model):
     rhea_id = db.Column(db.Integer, nullable=True, index=True)
     ec_id = db.Column(db.String, nullable=True, index=True)
 
-    tailoring = db.relationship(
+    tailorings = db.relationship(
         "Tailoring", secondary="reaction_tailoring", back_populates="reaction"
     )
-    evidence = db.relationship(
+    evidences = db.relationship(
         "Evidence", secondary="reaction_evidence", back_populates="reaction"
     )
-
-    # reaction_reference
+    references = db.relationship(
+        "Reference", secondary="reaction_reference", back_populates="reaction"
+    )
 
 
 reaction_tailoring = db.Table(
@@ -192,6 +196,16 @@ reaction_evidence = db.Table(
     "reaction_evidence",
     db.Column(
         "evidence_id", db.Integer, db.ForeignKey("evidence.id"), primary_key=True
+    ),
+    db.Column(
+        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
+    ),
+)
+
+reaction_reference = db.Table(
+    "reaction_reference",
+    db.Column(
+        "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
     ),
     db.Column(
         "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True

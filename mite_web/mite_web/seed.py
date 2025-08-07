@@ -141,9 +141,12 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         )
         db.session.add(reaction)
 
-        reaction.tailoring = [_get_or_create_tailoring(t) for t in r["tailoring"]]
-        reaction.evidence = [
+        reaction.tailorings = [_get_or_create_tailoring(t) for t in r["tailoring"]]
+        reaction.evidences = [
             _get_or_create_evidence(e) for e in r["evidence"]["evidenceCode"]
         ]
+        reaction.references.extend(
+            [get_or_create_reference(ref) for ref in r["evidence"]["references"]]
+        )
 
     return reactions
