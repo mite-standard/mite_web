@@ -149,6 +149,15 @@ class Tailoring(db.Model):
     )
 
 
+class Evidence(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    evidence = db.Column(db.Text, unique=True)
+
+    reaction = db.relationship(
+        "Reaction", secondary="reaction_evidence", back_populates="evidence"
+    )
+
+
 class Reaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
@@ -162,12 +171,27 @@ class Reaction(db.Model):
     tailoring = db.relationship(
         "Tailoring", secondary="reaction_tailoring", back_populates="reaction"
     )
+    evidence = db.relationship(
+        "Evidence", secondary="reaction_evidence", back_populates="reaction"
+    )
+
+    # reaction_reference
 
 
 reaction_tailoring = db.Table(
     "reaction_tailoring",
     db.Column(
         "tailoring_id", db.Integer, db.ForeignKey("tailoring.id"), primary_key=True
+    ),
+    db.Column(
+        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
+    ),
+)
+
+reaction_evidence = db.Table(
+    "reaction_evidence",
+    db.Column(
+        "evidence_id", db.Integer, db.ForeignKey("evidence.id"), primary_key=True
     ),
     db.Column(
         "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True

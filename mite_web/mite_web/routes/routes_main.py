@@ -27,7 +27,7 @@ from flask import Response, render_template, send_file
 from sqlalchemy import select
 
 from mite_web.config.extensions import db
-from mite_web.models import Cofactor, Entry, Enzyme, Reaction, Reference, Tailoring
+from mite_web.models import Evidence
 from mite_web.routes import bp
 
 
@@ -39,7 +39,7 @@ def index() -> str:
         The index.html page as string.
     """
 
-    result = db.session.execute(db.select(Tailoring)).scalars().all()
+    result = db.session.execute(db.select(Evidence)).scalars().all()
     print(result)
 
     return render_template("index.html")

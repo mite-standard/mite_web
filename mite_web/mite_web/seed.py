@@ -9,6 +9,7 @@ from mite_web.models import (
     Cofactor,
     Entry,
     Enzyme,
+    Evidence,
     Person,
     Reaction,
     Reference,
@@ -124,6 +125,13 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
             db.session.add(tailoring)
         return tailoring
 
+    def _get_or_create_evidence(item: str) -> Evidence:
+        evidence = Evidence.query.filter_by(evidence=item).first()
+        if not evidence:
+            evidence = Evidence(evidence=item)
+            db.session.add(evidence)
+        return evidence
+
     reactions = []
     for r in data:
         reaction = Reaction(
@@ -134,5 +142,8 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         db.session.add(reaction)
 
         reaction.tailoring = [_get_or_create_tailoring(t) for t in r["tailoring"]]
+        reaction.evidence = [
+            _get_or_create_evidence(e) for e in r["evidence"]["evidenceCode"]
+        ]
 
     return reactions
