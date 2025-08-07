@@ -4,7 +4,16 @@ import os
 from flask import current_app
 
 from mite_web.config.extensions import db
-from mite_web.models import ChangeLog, Cofactor, Entry, Enzyme, Person, Reference
+from mite_web.models import (
+    ChangeLog,
+    Cofactor,
+    Entry,
+    Enzyme,
+    Person,
+    Reaction,
+    Reference,
+    Tailoring,
+)
 
 # TODO(MMZ 5.8): replace print with logging
 
@@ -29,6 +38,7 @@ def seed_data() -> None:
 
             entry.changelogs = get_changelogs(entry, data["changelog"])
             entry.enzyme = get_enzyme(entry, data["enzyme"])
+            entry.reactions = get_reactions(entry, data["reactions"])
 
             db.session.add(entry)
 
@@ -60,7 +70,7 @@ def get_changelogs(entry: Entry, logs: list) -> list[ChangeLog]:
     return changelogs
 
 
-def get_or_create_referece(doi: str) -> Reference:
+def get_or_create_reference(doi: str) -> Reference:
     """Add reference if not already existing"""
     reference = Reference.query.filter_by(doi=doi).first()
     if not reference:
@@ -98,7 +108,31 @@ def get_enzyme(entry: Entry, data: dict) -> Enzyme:
 
     enzyme.references = []
     enzyme.references.extend(
-        [get_or_create_referece(ref) for ref in data["references"]]
+        [get_or_create_reference(ref) for ref in data["references"]]
     )
 
     return enzyme
+
+
+def get_reactions(entry: Entry, data: list) -> list[Reaction]:
+    """Parse enzyme info and create many-to-many Cofactor and Reference tables"""
+
+    def _get_or_create_tailoring(item: str) -> Tailoring:
+        tailoring = Tailoring.query.filter_by(tailoring=item).first()
+        if not tailoring:
+            tailoring = Tailoring(tailoring=item)
+            db.session.add(tailoring)
+        return tailoring
+
+    reactions = []
+    for r in data:
+        reaction = Reaction(
+            description=r.get("description"),
+            reaction_smarts=r["reactionSMARTS"],
+            entry=entry,
+        )
+        db.session.add(reaction)
+
+        reaction.tailoring = [_get_or_create_tailoring(t) for t in r["tailoring"]]
+
+    return reactions

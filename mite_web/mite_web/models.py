@@ -35,6 +35,7 @@ class Entry(db.Model):
 
     changelogs = db.relationship("ChangeLog", back_populates="entry")
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
+    reactions = db.relationship("Reaction", back_populates="entry")
 
 
 class Person(db.Model):
@@ -66,17 +67,19 @@ class ChangeLog(db.Model):
     )
 
 
-# TODO: why not primary_key=True?
 changelog_contributors = db.Table(
     "changelog_contributors",
-    db.Column("person_id", db.Integer, db.ForeignKey("person.id")),
-    db.Column("changelog_id", db.Integer, db.ForeignKey("change_log.id")),
+    db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
+    db.Column(
+        "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
+    ),
 )
-# TODO: why not primary_key=True?
 changelog_reviewers = db.Table(
     "changelog_reviewers",
-    db.Column("person_id", db.Integer, db.ForeignKey("person.id")),
-    db.Column("changelog_id", db.Integer, db.ForeignKey("change_log.id")),
+    db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
+    db.Column(
+        "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
+    ),
 )
 
 
@@ -134,4 +137,39 @@ enzyme_references = db.Table(
         "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
     ),
     db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
+)
+
+
+class Tailoring(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tailoring = db.Column(db.String, unique=True)
+
+    reaction = db.relationship(
+        "Reaction", secondary="reaction_tailoring", back_populates="tailoring"
+    )
+
+
+class Reaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
+    entry = db.relationship("Entry", back_populates="reactions")
+
+    description = db.Column(db.Text, nullable=True)
+    reaction_smarts = db.Column(db.Text)
+    rhea_id = db.Column(db.Integer, nullable=True, index=True)
+    ec_id = db.Column(db.String, nullable=True, index=True)
+
+    tailoring = db.relationship(
+        "Tailoring", secondary="reaction_tailoring", back_populates="reaction"
+    )
+
+
+reaction_tailoring = db.Table(
+    "reaction_tailoring",
+    db.Column(
+        "tailoring_id", db.Integer, db.ForeignKey("tailoring.id"), primary_key=True
+    ),
+    db.Column(
+        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
+    ),
 )
