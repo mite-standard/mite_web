@@ -10,6 +10,7 @@
     <div class="row my-3">
         <div class="col">
             <h3 class="fw-semibold lh-2">Search</h3>
+            <p>Combine different queries by filling in the search form</p>
         </div>
     </div>
     {% with messages = get_flashed_messages() %}
@@ -28,42 +29,85 @@
     </div>
     {% endif %}
     {% endwith %}
-    <form method="post">
+    <form id="queryForm" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="row d-flex align-items-center mb-3">
-            <div class="col-auto">
-                <label for="substructure_query" class="form-label">Search for a substructure</label>
-                <div class="input-group">
-                    <input type="text" name="substructure_query" id="substructure_query" class="form-control" aria-label="Insert your query SMILES/SMARTS" aria-describedby="substructure_descr" placeholder="Insert SMILES/SMARTS query">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select type of query</button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                    <li><button class="dropdown-item" type="submit" name="action" value="smiles">SMILES</button></li>
-                    <li><button class="dropdown-item" type="submit" name="action" value="smarts">SMARTS</button></li>
-                    </ul>
-                </div>
-                <div class="form-text" id="substructure_descr">Search the MITE repository for a certain substructure (e.g. 'C1CCCCC1' or '[c]-[X]')</div>
-            </div>
+        <div class="row my-2">
             <div class="col">
-                <label for="reaction_query" class="form-label">Search for a reaction</label>
-                <div class="input-group">
-                    <input type="text" name="reaction_query" id="reaction_query" class="form-control" aria-label="Insert your query reaction SMARTS" aria-describedby="reaction_descr" placeholder="Insert reaction SMARTS query">
-                    <span><input type="number" aria-label="similarity" id="similarity" name="similarity" class="form-control" value="0.9" min="0.1" max="1.0" step="0.1"></span>
-                    <span class="input-group-text">Similarity score</span>
-                    <button class="btn btn-outline-secondary" type="submit" name="action" value="reaction">Search</button>
-                </div>
-                <div class="form-text" id="reaction_descr">Search the MITE repository for a certain reaction using a reaction SMARTS</div>
+                <h6 class="fw-semibold lh-2">Query builder</h6>
+                <div id="builder"></div>
+                <input type="hidden" name="rules" id="rules-input">
             </div>
         </div>
-        <div class="row d-flex align-items-center mb-3">
-            <div class="col">
-                <label for="sequence" class="form-label">Search for a protein sequence</label>
-                <div class="input-group">
-                    <input type="text" aria-label="sequence" id="sequence" name="sequence" class="form-control" aria-describedby="blast_descr" placeholder="Insert your query protein sequence">
-                    <span><input type="number" aria-label="e_val" id="e_val" name="e_val" class="form-control" value="10"></span>
-                    <span class="input-group-text">E-value</span>
-                    <button class="btn btn-outline-secondary" type="submit" name="action" value="blast">BLAST!</button>
+        <div class="row align-items-center mb-3">
+            <div class="col-5">
+                <h6 class="fw-semibold lh-2">Substructure search</h6>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="substructure_query" name="substructure_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Insert SMILES (e.g. 'C1CCCCC1') or SMARTS (e.g. '[c]-[X]') query">
+                            <label for="substructure_query" class="form-label">Insert SMILES or SMARTS query <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" value="smiles" type="radio" name="query_substructure" id="smiles" checked>
+                            <label class="form-check-label" for="smiles">SMILES</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" value="smarts" type="radio" name="query_substructure" id="smarts">
+                            <label class="form-check-label" for="smarts">SMARTS</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-text" id="blast_descr">BLAST a protein sequence against all enzymes in the MITE repository</div>
+            </div>
+            <div class="col-7">
+                <h6 class="fw-semibold lh-2">Reaction search</h6>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="reaction_query" name="reaction_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Search MITE for a reaction SMARTS with a similarity score cutoff. Search can be either greedy (matching the full reaction) or non-greedy (matching the smallest possible reaction).">
+                            <label for="reaction_query" class="form-label">Insert reaction SMARTS query <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="similarity" name="similarity" class="form-control form-control-sm" type="number" value="0.9" min="0.1" max="1.0" step="0.1" placeholder="n/a" title="Similarity score cutoff (the higher, the more stringent match).">
+                            <label for="similarity" class="form-label">Similarity <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" value="greedy" type="radio" name="reaction_smarts_radio" id="greedy" checked>
+                            <label class="form-check-label" for="greedy">Greedy</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" value="nongreedy" type="radio" name="reaction_smarts_radio" id="nongreedy">
+                            <label class="form-check-label" for="smarts">Non-Greedy</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center mb-3">
+            <h6 class="fw-semibold lh-2">Sequence search</h6>
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <div class="form-floating">
+                        <input id="sequence_query" name="sequence_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Match a protein sequence against MITE entries using BLASTp.">
+                        <label for="reaction_query" class="form-label">Insert protein sequence <i class="bi bi-question-circle"></i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-floating">
+                        <input id="sequence_similarity" name="sequence_similarity" class="form-control form-control-sm" type="number" value="10" min="1" step="1" placeholder="n/a" title="Specify a E-value as match cutoff.">
+                        <label for="reaction_query" class="form-label">Insert protein sequence <i class="bi bi-question-circle"></i></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col text-center mx-auto">
+                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Submit search</button>
             </div>
         </div>
     </form>
@@ -157,4 +201,5 @@
     </table>
 </div>
 <script type="text/javascript" src="{{ url_for('static', filename='js/table_counter.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/querybuilder.js') }}" defer></script>
 {% endblock %}

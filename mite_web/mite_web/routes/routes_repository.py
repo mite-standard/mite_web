@@ -270,62 +270,65 @@ def overview() -> str:
         summary_json = json.load(infile)
         summary = summary_json.get("entries")
 
-    if request.method == "POST":
-        query_manager = QueryManager(summary=summary)
-        user_input = request.form.to_dict()
 
-        if user_input.get("action") == "smiles" or user_input.get("action") == "smarts":
-            if user_input.get("substructure_query") == "":
-                flash("Please specify a substructure query string.")
-                return render_template("overview.html", entries=summary)
 
-            try:
-                query_manager.query_substructure(
-                    action=user_input.get("action"),
-                    query=user_input.get("substructure_query"),
-                )
-                return render_template(
-                    "overview.html",
-                    entries=query_manager.return_summary(),
-                )
-            except Exception as e:
-                flash(f"An error in the substructure matching occurred: '{e!s}'")
-                return render_template("overview.html", entries=summary)
 
-        if user_input.get("action") == "reaction":
-            if user_input.get("reaction_query") == "":
-                flash("Please specify a reaction SMARTS query.")
-                return render_template("overview.html", entries=summary)
-
-            try:
-                query_manager.query_reaction(
-                    query=user_input.get("reaction_query"),
-                    sim_score=float(user_input.get("similarity")),
-                )
-                return render_template(
-                    "overview.html",
-                    entries=query_manager.return_summary(),
-                )
-            except Exception as e:
-                flash(f"An error in the reaction matching occurred: '{e!s}'")
-                return render_template("overview.html", entries=summary)
-
-        elif user_input.get("action") == "blast":
-            if user_input.get("sequence") == "":
-                flash("Please specify a amino acid sequence query string.")
-                return render_template("overview.html", entries=summary)
-
-            try:
-                query_manager.query_sequence(
-                    query=user_input.get("sequence"), e_val=int(user_input.get("e_val"))
-                )
-                return render_template(
-                    "overview.html",
-                    entries=query_manager.return_summary(),
-                )
-            except Exception as e:
-                flash(f"An error in BLASTp matching occurred: '{e!s}'")
-                return render_template("overview.html", entries=summary)
+    # if request.method == "POST":
+    #     query_manager = QueryManager(summary=summary)
+    #     user_input = request.form.to_dict()
+    #
+    #     if user_input.get("action") == "smiles" or user_input.get("action") == "smarts":
+    #         if user_input.get("substructure_query") == "":
+    #             flash("Please specify a substructure query string.")
+    #             return render_template("overview.html", entries=summary)
+    #
+    #         try:
+    #             query_manager.query_substructure(
+    #                 action=user_input.get("action"),
+    #                 query=user_input.get("substructure_query"),
+    #             )
+    #             return render_template(
+    #                 "overview.html",
+    #                 entries=query_manager.return_summary(),
+    #             )
+    #         except Exception as e:
+    #             flash(f"An error in the substructure matching occurred: '{e!s}'")
+    #             return render_template("overview.html", entries=summary)
+    #
+    #     if user_input.get("action") == "reaction":
+    #         if user_input.get("reaction_query") == "":
+    #             flash("Please specify a reaction SMARTS query.")
+    #             return render_template("overview.html", entries=summary)
+    #
+    #         try:
+    #             query_manager.query_reaction(
+    #                 query=user_input.get("reaction_query"),
+    #                 sim_score=float(user_input.get("similarity")),
+    #             )
+    #             return render_template(
+    #                 "overview.html",
+    #                 entries=query_manager.return_summary(),
+    #             )
+    #         except Exception as e:
+    #             flash(f"An error in the reaction matching occurred: '{e!s}'")
+    #             return render_template("overview.html", entries=summary)
+    #
+    #     elif user_input.get("action") == "blast":
+    #         if user_input.get("sequence") == "":
+    #             flash("Please specify a amino acid sequence query string.")
+    #             return render_template("overview.html", entries=summary)
+    #
+    #         try:
+    #             query_manager.query_sequence(
+    #                 query=user_input.get("sequence"), e_val=int(user_input.get("e_val"))
+    #             )
+    #             return render_template(
+    #                 "overview.html",
+    #                 entries=query_manager.return_summary(),
+    #             )
+    #         except Exception as e:
+    #             flash(f"An error in BLASTp matching occurred: '{e!s}'")
+    #             return render_template("overview.html", entries=summary)
 
     return render_template("overview.html", entries=summary)
 
