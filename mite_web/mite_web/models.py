@@ -43,10 +43,10 @@ class Person(db.Model):
     orcid = db.Column(db.String, unique=True)
 
     contributions = db.relationship(
-        "ChangeLog", secondary="changelog_contributors", back_populates="contributors"
+        "ChangeLog", secondary="changelog_contributor", back_populates="contributors"
     )
     reviews = db.relationship(
-        "ChangeLog", secondary="changelog_reviewers", back_populates="reviewers"
+        "ChangeLog", secondary="changelog_reviewer", back_populates="reviewers"
     )
 
 
@@ -60,22 +60,22 @@ class ChangeLog(db.Model):
     comment = db.Column(db.Text)
 
     contributors = db.relationship(
-        "Person", secondary="changelog_contributors", back_populates="contributions"
+        "Person", secondary="changelog_contributor", back_populates="contributions"
     )
     reviewers = db.relationship(
-        "Person", secondary="changelog_reviewers", back_populates="reviews"
+        "Person", secondary="changelog_reviewer", back_populates="reviews"
     )
 
 
-changelog_contributors = db.Table(
-    "changelog_contributors",
+changelog_contributor = db.Table(
+    "changelog_contributor",
     db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
     db.Column(
         "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
     ),
 )
-changelog_reviewers = db.Table(
-    "changelog_reviewers",
+changelog_reviewer = db.Table(
+    "changelog_reviewer",
     db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
     db.Column(
         "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
