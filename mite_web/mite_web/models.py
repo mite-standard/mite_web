@@ -161,6 +161,28 @@ class Evidence(db.Model):
     )
 
 
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    example_reaction_id = db.Column(db.Integer, db.ForeignKey("example_reaction.id"))
+
+    smiles_product = db.Column(db.Text)
+
+    example_reaction = db.relationship("ExampleReaction", back_populates="products")
+
+
+class ExampleReaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reaction_id = db.Column(db.Integer, db.ForeignKey("reaction.id"))
+    reaction = db.relationship("Reaction", back_populates="example_reactions")
+
+    smiles_substrate = db.Column(db.Text)
+    is_intermediate = db.Column(db.Boolean)
+
+    products = db.relationship(
+        "Product", back_populates="example_reaction", cascade="all, delete-orphan"
+    )
+
+
 class Reaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
@@ -179,6 +201,9 @@ class Reaction(db.Model):
     )
     references = db.relationship(
         "Reference", secondary="reaction_reference", back_populates="reaction"
+    )
+    example_reactions = db.relationship(
+        "ExampleReaction", back_populates="reaction", cascade="all, delete-orphan"
     )
 
 

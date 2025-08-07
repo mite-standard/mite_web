@@ -10,25 +10,31 @@ from mite_web.models import (
     Entry,
     Enzyme,
     Evidence,
+    ExampleReaction,
     Person,
+    Product,
     Reaction,
     Reference,
     Tailoring,
 )
 
-# TODO(MMZ 5.8): replace print with logging
-
 
 def seed_data() -> None:
     """Seeds database with MITE data"""
     if Entry.query.first():
-        print("Database already seeded.")
+        current_app.logger.warning("Database already seeded.")
         return
 
     src = current_app.config["DATA_JSON"]
     for entry in src.iterdir():
         with open(entry) as infile:
             data = json.load(infile)
+
+            if data["status"] != "active":
+                current_app.logger.warning(
+                    f"{data["accession"]} is retired - database parsing skipped."
+                )
+                continue
 
             entry = Entry(
                 accession=data["accession"],
@@ -44,7 +50,7 @@ def seed_data() -> None:
             db.session.add(entry)
 
     db.session.commit()
-    print(f"Seeded database.")
+    current_app.logger.info("Database seeding completed.")
 
 
 def get_changelogs(entry: Entry, logs: list) -> list[ChangeLog]:
@@ -132,6 +138,16 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
             db.session.add(evidence)
         return evidence
 
+    def _create_example_reaction(item: dict, r_ref: Reaction) -> ExampleReaction:
+        example_reaction = ExampleReaction(
+            smiles_substrate=item["substrate"],
+            is_intermediate=item["isIntermediate"],
+            products=[Product(smiles_product=s) for s in item["products"]],
+            reaction=r_ref,
+        )
+        db.session.add(example_reaction)
+        return example_reaction
+
     reactions = []
     for r in data:
         reaction = Reaction(
@@ -145,8 +161,12 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         reaction.evidences = [
             _get_or_create_evidence(e) for e in r["evidence"]["evidenceCode"]
         ]
+        reaction.references = []
         reaction.references.extend(
             [get_or_create_reference(ref) for ref in r["evidence"]["references"]]
         )
+        reaction.example_reactions = [
+            _create_example_reaction(expl, reaction) for expl in r["reactions"]
+        ]
 
     return reactions
