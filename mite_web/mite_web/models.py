@@ -29,9 +29,6 @@ from mite_web.config.extensions import db
 
 class Entry(db.Model):
     accession = db.Column(db.String, primary_key=True)
-    status = db.Column(db.String)
-    retirement_reasons = db.Column(db.Text, nullable=True)
-    comment = db.Column(db.Text, nullable=True)
 
     changelogs = db.relationship("ChangeLog", back_populates="entry")
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
@@ -55,9 +52,6 @@ class ChangeLog(db.Model):
     entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
     entry = db.relationship("Entry", back_populates="changelogs")
 
-    version = db.Column(db.String)
-    date = db.Column(db.Date)
-    comment = db.Column(db.Text)
 
     contributors = db.relationship(
         "Person", secondary="changelog_contributor", back_populates="contributions"

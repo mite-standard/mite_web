@@ -27,6 +27,7 @@ import os
 import pickle
 import re
 import subprocess
+from typing import Any
 import uuid
 from pathlib import Path
 
@@ -38,9 +39,11 @@ from flask import current_app, flash, render_template, request
 from pydantic import BaseModel
 from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools, rdChemReactions
 from rdkit.DataStructs import FingerprintSimilarity
+from sqlalchemy import or_, and_
+from sqlalchemy.orm import class_mapper
 
 from mite_web.routes import bp
-
+from mite_web.models import Entry, Enzyme, ChangeLog, Cofactor
 
 class QueryManager(BaseModel):
     """Organize querying functions
@@ -259,25 +262,114 @@ class QueryManager(BaseModel):
 
 
 
-class DatabaseManager(BaseModel):
-    """Organize functions for database querying"""
+class DatabaseManager:
+    """Organize functions for database querying
 
-    def run_query(self, rules: dict) -> set:
-        """Runs query against database
+    Attributes:
+        operators: translates querybuilder operators to SQLAlchemy col, val pairs
+    """
+    operators : dict = {
+        'equal': lambda col, val: col == val,
+        'not_equal': lambda col, val: col != val,
+        'contains': lambda col, val: col.ilike(f"%{val}%"),
+        'not_contains': lambda col, val: ~col.ilike(f"%{val}%"),
+        'is_null': lambda col, _: col.is_(None),
+        'is_not_null': lambda col, _: col.is_not(None),
+    }
+
+    field_map : dict = {
+        "accession": "Entry.accession",
+        "contributor": "Entry.changelogs.contributors.orcid",
+        "reviewer": "Entry.changelogs.reviewers.orcid",
+
+
+        "enzyme.mibig_id": "Entry.enzyme.mibig_id",
+        "enzyme.uniprot_id": "Entry.enzyme.uniprot_id",
+        "enzyme.cofactors.cofactor_name": "Entry.enzyme.cofactors.cofactor_name"
+    }
+
+    def query_db(self, rules: dict) -> set:
+        """Queries the DB
 
         Args:
             rules: the raw query from QueryBuilder JSON rules
+
         Returns:
-            A set of MITE accessions for filtering
+            A set of MITE accession IDs for filtering
         """
+        query = Entry.query
+        filters, join_paths = self.parse_rules(rules)
 
-        query = self.parse_rules(rules)
-        return self.query_db()
+        for path in join_paths:
+            current_query = query
+            for rel_attr in path:
+                current_query = current_query.join(rel_attr)
+            query = current_query
+
+        if filters is not None:
+            query = query.filter(filters)
+
+        return {e.accession for e in query.all()}
+
+    def parse_rules(self, rules: dict) -> Any | None:
+        """Converts QueryBuilder JSON rules into a SQLAlchemy-compatible expression
+
+        Args:
+            rules: QueryBuilder JSON rules
+
+        Returns:
+            A SQLAlchemy filter expression
+        """
+        filters = []
+        join_paths = set()
+
+        for rule in rules["rules"]:
+            field_path = self.field_map.get(rule["field"])
+            if not field_path:
+                continue
+
+            column, joins = self.resolve_field_path(field_path)
+            if joins:
+                join_paths.add(tuple(joins))
+
+            operator = rule["operator"]
+            value = rule.get('value')
+
+            if column is not None and operator in self.operators:
+                filters.append(self.operators[operator](column, value))
+
+        if not filters:
+            return None, join_paths
+
+        condition = rules.get("condition", "AND").upper()
+        combined = and_(*filters) if condition == "AND" else or_(*filters)
+        return combined, join_paths
 
 
+    def resolve_field_path(self, field_path: str) -> tuple[Any, list]:
+        """Convert string path into column, join_path
 
+        Args:
+            field_path: a mapping from a QueryBuilder rule
 
+        Returns:
+            A tuple of a column name and a list of relationship attributes to use in query.join()
+        """
+        parts = field_path.split(".")
+        current_model = globals()[parts[0]]
+        join_path = []
+        attr = None
 
+        for part in parts[1:]:
+            mapper = class_mapper(current_model)
+
+            if part in mapper.relationships:
+                join_path.append(getattr(current_model, part))
+                current_model = mapper.relationships[part].mapper.class_
+            else:
+                attr = getattr(current_model, part)
+
+        return attr, join_path
 
 @bp.route("/overview/", methods=["GET", "POST"])
 def overview() -> str:
@@ -286,23 +378,21 @@ def overview() -> str:
     Returns:
         The overview.html page as string.
     """
-    example_query = {'condition': 'AND', 'rules': [{'id': 'contributor', 'field': 'contributor', 'type': 'string', 'input': 'text', 'operator': 'equal', 'value': '0000-0001-6534-6609'}], 'valid': True}
-    empty_query = {"condition":"AND", "rules": [], "valid": True}
-
-
     summary = current_app.config["SUMMARY"]
     accessions = current_app.config["ACCESSIONS"]
 
 
-
-
     if request.method == "POST":
-        rules = request.form.get("rules")
-        rules = json.loads(rules)
-        print(rules)
 
-        user_input = request.form.to_dict()
-        print(user_input)
+        forms = request.form.to_dict()
+
+        rules = json.loads(request.form['rules'])
+
+        if len(rules["rules"]) > 0:
+            db_manager = DatabaseManager()
+            accessions.intersection_update(db_manager.query_db(rules))
+
+        # TODO: implement rest of filters in the same way as with dbmanager
 
 
 

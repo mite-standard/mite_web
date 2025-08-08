@@ -3,6 +3,14 @@ $(function () {
     plugins: ['bt-tooltip-errors'],
     allow_groups: false,
     allow_empty: true,
+    operators: [
+      'equal',
+      'not_equal',
+      'contains',
+      'not_contains',
+      'is_null',
+      'is_not_null'
+    ],
     filters: [
       {
         id: 'accession',
@@ -11,12 +19,32 @@ $(function () {
       },
       {
         id: 'contributor',
-        label: 'Contributor',
+        label: 'Contributor ORCID',
         type: 'string'
       },
       {
         id: 'reviewer',
-        label: 'Reviewer',
+        label: 'Reviewer ORCID',
+        type: 'string'
+      },
+
+
+
+
+
+      {
+        id: 'enzyme.mibig_id',
+        label: 'MIBiG ID',
+        type: 'string'
+      },
+      {
+        id: 'enzyme.uniprot_id',
+        label: 'UniProt ID',
+        type: 'string'
+      },
+      {
+        id: 'enzyme.cofactors.cofactor_name',
+        label: 'Cofactor name',
         type: 'string'
       },
     ]

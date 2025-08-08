@@ -38,9 +38,6 @@ def seed_data() -> None:
 
             entry = Entry(
                 accession=data["accession"],
-                status=data["status"],
-                retirement_reasons=data.get("retirementReasons"),
-                comment=data.get("comment"),
             )
 
             entry.changelogs = get_changelogs(entry, data["changelog"])
@@ -65,9 +62,7 @@ def get_changelogs(entry: Entry, logs: list) -> list[ChangeLog]:
 
     changelogs = []
     for i in logs:
-        cl = ChangeLog(
-            version=i["version"], date=i["date"], comment=i["comment"], entry=entry
-        )
+        cl = ChangeLog(entry=entry)
         db.session.add(cl)
 
         cl.contributors = [_get_or_create_person(orcid) for orcid in i["contributors"]]
