@@ -117,6 +117,13 @@ class Enzyme(db.Model):
     mibig_id = db.Column(db.String, nullable=True, index=True)
     wikidata_id = db.Column(db.String, nullable=True, index=True)
     has_auxenzymes = db.Column(db.Boolean, default=False)
+    organism_id = db.Column(db.String, nullable=True, index=True)
+    domain_id = db.Column(db.String, nullable=True, index=True)
+    kingdom_id = db.Column(db.String, nullable=True, index=True)
+    phylum_id = db.Column(db.String, nullable=True, index=True)
+    class_id = db.Column(db.String, nullable=True, index=True)
+    order_id = db.Column(db.String, nullable=True, index=True)
+    family_id = db.Column(db.String, nullable=True, index=True)
 
     cofactors = db.relationship(
         "Cofactor", secondary="enzyme_cofactor", back_populates="enzyme"

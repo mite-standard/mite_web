@@ -79,6 +79,7 @@ def configure_app(app: Flask) -> Flask:
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
     app.config["MITE_DATA"] = Path(__file__).parent.joinpath("mite_data")
@@ -92,6 +93,12 @@ def configure_app(app: Flask) -> Flask:
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+    app.config["QUERIES"].mkdir(parents=True, exist_ok=True)
+
+    with open(app.config["DATA_SUMMARY"]) as infile:
+        summary = json.load(infile)
+        app.config["SUMMARY"] = summary["entries"]
+        app.config["ACCESSIONS"] = { acc for acc in summary["entries"].keys() }
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

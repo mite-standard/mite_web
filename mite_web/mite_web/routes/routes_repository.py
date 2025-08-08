@@ -258,6 +258,10 @@ class QueryManager(BaseModel):
                 self.summary.pop(key, None)
 
 
+
+
+
+
 @bp.route("/overview/", methods=["GET", "POST"])
 def overview() -> str:
     """Render the repository overview page of mite_web
@@ -265,10 +269,21 @@ def overview() -> str:
     Returns:
         The overview.html page as string.
     """
+    example_query = {'condition': 'AND', 'rules': [{'id': 'contributor', 'field': 'contributor', 'type': 'string', 'input': 'text', 'operator': 'equal', 'value': '0000-0001-6534-6609'}], 'valid': True}
 
-    with open(current_app.config["DATA_SUMMARY"]) as infile:
-        summary_json = json.load(infile)
-        summary = summary_json.get("entries")
+    summary = current_app.config["SUMMARY"]
+    accessions = current_app.config["ACCESSIONS"]
+
+
+
+
+    if request.method == "POST":
+        rules = request.form.get("rules")
+        rules = json.loads(rules)
+        print(rules)
+
+        user_input = request.form.to_dict()
+        print(user_input)
 
 
 
@@ -329,6 +344,8 @@ def overview() -> str:
     #         except Exception as e:
     #             flash(f"An error in BLASTp matching occurred: '{e!s}'")
     #             return render_template("overview.html", entries=summary)
+
+    summary = {key: val for key, val in summary.items() if key in accessions}
 
     return render_template("overview.html", entries=summary)
 

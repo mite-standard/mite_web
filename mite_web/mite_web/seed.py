@@ -44,7 +44,7 @@ def seed_data() -> None:
             )
 
             entry.changelogs = get_changelogs(entry, data["changelog"])
-            entry.enzyme = get_enzyme(entry, data["enzyme"])
+            entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
             entry.reactions = get_reactions(entry, data["reactions"])
 
             db.session.add(entry)
@@ -86,9 +86,14 @@ def get_or_create_reference(doi: str) -> Reference:
     return reference
 
 
-def get_enzyme(entry: Entry, data: dict) -> Enzyme:
-    """Parse enzyme info and create many-to-many Cofactor and Reference tables"""
+def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
+    """Parse enzyme info and create many-to-many Cofactor and Reference tables
 
+    Args:
+        entry: an Entry instance
+        data: a MITE JSON enzyme dict
+        summary: the summary of the MITE entry containing taxonomy info
+    """
     def _get_or_create_cofactor(cfname: str, cftipo: str) -> Cofactor:
         cofactor = Cofactor.query.filter_by(cofactor_name=cfname).first()
         if not cofactor:
@@ -104,6 +109,13 @@ def get_enzyme(entry: Entry, data: dict) -> Enzyme:
         mibig_id=data.get("databaseIds", {}).get("mibig"),
         wikidata_id=data.get("databaseIds", {}).get("wikidata"),
         has_auxenzymes=bool(data.get("auxiliaryEnzymes")),
+        organism_id=summary.get("organism"),
+        domain_id=summary.get("domain"),
+        kingdom_id=summary.get("kingdom"),
+        phylum_id=summary.get("phylum"),
+        class_id=summary.get("class"),
+        order_id=summary.get("order"),
+        family_id=summary.get("family"),
         entry=entry,
     )
     db.session.add(enzyme)
