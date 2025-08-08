@@ -20,12 +20,13 @@ $(function () {
     ]
   });
 
-  $('#btn-get').on('click', function () {
-    const result = $('#builder').queryBuilder('getRules');
-    if (!result) {
-      $('#output').text('Invalid query');
-    } else {
-      $('#output').text(JSON.stringify(result, null, 2));
+  $('form').on('submit', function (e) {
+    const rules = $('#builder').queryBuilder('getRules');
+    if (!rules || !rules.valid) {
+      alert("Invalid query!");
+      e.preventDefault(); // stop form from submitting
+      return;
     }
+    $('#rules-input').val(JSON.stringify(rules));
   });
 });
