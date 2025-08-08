@@ -259,6 +259,23 @@ class QueryManager(BaseModel):
 
 
 
+class DatabaseManager(BaseModel):
+    """Organize functions for database querying"""
+
+    def run_query(self, rules: dict) -> set:
+        """Runs query against database
+
+        Args:
+            rules: the raw query from QueryBuilder JSON rules
+        Returns:
+            A set of MITE accessions for filtering
+        """
+
+        query = self.parse_rules(rules)
+        return self.query_db()
+
+
+
 
 
 
@@ -270,6 +287,8 @@ def overview() -> str:
         The overview.html page as string.
     """
     example_query = {'condition': 'AND', 'rules': [{'id': 'contributor', 'field': 'contributor', 'type': 'string', 'input': 'text', 'operator': 'equal', 'value': '0000-0001-6534-6609'}], 'valid': True}
+    empty_query = {"condition":"AND", "rules": [], "valid": True}
+
 
     summary = current_app.config["SUMMARY"]
     accessions = current_app.config["ACCESSIONS"]

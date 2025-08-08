@@ -1,6 +1,8 @@
 $(function () {
   $('#builder').queryBuilder({
     plugins: ['bt-tooltip-errors'],
+    allow_groups: false,
+    allow_empty: true,
     filters: [
       {
         id: 'accession',
@@ -18,6 +20,11 @@ $(function () {
         type: 'string'
       },
     ]
+  });
+
+  $('#builder').queryBuilder('setRules', {
+      condition: 'AND',
+      rules: []
   });
 
   $('form').on('submit', function (e) {
