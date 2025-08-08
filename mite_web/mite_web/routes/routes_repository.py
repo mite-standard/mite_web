@@ -39,11 +39,11 @@ from flask import current_app, flash, render_template, request
 from pydantic import BaseModel
 from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools, rdChemReactions
 from rdkit.DataStructs import FingerprintSimilarity
-from sqlalchemy import and_, or_, inspect
-from sqlalchemy.orm import class_mapper, RelationshipProperty
+from sqlalchemy import and_, inspect, or_
+from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from mite_web.config.extensions import db
-from mite_web.models import ChangeLog, Cofactor, Entry, Enzyme
+from mite_web.models import Cofactor, Entry, Enzyme
 from mite_web.routes import bp
 
 
@@ -281,9 +281,7 @@ class DatabaseManager:
 
     field_map : dict = {
         "accession": "accession",
-        "contributor": "changelogs.contributors.orcid",
-        "reviewer": "changelogs.reviewers.orcid",
-
+        "persons.orcid": "persons.orcid",
 
         "enzyme.mibig_id": "enzyme.mibig_id",
         "enzyme.uniprot_id": "enzyme.uniprot_id",

@@ -18,16 +18,10 @@ $(function () {
         type: 'string'
       },
       {
-        id: 'contributor',
-        label: 'Contributor ORCID',
+        id: 'persons.orcid',
+        label: 'ORCID',
         type: 'string'
       },
-      {
-        id: 'reviewer',
-        label: 'Reviewer ORCID',
-        type: 'string'
-      },
-
 
 
 

@@ -5,7 +5,6 @@ from flask import current_app
 
 from mite_web.config.extensions import db
 from mite_web.models import (
-    ChangeLog,
     Cofactor,
     Entry,
     Enzyme,
@@ -40,7 +39,7 @@ def seed_data() -> None:
                 accession=data["accession"],
             )
 
-            entry.changelogs = get_changelogs(entry, data["changelog"])
+            entry.persons = get_persons(entry, data["changelog"])
             entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
             entry.reactions = get_reactions(entry, data["reactions"])
 
@@ -50,26 +49,26 @@ def seed_data() -> None:
     current_app.logger.info("Database seeding completed.")
 
 
-def get_changelogs(entry: Entry, logs: list) -> list[ChangeLog]:
+def get_persons(entry: Entry, logs: list) -> list[Person]:
     """Parse changelog and create many-to-many person table"""
 
-    def _get_or_create_person(orcid: str) -> Person:
-        person = Person.query.filter_by(orcid=orcid).first()
-        if not person:
-            person = Person(orcid=orcid)
-            db.session.add(person)
-        return person
+    def _get_or_create_person(o: str) -> Person:
+        with db.session.no_autoflush:
+            p = Person.query.filter_by(orcid=o).first()
+        if not p:
+            p = Person(orcid=o)
+            db.session.add(p)
+        return p
 
-    changelogs = []
-    for i in logs:
-        cl = ChangeLog(entry=entry)
-        db.session.add(cl)
+    seen_orcids = set()
+    for log in logs:
+        for orcid in log.get("contributors", []) + log.get("reviewers", []):
+            if orcid not in seen_orcids:
+                person = _get_or_create_person(orcid)
+                entry.persons.append(person)
+                seen_orcids.add(orcid)
 
-        cl.contributors = [_get_or_create_person(orcid) for orcid in i["contributors"]]
-        cl.reviewers = [_get_or_create_person(orcid) for orcid in i["reviewers"]]
-        changelogs.append(cl)
-
-    return changelogs
+    return entry.persons
 
 
 def get_or_create_reference(doi: str) -> Reference:

@@ -30,7 +30,8 @@ from mite_web.config.extensions import db
 class Entry(db.Model):
     accession = db.Column(db.String, primary_key=True)
 
-    changelogs = db.relationship("ChangeLog", back_populates="entry")
+    persons = db.relationship("Person", secondary="entry_person", back_populates="entry")
+
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
 
@@ -39,42 +40,18 @@ class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     orcid = db.Column(db.String, unique=True)
 
-    contributions = db.relationship(
-        "ChangeLog", secondary="changelog_contributor", back_populates="contributors"
-    )
-    reviews = db.relationship(
-        "ChangeLog", secondary="changelog_reviewer", back_populates="reviewers"
+    entry = db.relationship(
+        "Entry", secondary="entry_person", back_populates="persons"
     )
 
-
-class ChangeLog(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
-    entry = db.relationship("Entry", back_populates="changelogs")
-
-
-    contributors = db.relationship(
-        "Person", secondary="changelog_contributor", back_populates="contributions"
-    )
-    reviewers = db.relationship(
-        "Person", secondary="changelog_reviewer", back_populates="reviews"
-    )
-
-
-changelog_contributor = db.Table(
-    "changelog_contributor",
+entry_person = db.Table(
+    "entry_person",
     db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
     db.Column(
-        "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
+        "entry_accession", db.String, db.ForeignKey("entry.accession"), primary_key=True
     ),
 )
-changelog_reviewer = db.Table(
-    "changelog_reviewer",
-    db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
-    db.Column(
-        "changelog_id", db.Integer, db.ForeignKey("change_log.id"), primary_key=True
-    ),
-)
+
 
 
 class Cofactor(db.Model):
