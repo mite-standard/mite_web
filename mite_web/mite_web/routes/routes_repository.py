@@ -310,16 +310,16 @@ class DatabaseManager:
         Returns:
             A set of MITE accession IDs for filtering
         """
-
         filters = self.parse_rules_to_filters(rules, Entry)
-        query = db.session.query(Entry).filter(*filters)
+        query = db.session.query(Entry).filter(filters)
         return {e.accession for e in query.all()}
 
 
     def parse_rules_to_filters(self, rules: dict, base_model: Any) -> list:
         """Convert QueryBuilder JSON rules into a SQLAlchemy-compatible expression"""
-        filters = []
-        for rule in rules["rules"]:
+        expressions = []
+
+        for rule in rules.get("rules", []):
             field_path = self.field_map.get(rule["field"])
             if not field_path:
                 continue
@@ -329,9 +329,12 @@ class DatabaseManager:
 
             path_parts = field_path.split(".")
             filter_expr = self.build_filter_from_path(base_model, path_parts, operator, value)
-            filters.append(filter_expr)
+            expressions.append(filter_expr)
 
-        return filters
+        if rules.get("condition", "AND").upper() == "OR":
+            return or_(*expressions)
+        else:
+            return and_(*expressions)
 
     def build_filter_from_path(self, model: Any, path_parts: list, operator: str, value: str):
         """Build a SQLAlchemy filter from a dotted path."""

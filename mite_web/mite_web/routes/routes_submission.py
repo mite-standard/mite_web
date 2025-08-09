@@ -54,7 +54,6 @@ from rdkit import Chem
 from mite_web.routes import bp
 
 
-
 def create_validated_parser(data: dict) -> MiteParser:
     """Creates validated MiteParser instance"""
     parser = MiteParser()
