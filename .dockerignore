@@ -6,6 +6,7 @@ tests
 mite_web/tests
 mite_web/dumps
 mite_web/queries
+mite_web/mite_web/queries
 mite_web/mite_web/dumps
 .pre-commit-config.yaml
 mite_web/.pre-commit-config.yaml

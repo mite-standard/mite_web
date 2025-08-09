@@ -111,22 +111,22 @@
             </div>
         </div>
     </form>
-    <div class="row mt-4 justify-content-end">
+    <div class="row mt-4">
         <div class="col">
             <h3 class="fw-semibold lh-2">Overview</h3>
         </div>
+    </div>
+    {% if filtered %}
+    <div class="row align-items-center justify-content-end mb-3">
+        <div class="col">
+            <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
+        </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier='mite_overview') }}">
-                <button class="btn btn-secondary" type="button" aria-label="Download the overview table" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Table download">
+            <a href="{{ url_for('routes.download_identifier', identifier=job_id) }}">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csf-file.">
                 <i class="bi bi-download"></i>
                 </button>
             </a>
-        </div>
-    </div>
-    {% if filtered %}
-    <div class="row align-items-center mb-3">
-        <div class="col-auto">
-            <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
         </div>
     </div>
     {% endif %}

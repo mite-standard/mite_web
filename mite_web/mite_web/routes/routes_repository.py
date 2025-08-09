@@ -40,10 +40,9 @@ from pydantic import BaseModel
 from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools, rdChemReactions
 from rdkit.DataStructs import FingerprintSimilarity
 from sqlalchemy import and_, inspect, or_
-from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from mite_web.config.extensions import db
-from mite_web.models import Entry, Reaction
+from mite_web.models import Entry
 from mite_web.routes import bp
 
 
@@ -372,6 +371,8 @@ class DatabaseManager:
 def overview() -> str:
     """Render the repository overview page of mite_web
 
+    If search null or fails, return the full list
+
     Returns:
         The overview.html page as string.
     """
@@ -389,11 +390,9 @@ def overview() -> str:
     ]
     filtered = False
 
-
     try:
         if request.method == "POST":
 
-            filtered = True
             forms = request.form.to_dict()
 
             rules = json.loads(forms['rules'])
@@ -403,11 +402,24 @@ def overview() -> str:
 
             # TODO: implement rest of filters in the same way as with dbmanager
             # TODO: inject values in summary dict, update header, set uuid, dump csv,
+
+            filtered = True
+            job_id = uuid.uuid1()
+
+            summary = [val for key, val in summary.items() if key in accessions]
+            df = pd.DataFrame(summary)
+            df.to_csv(
+                current_app.config["QUERIES"].joinpath(f"{job_id}.csv"), index=False
+            )
+
+            return render_template("overview.html", entries=summary, headers=headers,
+                                   form_vals=current_app.config["FORM_VALS"], filtered=filtered, job_id=job_id)
+
     except Exception as e:
         flash(f"An error occurred during database querying: '{e!s}'")
         summary = copy.deepcopy(current_app.config["SUMMARY"])
         accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
-        filtered = False
+
 
 
 
@@ -469,10 +481,7 @@ def overview() -> str:
     #         except Exception as e:
     #             flash(f"An error in BLASTp matching occurred: '{e!s}'")
     #             return render_template("overview.html", entries=summary)
-
-
     summary = [val for key, val in summary.items() if key in accessions]
-
     return render_template("overview.html", entries=summary, headers=headers, form_vals=current_app.config["FORM_VALS"], filtered=filtered)
 
 
