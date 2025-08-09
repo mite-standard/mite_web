@@ -165,5 +165,5 @@ def download_identifier(identifier: str) -> Response | None:
                 as_attachment=True,
             )
         except Exception as e:
-            current_app.logger.warning(f'Download failed - {e!s}')
-            return
+            current_app.logger.warning(f"Download failed - {e!s}")
+            return Response(status=204)
