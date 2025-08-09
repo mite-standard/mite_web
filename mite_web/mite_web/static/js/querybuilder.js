@@ -74,7 +74,7 @@ function initCustomQueryBuilder(form_vals) {
       },
       {
         id: 'enzyme.has_auxenzymes',
-        label: 'Auxilliary Enzyme',
+        label: 'Auxilliary Enzymes',
         type: 'boolean',
         input: 'select',
         operators: ['equal', 'not_equal'],
@@ -82,6 +82,48 @@ function initCustomQueryBuilder(form_vals) {
           true,
           false
         ]
+      },
+      {
+        id: 'enzyme.organism_id',
+        label: 'Organism',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.domain_id',
+        label: 'Domain',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.kingdom_id',
+        label: 'Kingdom',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.phylum_id',
+        label: 'Phylum',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.class_id',
+        label: 'Class',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.order_id',
+        label: 'Order',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.family_id',
+        label: 'Family',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
       },
       {
         id: 'enzyme.cofactors',

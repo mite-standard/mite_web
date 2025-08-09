@@ -299,6 +299,8 @@ class DatabaseManager:
         "enzyme.family_id": "enzyme.family_id",
         "enzyme.cofactors": "enzyme.cofactors",
 
+
+
     }
 
     def query_db(self, rules: dict) -> set:
