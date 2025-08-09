@@ -10,7 +10,6 @@ from mite_web.models import (
     ExampleReaction,
     Product,
     Reaction,
-    Tailoring,
 )
 
 
@@ -35,7 +34,8 @@ def seed_data() -> None:
                 accession=data["accession"],
                 orcids=get_orcids(data["changelog"]),
                 references=get_references(data),
-                evidences=get_evidence(data["reactions"])
+                evidences=get_evidence(data["reactions"]),
+                tailoring=get_tailoring(data["reactions"])
             )
 
             entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
@@ -74,6 +74,14 @@ def get_evidence(reactions: list) -> str:
         for evidence in r["evidence"]["evidenceCode"]:
             seen_evidence.add(evidence)
     return "|".join(seen_evidence)
+
+def get_tailoring(reactions: list) -> str:
+    """Parse data and concatenate tailoring terms"""
+    seen_tailoring = set()
+    for r in reactions:
+        for tailoring in r["tailoring"]:
+            seen_tailoring.add(tailoring)
+    return "|".join(seen_tailoring)
 
 
 def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
@@ -117,15 +125,6 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
 
 def get_reactions(entry: Entry, data: list) -> list[Reaction]:
 
-    def _get_or_create_tailoring(item: str) -> Tailoring:
-        tailoring = Tailoring.query.filter_by(tailoring=item).first()
-        if not tailoring:
-            tailoring = Tailoring(tailoring=item)
-            db.session.add(tailoring)
-        return tailoring
-
-
-
     def _create_example_reaction(item: dict, r_ref: Reaction) -> ExampleReaction:
         example_reaction = ExampleReaction(
             smiles_substrate=item["substrate"],
@@ -141,13 +140,15 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         reaction = Reaction(
             description=r.get("description"),
             reaction_smarts=r["reactionSMARTS"],
+            rhea_id=r.get("databaseIds", {}).get("rhea"),
+            ec_id=r.get("databaseIds", {}).get("ec"),
             entry=entry,
         )
         db.session.add(reaction)
 
-        reaction.tailorings = [_get_or_create_tailoring(t) for t in r["tailoring"]]
         reaction.example_reactions = [
             _create_example_reaction(expl, reaction) for expl in r["reactions"]
         ]
+        reactions.append(reaction)
 
     return reactions

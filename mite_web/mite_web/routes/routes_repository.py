@@ -43,7 +43,7 @@ from sqlalchemy import and_, inspect, or_
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from mite_web.config.extensions import db
-from mite_web.models import Entry
+from mite_web.models import Entry, Reaction
 from mite_web.routes import bp
 
 
@@ -283,6 +283,7 @@ class DatabaseManager:
         "orcids": "orcids",
         "references": "references",
         "evidences": "evidences",
+        "tailoring": "tailoring",
 
         "enzyme.name": "enzyme.name",
         "enzyme.enzyme_description": "enzyme.enzyme_description",
@@ -300,8 +301,13 @@ class DatabaseManager:
         "enzyme.family_id": "enzyme.family_id",
         "enzyme.cofactors": "enzyme.cofactors",
 
-
-
+        "reactions.description": "reactions.description",
+        "reactions.reaction_smarts": "reactions.reaction_smarts",
+        "reactions.rhea_id": "reactions.rhea_id",
+        "reactions.ec_id": "reactions.ec_id",
+        "reactions.example_reactions.smiles_substrate": "reactions.example_reactions.smiles_substrate",
+        "reactions.example_reactions.is_intermediate": "reactions.example_reactions.is_intermediate",
+        "reactions.example_reactions.products.smiles_product": "reactions.example_reactions.products.smiles_product",
     }
 
     def query_db(self, rules: dict) -> set:
@@ -315,7 +321,7 @@ class DatabaseManager:
         """
         filters = self.parse_rules_to_filters(rules, Entry)
         query = db.session.query(Entry).filter(filters)
-        return {e.accession for e in query.all()}
+        return {e.accession for e in query}
 
 
     def parse_rules_to_filters(self, rules: dict, base_model: Any) -> list:

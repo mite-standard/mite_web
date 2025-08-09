@@ -33,6 +33,7 @@ class Entry(db.Model):
     orcids = db.Column(db.Text)
     references = db.Column(db.Text)
     evidences = db.Column(db.Text)
+    tailoring = db.Column(db.Text)
 
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
@@ -57,15 +58,6 @@ class Enzyme(db.Model):
     order_id = db.Column(db.String, nullable=True, index=True)
     family_id = db.Column(db.String, nullable=True, index=True)
     cofactors = db.Column(db.String, nullable=True, index=True)
-
-
-class Tailoring(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tailoring = db.Column(db.String, unique=True)
-
-    reaction = db.relationship(
-        "Reaction", secondary="reaction_tailoring", back_populates="tailorings"
-    )
 
 
 class Product(db.Model):
@@ -97,24 +89,9 @@ class Reaction(db.Model):
 
     description = db.Column(db.Text, nullable=True)
     reaction_smarts = db.Column(db.Text)
-    rhea_id = db.Column(db.Integer, nullable=True, index=True)
+    rhea_id = db.Column(db.String, nullable=True, index=True)
     ec_id = db.Column(db.String, nullable=True, index=True)
 
-    tailorings = db.relationship(
-        "Tailoring", secondary="reaction_tailoring", back_populates="reaction"
-    )
     example_reactions = db.relationship(
         "ExampleReaction", back_populates="reaction", cascade="all, delete-orphan"
     )
-
-
-reaction_tailoring = db.Table(
-    "reaction_tailoring",
-    db.Column(
-        "tailoring_id", db.Integer, db.ForeignKey("tailoring.id"), primary_key=True
-    ),
-    db.Column(
-        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
-    ),
-)
-
