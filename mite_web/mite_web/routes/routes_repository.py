@@ -280,8 +280,8 @@ class DatabaseManager:
     }
 
     field_map : dict = {
-        "accession": "accession",
         "orcids": "orcids",
+        "references": "references",
 
         "enzyme.mibig_id": "enzyme.mibig_id",
         "enzyme.uniprot_id": "enzyme.uniprot_id",

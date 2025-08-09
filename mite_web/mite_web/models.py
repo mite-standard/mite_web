@@ -31,6 +31,7 @@ class Entry(db.Model):
     accession = db.Column(db.String, primary_key=True)
 
     orcids = db.Column(db.Text)
+    references = db.Column(db.Text)
 
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
@@ -46,17 +47,6 @@ class Cofactor(db.Model):
         "Enzyme", secondary="enzyme_cofactor", back_populates="cofactors"
     )
 
-
-class Reference(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    doi = db.Column(db.String, unique=True)
-
-    enzyme = db.relationship(
-        "Enzyme", secondary="enzyme_reference", back_populates="references"
-    )
-    reaction = db.relationship(
-        "Reaction", secondary="reaction_reference", back_populates="references"
-    )
 
 
 class Enzyme(db.Model):
@@ -82,23 +72,12 @@ class Enzyme(db.Model):
     cofactors = db.relationship(
         "Cofactor", secondary="enzyme_cofactor", back_populates="enzyme"
     )
-    references = db.relationship(
-        "Reference", secondary="enzyme_reference", back_populates="enzyme"
-    )
 
 
 enzyme_cofactor = db.Table(
     "enzyme_cofactor",
     db.Column(
         "cofactor_id", db.Integer, db.ForeignKey("cofactor.id"), primary_key=True
-    ),
-    db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
-)
-
-enzyme_reference = db.Table(
-    "enzyme_reference",
-    db.Column(
-        "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
     ),
     db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
 )
@@ -160,9 +139,6 @@ class Reaction(db.Model):
     evidences = db.relationship(
         "Evidence", secondary="reaction_evidence", back_populates="reaction"
     )
-    references = db.relationship(
-        "Reference", secondary="reaction_reference", back_populates="reaction"
-    )
     example_reactions = db.relationship(
         "ExampleReaction", back_populates="reaction", cascade="all, delete-orphan"
     )
@@ -188,12 +164,3 @@ reaction_evidence = db.Table(
     ),
 )
 
-reaction_reference = db.Table(
-    "reaction_reference",
-    db.Column(
-        "reference_id", db.Integer, db.ForeignKey("reference.id"), primary_key=True
-    ),
-    db.Column(
-        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
-    ),
-)

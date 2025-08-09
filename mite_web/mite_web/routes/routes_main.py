@@ -24,10 +24,7 @@ SOFTWARE.
 from pathlib import Path
 
 from flask import Response, render_template, send_file
-from sqlalchemy import select
 
-from mite_web.config.extensions import db
-from mite_web.models import Enzyme, Reference
 from mite_web.routes import bp
 
 
@@ -38,10 +35,6 @@ def index() -> str:
     Returns:
         The index.html page as string.
     """
-
-    result = db.session.execute(db.select(Enzyme.phylum_id).filter_by(phylum_id="Actinomycetota")).scalars().all()
-    print(len(result))
-
     return render_template("index.html")
 
 

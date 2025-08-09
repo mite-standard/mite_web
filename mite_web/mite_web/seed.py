@@ -10,10 +10,8 @@ from mite_web.models import (
     Enzyme,
     Evidence,
     ExampleReaction,
-    Person,
     Product,
     Reaction,
-    Reference,
     Tailoring,
 )
 
@@ -37,7 +35,8 @@ def seed_data() -> None:
 
             entry = Entry(
                 accession=data["accession"],
-                orcids=get_orcids(data["changelog"])
+                orcids=get_orcids(data["changelog"]),
+                references=get_references(data)
             )
 
             entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
@@ -54,18 +53,23 @@ def get_orcids(logs: list) -> str:
     seen_orcids = set()
     for log in logs:
         for orcid in log.get("contributors", []) + log.get("reviewers", []):
-            if orcid not in seen_orcids:
-                seen_orcids.add(orcid)
+            seen_orcids.add(orcid)
     return "|" + "|".join(seen_orcids) + "|"
 
 
-def get_or_create_reference(doi: str) -> Reference:
-    """Add reference if not already existing"""
-    reference = Reference.query.filter_by(doi=doi).first()
-    if not reference:
-        reference = Reference(doi=doi)
-        db.session.add(reference)
-    return reference
+def get_references(data: dict) -> str:
+    """Parse data and concatenate references in a string"""
+    seen_refs = set()
+    for ref in data["enzyme"]["references"]:
+        seen_refs.add(ref.strip("doi:"))
+
+    for r in data["reactions"]:
+        for ref in r["evidence"]["references"]:
+            seen_refs.add(ref.strip("doi:"))
+
+    return "|" + "|".join(seen_refs) + "|"
+
+
 
 
 def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
@@ -107,16 +111,10 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
         for name in data.get("cofactors", {}).get(tipo, []):
             enzyme.cofactors.append(_get_or_create_cofactor(name, tipo))
 
-    enzyme.references = []
-    enzyme.references.extend(
-        [get_or_create_reference(ref) for ref in data["references"]]
-    )
-
     return enzyme
 
 
 def get_reactions(entry: Entry, data: list) -> list[Reaction]:
-    """Parse enzyme info and create many-to-many Cofactor and Reference tables"""
 
     def _get_or_create_tailoring(item: str) -> Tailoring:
         tailoring = Tailoring.query.filter_by(tailoring=item).first()
@@ -155,10 +153,6 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         reaction.evidences = [
             _get_or_create_evidence(e) for e in r["evidence"]["evidenceCode"]
         ]
-        reaction.references = []
-        reaction.references.extend(
-            [get_or_create_reference(ref) for ref in r["evidence"]["references"]]
-        )
         reaction.example_reactions = [
             _create_example_reaction(expl, reaction) for expl in r["reactions"]
         ]

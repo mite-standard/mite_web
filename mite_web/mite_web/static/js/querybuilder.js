@@ -13,16 +13,25 @@ $(function () {
     ],
     filters: [
       {
-        id: 'accession',
-        label: 'Accession',
-        type: 'string'
-      },
-      {
         id: 'orcids',
         label: 'ORCID',
-        type: 'string'
+        type: 'string',
+        placeholder: 'e.g. 0000-0001-6534-6609',
+        validation: {
+          format: /^[0-9]/i
+        },
+        operators: ['equal', 'not_equal', 'contains', 'not_contains']
       },
-
+      {
+        id: 'references',
+        label: 'Literature DOI',
+        type: 'string',
+        placeholder: 'e.g. 10.1016/j.chembiol.2020.11.009',
+        validation: {
+          format: /^10\.\S+$/i
+        },
+        operators: ['equal', 'not_equal', 'contains', 'not_contains']
+      },
 
 
 
