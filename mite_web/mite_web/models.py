@@ -32,6 +32,7 @@ class Entry(db.Model):
 
     orcids = db.Column(db.Text)
     references = db.Column(db.Text)
+    evidences = db.Column(db.Text)
 
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
@@ -64,15 +65,6 @@ class Tailoring(db.Model):
 
     reaction = db.relationship(
         "Reaction", secondary="reaction_tailoring", back_populates="tailorings"
-    )
-
-
-class Evidence(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    evidence = db.Column(db.Text, unique=True)
-
-    reaction = db.relationship(
-        "Reaction", secondary="reaction_evidence", back_populates="evidences"
     )
 
 
@@ -111,9 +103,6 @@ class Reaction(db.Model):
     tailorings = db.relationship(
         "Tailoring", secondary="reaction_tailoring", back_populates="reaction"
     )
-    evidences = db.relationship(
-        "Evidence", secondary="reaction_evidence", back_populates="reaction"
-    )
     example_reactions = db.relationship(
         "ExampleReaction", back_populates="reaction", cascade="all, delete-orphan"
     )
@@ -123,16 +112,6 @@ reaction_tailoring = db.Table(
     "reaction_tailoring",
     db.Column(
         "tailoring_id", db.Integer, db.ForeignKey("tailoring.id"), primary_key=True
-    ),
-    db.Column(
-        "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True
-    ),
-)
-
-reaction_evidence = db.Table(
-    "reaction_evidence",
-    db.Column(
-        "evidence_id", db.Integer, db.ForeignKey("evidence.id"), primary_key=True
     ),
     db.Column(
         "reaction_id", db.Integer, db.ForeignKey("reaction.id"), primary_key=True

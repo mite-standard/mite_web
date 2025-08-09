@@ -2,6 +2,7 @@ function initCustomQueryBuilder(form_vals) {
   const inorganic = form_vals.inorganic;
   const organic = form_vals.organic;
   const cofactors = organic.concat(inorganic);
+  const evidence = form_vals.evidence;
 
   $('#builder').queryBuilder({
     plugins: ['bt-tooltip-errors'],
@@ -34,6 +35,14 @@ function initCustomQueryBuilder(form_vals) {
         validation: {
           format: /^10\.\S+$/i
         },
+        operators: ['contains', 'not_contains', 'equal', 'not_equal']
+      },
+      {
+        id: 'evidences',
+        label: 'Experimental evidence',
+        type: 'string',
+        input: 'select',
+        values: evidence,
         operators: ['contains', 'not_contains', 'equal', 'not_equal']
       },
       {
@@ -131,9 +140,6 @@ function initCustomQueryBuilder(form_vals) {
         type: 'string',
         input: 'select',
         values: cofactors,
-        validation: {
-          format: /^10\.\S+$/i
-        },
         operators: ['contains', 'not_contains', 'equal', 'not_equal']
       },
 

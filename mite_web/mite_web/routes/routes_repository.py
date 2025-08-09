@@ -282,6 +282,7 @@ class DatabaseManager:
     field_map : dict = {
         "orcids": "orcids",
         "references": "references",
+        "evidences": "evidences",
 
         "enzyme.name": "enzyme.name",
         "enzyme.enzyme_description": "enzyme.enzyme_description",

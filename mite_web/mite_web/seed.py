@@ -7,7 +7,6 @@ from mite_web.config.extensions import db
 from mite_web.models import (
     Entry,
     Enzyme,
-    Evidence,
     ExampleReaction,
     Product,
     Reaction,
@@ -35,7 +34,8 @@ def seed_data() -> None:
             entry = Entry(
                 accession=data["accession"],
                 orcids=get_orcids(data["changelog"]),
-                references=get_references(data)
+                references=get_references(data),
+                evidences=get_evidence(data["reactions"])
             )
 
             entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
@@ -55,7 +55,6 @@ def get_orcids(logs: list) -> str:
             seen_orcids.add(orcid)
     return "|".join(seen_orcids)
 
-
 def get_references(data: dict) -> str:
     """Parse data and concatenate references in a string"""
     seen_refs = set()
@@ -67,6 +66,14 @@ def get_references(data: dict) -> str:
             seen_refs.add(ref.strip("doi:"))
 
     return "|".join(seen_refs)
+
+def get_evidence(reactions: list) -> str:
+    """Parse data and concatenate evidence """
+    seen_evidence = set()
+    for r in reactions:
+        for evidence in r["evidence"]["evidenceCode"]:
+            seen_evidence.add(evidence)
+    return "|".join(seen_evidence)
 
 
 def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
@@ -117,12 +124,7 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
             db.session.add(tailoring)
         return tailoring
 
-    def _get_or_create_evidence(item: str) -> Evidence:
-        evidence = Evidence.query.filter_by(evidence=item).first()
-        if not evidence:
-            evidence = Evidence(evidence=item)
-            db.session.add(evidence)
-        return evidence
+
 
     def _create_example_reaction(item: dict, r_ref: Reaction) -> ExampleReaction:
         example_reaction = ExampleReaction(
@@ -144,9 +146,6 @@ def get_reactions(entry: Entry, data: list) -> list[Reaction]:
         db.session.add(reaction)
 
         reaction.tailorings = [_get_or_create_tailoring(t) for t in r["tailoring"]]
-        reaction.evidences = [
-            _get_or_create_evidence(e) for e in r["evidence"]["evidenceCode"]
-        ]
         reaction.example_reactions = [
             _create_example_reaction(expl, reaction) for expl in r["reactions"]
         ]
