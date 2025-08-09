@@ -36,19 +36,6 @@ class Entry(db.Model):
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
 
-
-
-class Cofactor(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    cofactor_name = db.Column(db.String, unique=True)
-    cofactor_type = db.Column(db.String)
-
-    enzyme = db.relationship(
-        "Enzyme", secondary="enzyme_cofactor", back_populates="cofactors"
-    )
-
-
-
 class Enzyme(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     entry_id = db.Column(db.String, db.ForeignKey("entry.accession"))
@@ -68,19 +55,7 @@ class Enzyme(db.Model):
     class_id = db.Column(db.String, nullable=True, index=True)
     order_id = db.Column(db.String, nullable=True, index=True)
     family_id = db.Column(db.String, nullable=True, index=True)
-
-    cofactors = db.relationship(
-        "Cofactor", secondary="enzyme_cofactor", back_populates="enzyme"
-    )
-
-
-enzyme_cofactor = db.Table(
-    "enzyme_cofactor",
-    db.Column(
-        "cofactor_id", db.Integer, db.ForeignKey("cofactor.id"), primary_key=True
-    ),
-    db.Column("enzyme_id", db.Integer, db.ForeignKey("enzyme.id"), primary_key=True),
-)
+    cofactors = db.Column(db.String, nullable=True, index=True)
 
 
 class Tailoring(db.Model):

@@ -103,11 +103,12 @@ class SummaryManager(Locations):
                 mite_data = json.load(infile)
 
             if mite_data.get("status") == "active":
-                self.active_files.append(f"{mite_data.get("accession")}.json")
+                self.active_files.append(f"{mite_data["accession"]}.json")
 
             origin = self.get_organism(data=mite_data)
 
             self.summary["entries"][mite_data.get("accession")] = {
+                "accession": mite_data["accession"],
                 "status": '<i class="bi bi-check-circle-fill"></i>'
                 if mite_data.get("status") == "active"
                 else '<i class="bi bi-circle"></i>',

@@ -123,83 +123,47 @@
             </a>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <div id="search-count" class="lead"></div>
+    {% if filtered %}
+    <div class="row align-items-center mb-3">
+        <div class="col-auto">
+            <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
         </div>
     </div>
-    <table id="table" class="my-3 table-striped" data-toggle="table" data-search="true" data-show-columns-toggle-all="true" data-show-columns="true" >
+    {% endif %}
+    <table class="my-3 table table-striped table-hover">
         <thead>
             <tr>
-                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
-                {% set first_key, first_val = entries.items() | first %}
-                {% if "example" in first_val %}
-                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
-                <th scope="col" data-sortable="true" data-field="reaction_example">Reaction Example</th>
-                {% endif %}
-                {% if "sim_score" in first_val %}
-                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
-                <th scope="col" data-sortable="true" data-field="sim_score">Similarity Score</th>
-                {% endif %}
-                {% if "evalue" in first_val %}
-                <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
-                <th scope="col" data-sortable="true" data-field="similarity">Sequence Sim. (%)</th>
-                <th scope="col" data-sortable="true" data-field="alignment">Alignment Score</th>
-                <th scope="col" data-sortable="true" data-field="bitscore">Bit-Score</th>
-                {% endif %}
-                <th scope="col" data-sortable="true" data-field="status">Status</th>
-                <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
-                <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
-                <th scope="col" data-sortable="true" data-field="description">Enzyme Type</th>
-                <th scope="col" data-sortable="false" data-field="reaction_description">Reaction Description</th>
-                <th scope="col" data-sortable="true" data-field="cofactors_organic">Cofactors (organic)</th>
-                <th scope="col" data-sortable="true" data-field="cofactors_inorganic">Cofactors (inorganic)</th>
-                <th scope="col" data-sortable="true" data-field="organism">Organism</th>
-                <th scope="col" data-sortable="true" data-field="domain">Domain</th>
-                <th scope="col" data-sortable="true" data-field="kingdom">Kingdom</th>
-                <th scope="col" data-sortable="true" data-field="phylum">Phylum</th>
-                <th scope="col" data-sortable="true" data-field="class">Class</th>
-                <th scope="col" data-sortable="true" data-field="order">Order</th>
-                <th scope="col" data-sortable="true" data-field="family">Family</th>
+              {% for header in headers %}
+                <th>{{ header[1] }}</th>
+              {% endfor %}
             </tr>
         </thead>
-        <tbody>
-            {% for key, value in entries.items() %}
-                <tr>
-                    <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
-                    {% if "example" in first_val %}
-                    <td>{{ value.reaction }}</td>
-                    <td>{{ value.example }}</td>
-                    {% endif %}
-                    {% if "sim_score" in first_val %}
-                    <td>{{ value.reaction }}</td>
-                    <td>{{ value.sim_score }}</td>
-                    {% endif %}
-                    {% if "evalue" in first_val %}
-                    <td>{{ value.evalue }}</td>
-                    <td>{{ value.sequence_similarity }}</td>
-                    <td>{{ value.alignment_score }}</td>
-                    <td>{{ value.bit_score }}</td>
-                    {% endif %}
-                    <td>{{ value.status | safe }}</td>
-                    <td>{{ value.name }}</td>
-                    <td>{{ value.tailoring }}</td>
-                    <td>{{ value.description | truncate(75, True) }}</td>
-                    <td>{{ value.reaction_description | truncate(75, True) }}</td>
-                    <td>{{ value.cofactors_organic }}</td>
-                    <td>{{ value.cofactors_inorganic }}</td>
-                    <td>{{ value.organism }}</td>
-                    <td>{{ value.domain }}</td>
-                    <td>{{ value.kingdom }}</td>
-                    <td>{{ value.phylum }}</td>
-                    <td>{{ value.class }}</td>
-                    <td>{{ value.order }}</td>
-                    <td>{{ value.family }}</td>
-                </tr>
+        <tbody class="align-middle">
+        {% for row in entries %}
+          <tr>
+            {% for header in headers %}
+              {% if header[0] == "accession" %}
+              <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=row[header[0]]) }}">{{ row[header[0]] }}</a></td>
+              {% elif header[0] == "status" %}
+              <td class="text-center">{{ row[header[0]] | safe }}</td>
+              {% elif header[0] == "description" %}
+              <td>{{ row[header[0]] | truncate(75, True) }}</td>
+              {% elif header[0] == "reaction_description" %}
+              <td>{{ row[header[0]] | truncate(75, True) }}</td>
+              {% else %}
+              <td>{{ row[header[0]] }}</td>
+              {% endif %}
             {% endfor %}
+          </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
-<script type="text/javascript" src="{{ url_for('static', filename='js/table_counter.js') }}" defer></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/querybuilder.js') }}" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const formVals = {{ form_vals | tojson | safe }};
+    initCustomQueryBuilder(formVals);
+});
+</script>
 {% endblock %}

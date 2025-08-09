@@ -5,7 +5,6 @@ from flask import current_app
 
 from mite_web.config.extensions import db
 from mite_web.models import (
-    Cofactor,
     Entry,
     Enzyme,
     Evidence,
@@ -54,7 +53,7 @@ def get_orcids(logs: list) -> str:
     for log in logs:
         for orcid in log.get("contributors", []) + log.get("reviewers", []):
             seen_orcids.add(orcid)
-    return "|" + "|".join(seen_orcids) + "|"
+    return "|".join(seen_orcids)
 
 
 def get_references(data: dict) -> str:
@@ -67,9 +66,7 @@ def get_references(data: dict) -> str:
         for ref in r["evidence"]["references"]:
             seen_refs.add(ref.strip("doi:"))
 
-    return "|" + "|".join(seen_refs) + "|"
-
-
+    return "|".join(seen_refs)
 
 
 def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
@@ -80,12 +77,13 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
         data: a MITE JSON enzyme dict
         summary: the summary of the MITE entry containing taxonomy info
     """
-    def _get_or_create_cofactor(cfname: str, cftipo: str) -> Cofactor:
-        cofactor = Cofactor.query.filter_by(cofactor_name=cfname).first()
-        if not cofactor:
-            cofactor = Cofactor(cofactor_name=cfname, cofactor_type=cftipo)
-            db.session.add(cofactor)
-        return cofactor
+    def _add_cofactors() -> str:
+        """Returns concatenated cofactors"""
+        cofactor_set = set()
+        for cat in ("inorganic", "organic"):
+            for name in data.get("cofactors", {}).get(cat, []):
+                cofactor_set.add(name)
+        return "|".join(cofactor_set)
 
     enzyme = Enzyme(
         name=data["name"],
@@ -102,14 +100,10 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
         class_id=summary.get("class"),
         order_id=summary.get("order"),
         family_id=summary.get("family"),
+        cofactors=_add_cofactors(),
         entry=entry,
     )
     db.session.add(enzyme)
-
-    enzyme.cofactors = []
-    for tipo in ("inorganic", "organic"):
-        for name in data.get("cofactors", {}).get(tipo, []):
-            enzyme.cofactors.append(_get_or_create_cofactor(name, tipo))
 
     return enzyme
 

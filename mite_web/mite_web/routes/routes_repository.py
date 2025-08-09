@@ -43,7 +43,7 @@ from sqlalchemy import and_, inspect, or_
 from sqlalchemy.orm import RelationshipProperty, class_mapper
 
 from mite_web.config.extensions import db
-from mite_web.models import Cofactor, Entry, Enzyme
+from mite_web.models import Entry
 from mite_web.routes import bp
 
 
@@ -283,9 +283,22 @@ class DatabaseManager:
         "orcids": "orcids",
         "references": "references",
 
-        "enzyme.mibig_id": "enzyme.mibig_id",
+        "enzyme.name": "enzyme.name",
+        "enzyme.enzyme_description": "enzyme.enzyme_description",
         "enzyme.uniprot_id": "enzyme.uniprot_id",
-        "enzyme.cofactors.cofactor_name": "enzyme.cofactors.cofactor_name"
+        "enzyme.genpept_id": "enzyme.genpept_id",
+        "enzyme.mibig_id": "enzyme.mibig_id",
+        "enzyme.wikidata_id": "enzyme.wikidata_id",
+        "enzyme.has_auxenzymes": "enzyme.has_auxenzymes",
+        "enzyme.organism_id": "enzyme.organism_id",
+        "enzyme.domain_id": "enzyme.domain_id",
+        "enzyme.kingdom_id": "enzyme.kingdom_id",
+        "enzyme.phylum_id": "enzyme.phylum_id",
+        "enzyme.class_id": "enzyme.class_id",
+        "enzyme.order_id": "enzyme.order_id",
+        "enzyme.family_id": "enzyme.family_id",
+        "enzyme.cofactors": "enzyme.cofactors",
+
     }
 
     def query_db(self, rules: dict) -> set:
@@ -316,13 +329,12 @@ class DatabaseManager:
 
             path_parts = field_path.split(".")
             filter_expr = self.build_filter_from_path(base_model, path_parts, operator, value)
-            current_app.logger.info(filter_expr)
             filters.append(filter_expr)
 
         return filters
 
     def build_filter_from_path(self, model: Any, path_parts: list, operator: str, value: str):
-        """Recursively build a SQLAlchemy filter from a dotted path."""
+        """Build a SQLAlchemy filter from a dotted path."""
         mapper = inspect(model)
 
         if path_parts[0] in mapper.relationships:
@@ -335,13 +347,10 @@ class DatabaseManager:
                 return rel.class_attribute.any(nested_filter)
             else:
                 return rel.class_attribute.has(nested_filter)
-
         elif path_parts[0] in mapper.columns:
             col = mapper.columns[path_parts[0]]
             return self.operators[operator](col, value)
-
         else:
-            # TODO: catch the error
             raise ValueError(f"Invalid path segment: {path_parts[0]}")
 
 
@@ -356,21 +365,38 @@ def overview() -> str:
     """
     summary = copy.deepcopy(current_app.config["SUMMARY"])
     accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+    headers = [
+        ("accession", "MITE Accession"),
+        ("status", "Status"),
+        ("name", "Enzyme Name"),
+        ("tailoring", "Tailoring Reaction"),
+        ("description", "Enzyme Description"),
+        ("organism", "Organism"),
+        ("family", "Family"),
+        ("reaction_description", "Reaction Description"),
+    ]
+    filtered = False
 
-    current_app.logger.info("Before filtering")
-    current_app.logger.info(len(accessions))
 
+    try:
+        if request.method == "POST":
 
-    if request.method == "POST":
+            filtered = True
+            forms = request.form.to_dict()
 
-        forms = request.form.to_dict()
+            rules = json.loads(forms['rules'])
+            if len(rules["rules"]) > 0:
+                db_manager = DatabaseManager()
+                accessions.intersection_update(db_manager.query_db(rules))
 
-        rules = json.loads(forms['rules'])
-        if len(rules["rules"]) > 0:
-            db_manager = DatabaseManager()
-            accessions.intersection_update(db_manager.query_db(rules))
+            # TODO: implement rest of filters in the same way as with dbmanager
+            # TODO: inject values in summary dict, update header, set uuid, dump csv,
+    except Exception as e:
+        flash(f"An error occurred during database querying: '{e!s}'")
+        summary = copy.deepcopy(current_app.config["SUMMARY"])
+        accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+        filtered = False
 
-        # TODO: implement rest of filters in the same way as with dbmanager
 
 
 
@@ -432,12 +458,10 @@ def overview() -> str:
     #             flash(f"An error in BLASTp matching occurred: '{e!s}'")
     #             return render_template("overview.html", entries=summary)
 
-    current_app.logger.info("After filtering")
-    current_app.logger.info(len(accessions))
 
-    summary = {key: val for key, val in summary.items() if key in accessions}
+    summary = [val for key, val in summary.items() if key in accessions]
 
-    return render_template("overview.html", entries=summary)
+    return render_template("overview.html", entries=summary, headers=headers, form_vals=current_app.config["FORM_VALS"], filtered=filtered)
 
 
 @bp.route("/repository/<mite_acc>")

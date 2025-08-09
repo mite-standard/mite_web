@@ -32,6 +32,7 @@ import coloredlogs
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from mite_schema import SchemaManager
 
 from mite_web.api.mite_api import mite_ns
 from mite_web.config.extensions import api, db
@@ -99,6 +100,15 @@ def configure_app(app: Flask) -> Flask:
         summary = json.load(infile)
         app.config["SUMMARY"] = summary["entries"]
         app.config["ACCESSIONS"] = { acc for acc in summary["entries"].keys() }
+
+    with open(SchemaManager().entry) as f:
+        schema = json.load(f)
+        app.config["FORM_VALS"] = {
+            "evidence": schema["$defs"]["evidence"]["enum"],
+            "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
+            "inorganic": schema["$defs"]["inorganic"]["enum"],
+            "organic": schema["$defs"]["organic"]["enum"],
+        }
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

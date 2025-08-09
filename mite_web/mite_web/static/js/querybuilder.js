@@ -1,4 +1,8 @@
-$(function () {
+function initCustomQueryBuilder(form_vals) {
+  const inorganic = form_vals.inorganic;
+  const organic = form_vals.organic;
+  const cofactors = organic.concat(inorganic);
+
   $('#builder').queryBuilder({
     plugins: ['bt-tooltip-errors'],
     allow_groups: false,
@@ -20,7 +24,7 @@ $(function () {
         validation: {
           format: /^[0-9]/i
         },
-        operators: ['equal', 'not_equal', 'contains', 'not_contains']
+        operators: ['contains', 'not_contains', 'equal', 'not_equal']
       },
       {
         id: 'references',
@@ -30,26 +34,72 @@ $(function () {
         validation: {
           format: /^10\.\S+$/i
         },
-        operators: ['equal', 'not_equal', 'contains', 'not_contains']
+        operators: ['contains', 'not_contains', 'equal', 'not_equal']
       },
-
-
-
       {
-        id: 'enzyme.mibig_id',
-        label: 'MIBiG ID',
-        type: 'string'
+        id: 'enzyme.name',
+        label: 'Enzyme Name',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.enzyme_description',
+        label: 'Enzyme Description',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
       },
       {
         id: 'enzyme.uniprot_id',
         label: 'UniProt ID',
-        type: 'string'
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
       },
       {
-        id: 'enzyme.cofactors.cofactor_name',
-        label: 'Cofactor name',
-        type: 'string'
+        id: 'enzyme.genpept_id',
+        label: 'Genpept ID',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
       },
+      {
+        id: 'enzyme.mibig_id',
+        label: 'MIBiG ID',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.wikidata_id',
+        label: 'Wikidata QID',
+        type: 'string',
+        operators: ['contains', 'not_contains', 'equal', 'not_equal', 'is_null', 'is_not_null']
+      },
+      {
+        id: 'enzyme.has_auxenzymes',
+        label: 'Auxilliary Enzyme',
+        type: 'boolean',
+        input: 'select',
+        operators: ['equal', 'not_equal'],
+        values: [
+          true,
+          false
+        ]
+      },
+      {
+        id: 'enzyme.cofactors',
+        label: 'Cofactor',
+        type: 'string',
+        input: 'select',
+        values: cofactors,
+        validation: {
+          format: /^10\.\S+$/i
+        },
+        operators: ['contains', 'not_contains', 'equal', 'not_equal']
+      },
+
+
+
+
+
+
     ]
   });
 
@@ -67,4 +117,4 @@ $(function () {
     }
     $('#rules-input').val(JSON.stringify(rules));
   });
-});
+};
