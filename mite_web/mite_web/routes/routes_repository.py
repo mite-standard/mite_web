@@ -46,7 +46,7 @@ from mite_web.models import Entry
 from mite_web.routes import bp
 
 
-class QueryManager(BaseModel):
+class StructureManager(BaseModel):
     """Organize querying functions
 
     Attributes:
@@ -55,7 +55,6 @@ class QueryManager(BaseModel):
         substrates_pickle: path to pre-calculated fingerprints of substrate SMILES
         products_pickle: path to pre-calculated fingerprints of products SMILES
         reaction_pickle: path to pre-calculated fingerprints of reaction SMARTS
-        blastlib: path to the blast library
     """
 
     summary: dict
@@ -71,28 +70,19 @@ class QueryManager(BaseModel):
     reaction_pickle: Path = Path(__file__).parent.parent.joinpath(
         "data/reaction_fps.pickle"
     )
-    blastlib: Path = Path(__file__).parent.parent.joinpath("data/blastlib/")
 
     def return_summary(self) -> dict:
-        """Returns the summary dict
+        return self.summary
 
-        Returns:
-            Modified summary dict
-
-        Raises:
-            RuntimeError: No matches found
-        """
-        if len(self.summary) == 0:
-            raise RuntimeError("No significant matches found")
-        else:
-            return self.summary
-
-    def query_substructure(self, action: str, query: str):
+    def query_substructure(self, action: str, query: str) -> set:
         """Query dataset for a specific substructure and filter summary for matching entries
 
         Arguments:
             action: the type of matching to perform (smiles or smarts matching)
             query: a SMILES or SMARTS string
+
+        Returns:
+            A set of relevant MITE accessions
         """
         with open(
             self.substrates_pickle,
@@ -121,8 +111,10 @@ class QueryManager(BaseModel):
 
         matches = sorted(matches)
 
+        mite_accessions = set()
         for match in matches:
             key = match.split(".")[0]
+            mite_accessions.add(key)
             reaction = match.split(".")[1].replace("reaction", "rx")
             example = match.split(".")[2].replace("example", "ex")
 
@@ -133,19 +125,7 @@ class QueryManager(BaseModel):
                 self.summary[key]["reaction"] = [reaction]
                 self.summary[key]["example"] = [f"{reaction}-{example}"]
 
-        copy_summary = copy.deepcopy(self.summary)
-        for key, value in copy_summary.items():
-            if value["status"] == '<i class="bi bi-circle"></i>' or not value.get(
-                "reaction"
-            ):
-                self.summary.pop(key, None)
-            else:
-                self.summary[key]["reaction"] = ", ".join(
-                    [str(i) for i in self.summary[key]["reaction"]]
-                )
-                self.summary[key]["example"] = ", ".join(
-                    [str(i) for i in self.summary[key]["example"]]
-                )
+        return mite_accessions
 
     def query_reaction(self, query: str, sim_score: float):
         """Query dataset for a reaction and filter summary for matching entries
@@ -196,8 +176,6 @@ class QueryManager(BaseModel):
                 self.summary[key]["sim_score"] = ", ".join(
                     [str(i) for i in self.summary[key]["sim_score"]]
                 )
-
-
 
 
 class DatabaseManager:
@@ -385,9 +363,6 @@ class BlastManager(BaseModel):
 
         return filtered_accessions
 
-
-
-
 @bp.route("/overview/", methods=["GET", "POST"])
 def overview() -> str:
     """Render the repository overview page of mite_web
@@ -429,6 +404,16 @@ def overview() -> str:
                 summary = blast_manager.return_summary()
                 headers.extend([
                     ("evalue", "E-Value"), ("sequence_similarity", "Sequence Sim. (%)"), ("alignment_score", "Alignment Score"), ("bit_score", "Bit-Score")
+                ])
+
+            if forms.get("substructure_query", "") != "":
+                structure_manager = StructureManager(summary=summary)
+                accessions.intersection_update(structure_manager.query_substructure(
+                    action=forms.get("query_substructure"), query=forms.get("substructure_query")
+                ))
+                summary = structure_manager.return_summary()
+                headers.extend([
+                    ("reaction", "Reaction"), ("example", "Example Reaction"),
                 ])
 
 
