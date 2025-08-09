@@ -197,69 +197,6 @@ class QueryManager(BaseModel):
                     [str(i) for i in self.summary[key]["sim_score"]]
                 )
 
-    def query_sequence(self, query: str, e_val: int):
-        """Run BLAST against MITE BLAST DB for a specific protein and filter summary for matching entries
-
-        Arguments:
-            query: a protein sequence
-            e_val: the e-value to filter matches with
-
-        Raises:
-            RuntimeError: input sanitization detected illegal input
-        """
-        query = query.replace("\n", "")
-        query = re.sub(r"\s+", "", query, flags=re.UNICODE)
-
-        if not query.isalpha():
-            raise RuntimeError("The query AA sequence contains illegal characters.")
-        else:
-            query = query.upper()
-
-        job_uuid = uuid.uuid1()
-
-        record = SeqRecord(seq=Seq(query), id="user_query", description="user_query")
-
-        with open(self.blastlib.joinpath(f"{job_uuid}.fasta"), "w") as outfile:
-            SeqIO.write(record, outfile, "fasta")
-
-        command = [
-            "blastp",
-            "-query",
-            f"{self.blastlib.joinpath(f"{job_uuid}.fasta")}",
-            "-db",
-            f"{self.blastlib.joinpath("mite_blastfiles")}",
-            "-out",
-            f"{self.blastlib.joinpath(f"{job_uuid}.xml")}",
-            "-evalue",
-            f"1e-{e_val}",
-            "-outfmt",
-            "5",
-        ]
-        subprocess.run(command, check=True, timeout=5)
-
-        with open(self.blastlib.joinpath(f"{job_uuid}.xml"), "rb") as infile:
-            blast_record = Blast.read(infile)
-
-        for hit in blast_record:
-            key = hit[0].target.description.split()[0]
-            self.summary[key]["sequence_similarity"] = round(
-                (float(hit[0].annotations.get("positive")) / float(len(query))) * 100, 0
-            )
-            self.summary[key]["alignment_score"] = round(hit[0].score, 0)
-            self.summary[key]["evalue"] = round(hit[0].annotations.get("evalue"), 0)
-            self.summary[key]["bit_score"] = round(
-                hit[0].annotations.get("bit score"), 0
-            )
-
-        os.remove(self.blastlib.joinpath(f"{job_uuid}.xml"))
-        os.remove(self.blastlib.joinpath(f"{job_uuid}.fasta"))
-
-        copy_summary = copy.deepcopy(self.summary)
-        for key, value in copy_summary.items():
-            if value["status"] == '<i class="bi bi-circle"></i>' or not value.get(
-                "sequence_similarity"
-            ):
-                self.summary.pop(key, None)
 
 
 
@@ -364,6 +301,90 @@ class DatabaseManager:
         else:
             raise ValueError(f"Invalid path segment: {path_parts[0]}")
 
+class BlastManager(BaseModel):
+    """Organizes querying for a protein sequence
+
+    Attributes:
+        summary: entry summary for overview page
+        blastlib: Path to blast library
+
+    """
+    summary: dict
+    blastlib: Path = Path(__file__).parent.parent.joinpath("data/blastlib/")
+
+    def return_summary(self) -> dict:
+        return self.summary
+
+    def query_sequence(self, query: str, e_val: int) -> set:
+        """Run BLAST against MITE BLAST DB for a specific protein and filter summary for matching entries
+
+        Arguments:
+            query: a protein sequence
+            e_val: the e-value to filter matches with
+
+        Returns:
+            A set of relevant MITE accessions
+
+        Raises:
+            RuntimeError: input sanitization detected illegal input
+        """
+        query = query.replace("\n", "")
+        query = re.sub(r"\s+", "", query, flags=re.UNICODE)
+
+        try:
+            e_val = int(e_val)
+        except Exception as e:
+            raise ValueError("E-value not an integer") from e
+
+        if not query.isalpha():
+            raise RuntimeError("The query AA sequence contains illegal characters - please check.")
+        else:
+            query = query.upper()
+
+        job_uuid = uuid.uuid1()
+
+        record = SeqRecord(seq=Seq(query), id="user_query", description="user_query")
+
+        with open(self.blastlib.joinpath(f"{job_uuid}.fasta"), "w") as outfile:
+            SeqIO.write(record, outfile, "fasta")
+
+        command = [
+            "blastp",
+            "-query",
+            f"{self.blastlib.joinpath(f"{job_uuid}.fasta")}",
+            "-db",
+            f"{self.blastlib.joinpath("mite_blastfiles")}",
+            "-out",
+            f"{self.blastlib.joinpath(f"{job_uuid}.xml")}",
+            "-evalue",
+            f"1e-{e_val}",
+            "-outfmt",
+            "5",
+        ]
+        subprocess.run(command, check=True, timeout=5)
+
+        with open(self.blastlib.joinpath(f"{job_uuid}.xml"), "rb") as infile:
+            blast_record = Blast.read(infile)
+
+
+        filtered_accessions = set()
+        for hit in blast_record:
+            key = hit[0].target.description.split()[0]
+            filtered_accessions.add(key)
+            self.summary[key]["sequence_similarity"] = round(
+                (float(hit[0].annotations.get("positive")) / float(len(query))) * 100, 0
+            )
+            self.summary[key]["alignment_score"] = round(hit[0].score, 0)
+            self.summary[key]["evalue"] = round(hit[0].annotations.get("evalue"), 0)
+            self.summary[key]["bit_score"] = round(
+                hit[0].annotations.get("bit score"), 0
+            )
+
+        os.remove(self.blastlib.joinpath(f"{job_uuid}.xml"))
+        os.remove(self.blastlib.joinpath(f"{job_uuid}.fasta"))
+
+        return filtered_accessions
+
 
 
 
@@ -400,6 +421,17 @@ def overview() -> str:
                 db_manager = DatabaseManager()
                 accessions.intersection_update(db_manager.query_db(rules))
 
+            if forms.get("sequence_query", "") != "":
+                blast_manager = BlastManager(summary=summary)
+                accessions.intersection_update(blast_manager.query_sequence(
+                    query=forms.get("sequence_query"), e_val=forms.get("sequence_similarity")
+                ))
+                summary = blast_manager.return_summary()
+
+
+
+            print(forms)
+
             # TODO: implement rest of filters in the same way as with dbmanager
             # TODO: inject values in summary dict, update header, set uuid, dump csv,
 
@@ -416,7 +448,7 @@ def overview() -> str:
                                    form_vals=current_app.config["FORM_VALS"], filtered=filtered, job_id=job_id)
 
     except Exception as e:
-        flash(f"An error occurred during database querying: '{e!s}'")
+        flash(f"An error occurred during search: '{e!s}'")
         summary = copy.deepcopy(current_app.config["SUMMARY"])
         accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
 
