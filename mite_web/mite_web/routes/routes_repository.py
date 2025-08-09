@@ -427,7 +427,9 @@ def overview() -> str:
                     query=forms.get("sequence_query"), e_val=forms.get("sequence_similarity")
                 ))
                 summary = blast_manager.return_summary()
-
+                headers.extend([
+                    ("evalue", "E-Value"), ("sequence_similarity", "Sequence Sim. (%)"), ("alignment_score", "Alignment Score"), ("bit_score", "Bit-Score")
+                ])
 
 
             print(forms)
