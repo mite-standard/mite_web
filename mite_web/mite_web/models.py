@@ -30,27 +30,10 @@ from mite_web.config.extensions import db
 class Entry(db.Model):
     accession = db.Column(db.String, primary_key=True)
 
-    persons = db.relationship("Person", secondary="entry_person", back_populates="entry")
+    orcids = db.Column(db.Text)
 
     enzyme = db.relationship("Enzyme", uselist=False, back_populates="entry")
     reactions = db.relationship("Reaction", back_populates="entry")
-
-
-class Person(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    orcid = db.Column(db.String, unique=True)
-
-    entry = db.relationship(
-        "Entry", secondary="entry_person", back_populates="persons"
-    )
-
-entry_person = db.Table(
-    "entry_person",
-    db.Column("person_id", db.Integer, db.ForeignKey("person.id"), primary_key=True),
-    db.Column(
-        "entry_accession", db.String, db.ForeignKey("entry.accession"), primary_key=True
-    ),
-)
 
 
 

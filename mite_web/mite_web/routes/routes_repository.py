@@ -281,7 +281,7 @@ class DatabaseManager:
 
     field_map : dict = {
         "accession": "accession",
-        "persons.orcid": "persons.orcid",
+        "orcids": "orcids",
 
         "enzyme.mibig_id": "enzyme.mibig_id",
         "enzyme.uniprot_id": "enzyme.uniprot_id",

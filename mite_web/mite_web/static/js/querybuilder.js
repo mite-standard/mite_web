@@ -18,7 +18,7 @@ $(function () {
         type: 'string'
       },
       {
-        id: 'persons.orcid',
+        id: 'orcids',
         label: 'ORCID',
         type: 'string'
       },

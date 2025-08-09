@@ -37,9 +37,9 @@ def seed_data() -> None:
 
             entry = Entry(
                 accession=data["accession"],
+                orcids=get_orcids(data["changelog"])
             )
 
-            entry.persons = get_persons(entry, data["changelog"])
             entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
             entry.reactions = get_reactions(entry, data["reactions"])
 
@@ -49,26 +49,14 @@ def seed_data() -> None:
     current_app.logger.info("Database seeding completed.")
 
 
-def get_persons(entry: Entry, logs: list) -> list[Person]:
-    """Parse changelog and create many-to-many person table"""
-
-    def _get_or_create_person(o: str) -> Person:
-        with db.session.no_autoflush:
-            p = Person.query.filter_by(orcid=o).first()
-        if not p:
-            p = Person(orcid=o)
-            db.session.add(p)
-        return p
-
+def get_orcids(logs: list) -> str:
+    """Parse changelog and concatenate ORCIDs in a string"""
     seen_orcids = set()
     for log in logs:
         for orcid in log.get("contributors", []) + log.get("reviewers", []):
             if orcid not in seen_orcids:
-                person = _get_or_create_person(orcid)
-                entry.persons.append(person)
                 seen_orcids.add(orcid)
-
-    return entry.persons
+    return "|" + "|".join(seen_orcids) + "|"
 
 
 def get_or_create_reference(doi: str) -> Reference:
