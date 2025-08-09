@@ -127,13 +127,22 @@ class StructureManager(BaseModel):
 
         return mite_accessions
 
-    def query_reaction(self, query: str, sim_score: float):
+    def query_reaction(self, query: str, sim_score: float) -> set:
         """Query dataset for a reaction and filter summary for matching entries
 
         Arguments:
             query: a reaction SMARTS string
             sim_score: the minimum similarity score to consider an entry
+
+        Returns:
+            A set of relevant MITE accessions
         """
+
+        # TODO: implement the non-greedy fingerprint
+        try:
+            sim_score = float(sim_score)
+        except Exception as e:
+            raise ValueError("Similarity score not a number") from e
 
         with open(self.reaction_pickle, "rb") as infile:
             reaction_dict = pickle.load(infile)
@@ -148,10 +157,12 @@ class StructureManager(BaseModel):
         ]
         reaction_dict["similarities"] = similarities
 
+        mite_accessions = set()
         df = pd.DataFrame(reaction_dict)
         for _, row in df.iterrows():
             key = row["mite_id"].split(".")[0]
             if row["similarities"] >= sim_score:
+                mite_accessions.add(key)
                 if self.summary[key].get("reaction"):
                     self.summary[key]["reaction"].append(
                         row["mite_id"].split(".")[1].replace("reaction", "rx")
@@ -163,20 +174,7 @@ class StructureManager(BaseModel):
                     ]
                     self.summary[key]["sim_score"] = [round(row["similarities"], 2)]
 
-        copy_summary = copy.deepcopy(self.summary)
-        for key, value in copy_summary.items():
-            if value["status"] == '<i class="bi bi-circle"></i>' or not value.get(
-                "reaction"
-            ):
-                self.summary.pop(key, None)
-            else:
-                self.summary[key]["reaction"] = ", ".join(
-                    [str(i) for i in self.summary[key]["reaction"]]
-                )
-                self.summary[key]["sim_score"] = ", ".join(
-                    [str(i) for i in self.summary[key]["sim_score"]]
-                )
-
+        return mite_accessions
 
 class DatabaseManager:
     """Organize functions for database querying
@@ -305,6 +303,7 @@ class BlastManager(BaseModel):
 
         Raises:
             RuntimeError: input sanitization detected illegal input
+            ValueError: E-value invalid
         """
         query = query.replace("\n", "")
         query = re.sub(r"\s+", "", query, flags=re.UNICODE)
@@ -416,11 +415,15 @@ def overview() -> str:
                     ("reaction", "Reaction"), ("example", "Example Reaction"),
                 ])
 
-
-            print(forms)
-
-            # TODO: implement rest of filters in the same way as with dbmanager
-            # TODO: inject values in summary dict, update header, set uuid, dump csv,
+            if forms.get("reaction_query", "") != "":
+                structure_manager = StructureManager(summary=summary)
+                accessions.intersection_update(structure_manager.query_reaction(
+                    query=forms.get("reaction_query"), sim_score=forms.get("similarity")
+                ))
+                summary = structure_manager.return_summary()
+                headers.extend([
+                    ("reaction", "Reaction"), ("sim_score", "Similarity Score"),
+                ])
 
             filtered = True
             job_id = uuid.uuid1()
