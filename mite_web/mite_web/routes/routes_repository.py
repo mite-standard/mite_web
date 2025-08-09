@@ -29,7 +29,7 @@ import re
 import subprocess
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import pandas as pd
 from Bio import Blast, SeqIO
@@ -176,27 +176,28 @@ class StructureManager(BaseModel):
 
         return mite_accessions
 
+
 class DatabaseManager:
     """Organize functions for database querying
 
     Attributes:
         operators: translates querybuilder operators to SQLAlchemy col, val pairs
     """
-    operators : dict = {
-        'equal': lambda col, val: col == val,
-        'not_equal': lambda col, val: col != val,
-        'contains': lambda col, val: col.ilike(f"%{val}%"),
-        'not_contains': lambda col, val: ~col.ilike(f"%{val}%"),
-        'is_null': lambda col, _: col.is_(None),
-        'is_not_null': lambda col, _: col.is_not(None),
+
+    operators: ClassVar = {
+        "equal": lambda col, val: col == val,
+        "not_equal": lambda col, val: col != val,
+        "contains": lambda col, val: col.ilike(f"%{val}%"),
+        "not_contains": lambda col, val: ~col.ilike(f"%{val}%"),
+        "is_null": lambda col, _: col.is_(None),
+        "is_not_null": lambda col, _: col.is_not(None),
     }
 
-    field_map : dict = {
+    field_map: ClassVar = {
         "orcids": "orcids",
         "references": "references",
         "evidences": "evidences",
         "tailoring": "tailoring",
-
         "enzyme.name": "enzyme.name",
         "enzyme.enzyme_description": "enzyme.enzyme_description",
         "enzyme.uniprot_id": "enzyme.uniprot_id",
@@ -212,7 +213,6 @@ class DatabaseManager:
         "enzyme.order_id": "enzyme.order_id",
         "enzyme.family_id": "enzyme.family_id",
         "enzyme.cofactors": "enzyme.cofactors",
-
         "reactions.description": "reactions.description",
         "reactions.reaction_smarts": "reactions.reaction_smarts",
         "reactions.rhea_id": "reactions.rhea_id",
@@ -235,7 +235,6 @@ class DatabaseManager:
         query = db.session.query(Entry).filter(filters)
         return {e.accession for e in query}
 
-
     def parse_rules_to_filters(self, rules: dict, base_model: Any) -> list:
         """Convert QueryBuilder JSON rules into a SQLAlchemy-compatible expression"""
         expressions = []
@@ -249,7 +248,9 @@ class DatabaseManager:
             value = rule.get("value")
 
             path_parts = field_path.split(".")
-            filter_expr = self.build_filter_from_path(base_model, path_parts, operator, value)
+            filter_expr = self.build_filter_from_path(
+                base_model, path_parts, operator, value
+            )
             expressions.append(filter_expr)
 
         if rules.get("condition", "AND").upper() == "OR":
@@ -257,7 +258,9 @@ class DatabaseManager:
         else:
             return and_(*expressions)
 
-    def build_filter_from_path(self, model: Any, path_parts: list, operator: str, value: str):
+    def build_filter_from_path(
+        self, model: Any, path_parts: list, operator: str, value: str
+    ):
         """Build a SQLAlchemy filter from a dotted path."""
         mapper = inspect(model)
 
@@ -265,7 +268,9 @@ class DatabaseManager:
             rel = mapper.relationships[path_parts[0]]
             related_model = rel.entity.class_
 
-            nested_filter = self.build_filter_from_path(related_model, path_parts[1:], operator, value)
+            nested_filter = self.build_filter_from_path(
+                related_model, path_parts[1:], operator, value
+            )
 
             if rel.uselist:
                 return rel.class_attribute.any(nested_filter)
@@ -277,6 +282,7 @@ class DatabaseManager:
         else:
             raise ValueError(f"Invalid path segment: {path_parts[0]}")
 
+
 class BlastManager(BaseModel):
     """Organizes querying for a protein sequence
 
@@ -285,6 +291,7 @@ class BlastManager(BaseModel):
         blastlib: Path to blast library
 
     """
+
     summary: dict
     blastlib: Path = Path(__file__).parent.parent.joinpath("data/blastlib/")
 
@@ -314,7 +321,9 @@ class BlastManager(BaseModel):
             raise ValueError("E-value not an integer") from e
 
         if not query.isalpha():
-            raise RuntimeError("The query AA sequence contains illegal characters - please check.")
+            raise RuntimeError(
+                "The query AA sequence contains illegal characters - please check."
+            )
         else:
             query = query.upper()
 
@@ -343,7 +352,6 @@ class BlastManager(BaseModel):
         with open(self.blastlib.joinpath(f"{job_uuid}.xml"), "rb") as infile:
             blast_record = Blast.read(infile)
 
-
         filtered_accessions = set()
         for hit in blast_record:
             key = hit[0].target.description.split()[0]
@@ -361,6 +369,7 @@ class BlastManager(BaseModel):
         os.remove(self.blastlib.joinpath(f"{job_uuid}.fasta"))
 
         return filtered_accessions
+
 
 @bp.route("/overview/", methods=["GET", "POST"])
 def overview() -> str:
@@ -387,43 +396,62 @@ def overview() -> str:
 
     try:
         if request.method == "POST":
-
             forms = request.form.to_dict()
 
-            rules = json.loads(forms['rules'])
+            rules = json.loads(forms["rules"])
             if len(rules["rules"]) > 0:
                 db_manager = DatabaseManager()
                 accessions.intersection_update(db_manager.query_db(rules))
 
             if forms.get("sequence_query", "") != "":
                 blast_manager = BlastManager(summary=summary)
-                accessions.intersection_update(blast_manager.query_sequence(
-                    query=forms.get("sequence_query"), e_val=forms.get("sequence_similarity")
-                ))
+                accessions.intersection_update(
+                    blast_manager.query_sequence(
+                        query=forms.get("sequence_query"),
+                        e_val=forms.get("sequence_similarity"),
+                    )
+                )
                 summary = blast_manager.return_summary()
-                headers.extend([
-                    ("evalue", "E-Value"), ("sequence_similarity", "Sequence Sim. (%)"), ("alignment_score", "Alignment Score"), ("bit_score", "Bit-Score")
-                ])
+                headers.extend(
+                    [
+                        ("evalue", "E-Value"),
+                        ("sequence_similarity", "Sequence Sim. (%)"),
+                        ("alignment_score", "Alignment Score"),
+                        ("bit_score", "Bit-Score"),
+                    ]
+                )
 
             if forms.get("substructure_query", "") != "":
                 structure_manager = StructureManager(summary=summary)
-                accessions.intersection_update(structure_manager.query_substructure(
-                    action=forms.get("query_substructure"), query=forms.get("substructure_query")
-                ))
+                accessions.intersection_update(
+                    structure_manager.query_substructure(
+                        action=forms.get("query_substructure"),
+                        query=forms.get("substructure_query"),
+                    )
+                )
                 summary = structure_manager.return_summary()
-                headers.extend([
-                    ("reaction", "Reaction"), ("example", "Example Reaction"),
-                ])
+                headers.extend(
+                    [
+                        ("reaction", "Reaction"),
+                        ("example", "Example Reaction"),
+                    ]
+                )
 
             if forms.get("reaction_query", "") != "":
                 structure_manager = StructureManager(summary=summary)
-                accessions.intersection_update(structure_manager.query_reaction(
-                    query=forms.get("reaction_query"), sim_score=forms.get("similarity")
-                ))
+                accessions.intersection_update(
+                    structure_manager.query_reaction(
+                        query=forms.get("reaction_query"),
+                        sim_score=forms.get("similarity"),
+                    )
+                )
                 summary = structure_manager.return_summary()
-                headers.extend([
-                    ("reaction", "Reaction"), ("sim_score", "Similarity Score"),
-                ])
+                headers.extend(
+                    [
+                        ("reaction", "Reaction"),
+                        ("sim_score", "Similarity Score"),
+                    ]
+                )
 
             filtered = True
             job_id = uuid.uuid1()
@@ -434,77 +462,27 @@ def overview() -> str:
                 current_app.config["QUERIES"].joinpath(f"{job_id}.csv"), index=False
             )
 
-            return render_template("overview.html", entries=summary, headers=headers,
-                                   form_vals=current_app.config["FORM_VALS"], filtered=filtered, job_id=job_id)
-
+            return render_template(
+                "overview.html",
+                entries=summary,
+                headers=headers,
+                form_vals=current_app.config["FORM_VALS"],
+                filtered=filtered,
+                job_id=job_id,
+            )
     except Exception as e:
         flash(f"An error occurred during search: '{e!s}'")
         summary = copy.deepcopy(current_app.config["SUMMARY"])
         accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
 
-
-
-
-
-
-    # if request.method == "POST":
-    #     query_manager = QueryManager(summary=summary)
-    #     user_input = request.form.to_dict()
-    #
-    #     if user_input.get("action") == "smiles" or user_input.get("action") == "smarts":
-    #         if user_input.get("substructure_query") == "":
-    #             flash("Please specify a substructure query string.")
-    #             return render_template("overview.html", entries=summary)
-    #
-    #         try:
-    #             query_manager.query_substructure(
-    #                 action=user_input.get("action"),
-    #                 query=user_input.get("substructure_query"),
-    #             )
-    #             return render_template(
-    #                 "overview.html",
-    #                 entries=query_manager.return_summary(),
-    #             )
-    #         except Exception as e:
-    #             flash(f"An error in the substructure matching occurred: '{e!s}'")
-    #             return render_template("overview.html", entries=summary)
-    #
-    #     if user_input.get("action") == "reaction":
-    #         if user_input.get("reaction_query") == "":
-    #             flash("Please specify a reaction SMARTS query.")
-    #             return render_template("overview.html", entries=summary)
-    #
-    #         try:
-    #             query_manager.query_reaction(
-    #                 query=user_input.get("reaction_query"),
-    #                 sim_score=float(user_input.get("similarity")),
-    #             )
-    #             return render_template(
-    #                 "overview.html",
-    #                 entries=query_manager.return_summary(),
-    #             )
-    #         except Exception as e:
-    #             flash(f"An error in the reaction matching occurred: '{e!s}'")
-    #             return render_template("overview.html", entries=summary)
-    #
-    #     elif user_input.get("action") == "blast":
-    #         if user_input.get("sequence") == "":
-    #             flash("Please specify a amino acid sequence query string.")
-    #             return render_template("overview.html", entries=summary)
-    #
-    #         try:
-    #             query_manager.query_sequence(
-    #                 query=user_input.get("sequence"), e_val=int(user_input.get("e_val"))
-    #             )
-    #             return render_template(
-    #                 "overview.html",
-    #                 entries=query_manager.return_summary(),
-    #             )
-    #         except Exception as e:
-    #             flash(f"An error in BLASTp matching occurred: '{e!s}'")
-    #             return render_template("overview.html", entries=summary)
     summary = [val for key, val in summary.items() if key in accessions]
-    return render_template("overview.html", entries=summary, headers=headers, form_vals=current_app.config["FORM_VALS"], filtered=filtered)
+    return render_template(
+        "overview.html",
+        entries=summary,
+        headers=headers,
+        form_vals=current_app.config["FORM_VALS"],
+        filtered=filtered,
+    )
 
 
 @bp.route("/repository/<mite_acc>")
