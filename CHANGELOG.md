@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] 10-08-2025
+
+### Changed
+
+- Reworked search page, added complex search
+- Added reaction SMARTS diff fingerprint search
+- Implemented search query system
+
+## [1.4.2] 26-07-2025
+
+### Fixed
+
+- Added formatting to changelog strings
+
 ## [1.4.2] 26-07-2025
 
 ### Fixed

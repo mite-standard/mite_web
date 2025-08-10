@@ -10,6 +10,7 @@
     <div class="row my-3">
         <div class="col">
             <h3 class="fw-semibold lh-2">Search</h3>
+            <p>Combine different queries by filling in the search form</p>
         </div>
     </div>
     {% with messages = get_flashed_messages() %}
@@ -28,133 +29,141 @@
     </div>
     {% endif %}
     {% endwith %}
-    <form method="post">
+    <form id="queryForm" method="post">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="row d-flex align-items-center mb-3">
-            <div class="col-auto">
-                <label for="substructure_query" class="form-label">Search for a substructure</label>
-                <div class="input-group">
-                    <input type="text" name="substructure_query" id="substructure_query" class="form-control" aria-label="Insert your query SMILES/SMARTS" aria-describedby="substructure_descr" placeholder="Insert SMILES/SMARTS query">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Select type of query</button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                    <li><button class="dropdown-item" type="submit" name="action" value="smiles">SMILES</button></li>
-                    <li><button class="dropdown-item" type="submit" name="action" value="smarts">SMARTS</button></li>
-                    </ul>
-                </div>
-                <div class="form-text" id="substructure_descr">Search the MITE repository for a certain substructure (e.g. 'C1CCCCC1' or '[c]-[X]')</div>
-            </div>
+        <div class="row my-2">
             <div class="col">
-                <label for="reaction_query" class="form-label">Search for a reaction</label>
-                <div class="input-group">
-                    <input type="text" name="reaction_query" id="reaction_query" class="form-control" aria-label="Insert your query reaction SMARTS" aria-describedby="reaction_descr" placeholder="Insert reaction SMARTS query">
-                    <span><input type="number" aria-label="similarity" id="similarity" name="similarity" class="form-control" value="0.9" min="0.1" max="1.0" step="0.1"></span>
-                    <span class="input-group-text">Similarity score</span>
-                    <button class="btn btn-outline-secondary" type="submit" name="action" value="reaction">Search</button>
-                </div>
-                <div class="form-text" id="reaction_descr">Search the MITE repository for a certain reaction using a reaction SMARTS</div>
+                <h6 class="fw-semibold lh-2">Query builder</h6>
+                <div id="builder"></div>
+                <input type="hidden" name="rules" id="rules-input">
             </div>
         </div>
-        <div class="row d-flex align-items-center mb-3">
-            <div class="col">
-                <label for="sequence" class="form-label">Search for a protein sequence</label>
-                <div class="input-group">
-                    <input type="text" aria-label="sequence" id="sequence" name="sequence" class="form-control" aria-describedby="blast_descr" placeholder="Insert your query protein sequence">
-                    <span><input type="number" aria-label="e_val" id="e_val" name="e_val" class="form-control" value="10"></span>
-                    <span class="input-group-text">E-value</span>
-                    <button class="btn btn-outline-secondary" type="submit" name="action" value="blast">BLAST!</button>
+        <div class="row align-items-center mb-3">
+            <div class="col-5">
+                <h6 class="fw-semibold lh-2">Substructure search</h6>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="substructure_query" name="substructure_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Insert SMILES (e.g. 'C1CCCCC1') or SMARTS (e.g. '[c]-[X]') query">
+                            <label for="substructure_query" class="form-label">Insert SMILES or SMARTS query <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" value="smiles" type="radio" name="query_substructure" id="smiles" checked>
+                            <label class="form-check-label" for="smiles">SMILES</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" value="smarts" type="radio" name="query_substructure" id="smarts">
+                            <label class="form-check-label" for="smarts">SMARTS</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-text" id="blast_descr">BLAST a protein sequence against all enzymes in the MITE repository</div>
+            </div>
+            <div class="col-7">
+                <h6 class="fw-semibold lh-2">Reaction search</h6>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="reaction_query" name="reaction_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Search MITE for a reaction SMARTS. Converts query to a fingerprint and matches against MITE entries at a given similarity.">
+                            <label for="reaction_query" class="form-label">Insert reaction SMARTS query <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="similarity" name="similarity" class="form-control form-control-sm" type="number" value="0.7" min="0.1" max="1.0" step="0.1" placeholder="n/a" title="Similarity score cutoff (the higher, the more stringent match).">
+                            <label for="similarity" class="form-label">Similarity <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" value="nongreedy" type="radio" name="reaction_smarts_radio" id="nongreedy" title="Fingerprint of the transformation pattern - reactants subtracted from products ('What structural features were gained or lost during the reaction?'). Uses RDKit's 'CreateDifferenceFingerprintForReaction'" checked>
+                            <label class="form-check-label" for="nongreedy">Differential FP</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" value="greedy" type="radio" name="reaction_smarts_radio" id="greedy" title="Fingerprint of the union of all reactants, agents, and products of the reaction SMARTS ('What chemical groups and substructures appear anywhere in the reaction?'). Uses RDKit's 'CreateStructuralFingerprintForReaction'.">
+                            <label class="form-check-label" for="greedy">Structural FP</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row align-items-center mb-3">
+            <h6 class="fw-semibold lh-2">Sequence search</h6>
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <div class="form-floating">
+                        <input id="sequence_query" name="sequence_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Match a protein sequence against MITE entries using BLASTp.">
+                        <label for="reaction_query" class="form-label">Insert protein sequence <i class="bi bi-question-circle"></i></label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-floating">
+                        <input id="sequence_similarity" name="sequence_similarity" class="form-control form-control-sm" type="number" value="10" min="1" step="1" placeholder="n/a" title="Specify a E-value as match cutoff.">
+                        <label for="reaction_query" class="form-label">E-value <i class="bi bi-question-circle"></i></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col text-center mx-auto">
+                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Submit search</button>
             </div>
         </div>
     </form>
-    <div class="row mt-4 justify-content-end">
+    <div class="row mt-4">
         <div class="col">
             <h3 class="fw-semibold lh-2">Overview</h3>
         </div>
+    </div>
+    {% if filtered %}
+    <div class="row align-items-center justify-content-end mb-3">
+        <div class="col">
+            <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
+        </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier='mite_overview') }}">
-                <button class="btn btn-secondary" type="button" aria-label="Download the overview table" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Table download">
+            <a href="{{ url_for('routes.download_identifier', identifier=job_id) }}">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
                 <i class="bi bi-download"></i>
                 </button>
             </a>
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <div id="search-count" class="lead"></div>
-        </div>
-    </div>
-    <table id="table" class="my-3 table-striped" data-toggle="table" data-search="true" data-show-columns-toggle-all="true" data-show-columns="true" >
+    {% endif %}
+    <table class="my-3 table table-striped table-hover">
         <thead>
             <tr>
-                <th scope="col" data-sortable="true" data-field="accession">MITE Accession</th>
-                {% set first_key, first_val = entries.items() | first %}
-                {% if "example" in first_val %}
-                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
-                <th scope="col" data-sortable="true" data-field="reaction_example">Reaction Example</th>
-                {% endif %}
-                {% if "sim_score" in first_val %}
-                <th scope="col" data-sortable="true" data-field="reaction">Reaction</th>
-                <th scope="col" data-sortable="true" data-field="sim_score">Similarity Score</th>
-                {% endif %}
-                {% if "evalue" in first_val %}
-                <th scope="col" data-sortable="true" data-field="e_value">E-Value</th>
-                <th scope="col" data-sortable="true" data-field="similarity">Sequence Sim. (%)</th>
-                <th scope="col" data-sortable="true" data-field="alignment">Alignment Score</th>
-                <th scope="col" data-sortable="true" data-field="bitscore">Bit-Score</th>
-                {% endif %}
-                <th scope="col" data-sortable="true" data-field="status">Status</th>
-                <th scope="col" data-sortable="true" data-field="name">Enzyme Name</th>
-                <th scope="col" data-sortable="true" data-field="tailoring">Tailoring Reaction</th>
-                <th scope="col" data-sortable="true" data-field="description">Enzyme Type</th>
-                <th scope="col" data-sortable="false" data-field="reaction_description">Reaction Description</th>
-                <th scope="col" data-sortable="true" data-field="cofactors_organic">Cofactors (organic)</th>
-                <th scope="col" data-sortable="true" data-field="cofactors_inorganic">Cofactors (inorganic)</th>
-                <th scope="col" data-sortable="true" data-field="organism">Organism</th>
-                <th scope="col" data-sortable="true" data-field="domain">Domain</th>
-                <th scope="col" data-sortable="true" data-field="kingdom">Kingdom</th>
-                <th scope="col" data-sortable="true" data-field="phylum">Phylum</th>
-                <th scope="col" data-sortable="true" data-field="class">Class</th>
-                <th scope="col" data-sortable="true" data-field="order">Order</th>
-                <th scope="col" data-sortable="true" data-field="family">Family</th>
+              {% for header in headers %}
+                <th>{{ header[1] }}</th>
+              {% endfor %}
             </tr>
         </thead>
-        <tbody>
-            {% for key, value in entries.items() %}
-                <tr>
-                    <th width="20%" scope="row"><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=key) }}">{{ key }}</a></th>
-                    {% if "example" in first_val %}
-                    <td>{{ value.reaction }}</td>
-                    <td>{{ value.example }}</td>
-                    {% endif %}
-                    {% if "sim_score" in first_val %}
-                    <td>{{ value.reaction }}</td>
-                    <td>{{ value.sim_score }}</td>
-                    {% endif %}
-                    {% if "evalue" in first_val %}
-                    <td>{{ value.evalue }}</td>
-                    <td>{{ value.sequence_similarity }}</td>
-                    <td>{{ value.alignment_score }}</td>
-                    <td>{{ value.bit_score }}</td>
-                    {% endif %}
-                    <td>{{ value.status | safe }}</td>
-                    <td>{{ value.name }}</td>
-                    <td>{{ value.tailoring }}</td>
-                    <td>{{ value.description | truncate(75, True) }}</td>
-                    <td>{{ value.reaction_description | truncate(75, True) }}</td>
-                    <td>{{ value.cofactors_organic }}</td>
-                    <td>{{ value.cofactors_inorganic }}</td>
-                    <td>{{ value.organism }}</td>
-                    <td>{{ value.domain }}</td>
-                    <td>{{ value.kingdom }}</td>
-                    <td>{{ value.phylum }}</td>
-                    <td>{{ value.class }}</td>
-                    <td>{{ value.order }}</td>
-                    <td>{{ value.family }}</td>
-                </tr>
+        <tbody class="align-middle">
+        {% for row in entries %}
+          <tr>
+            {% for header in headers %}
+              {% if header[0] == "accession" %}
+              <td><a class="custom-link" target="_blank" href="{{ url_for('routes.repository', mite_acc=row[header[0]]) }}">{{ row[header[0]] }}</a></td>
+              {% elif header[0] == "status" %}
+              <td class="text-center">{{ row[header[0]] | safe }}</td>
+              {% elif header[0] == "description" %}
+              <td>{{ row[header[0]] | truncate(75, True) }}</td>
+              {% elif header[0] == "reaction_description" %}
+              <td>{{ row[header[0]] | truncate(75, True) }}</td>
+              {% else %}
+              <td>{{ row[header[0]] }}</td>
+              {% endif %}
             {% endfor %}
+          </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
-<script type="text/javascript" src="{{ url_for('static', filename='js/table_counter.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/querybuilder.js') }}" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const formVals = {{ form_vals | tojson | safe }};
+    initCustomQueryBuilder(formVals);
+});
+</script>
 {% endblock %}

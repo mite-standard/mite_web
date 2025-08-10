@@ -1,8 +1,8 @@
 <h3 class="mb-3">Reaction Information</h3>
 <div class="d-flex justify-content-between align-items-center mb-2">
-    <h4>Number of Known Reactions: <b>{{ data.reactions|length }}</b></h4>
+    <h4 class="mb-0">Number of Known Reactions: <b>{{ data.reactions|length }}</b></h4>
     <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Select a reaction:</button>
+        <button class="btn btn-primary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">Select a reaction:</button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             {% for reaction in data.reactions %}
             <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#reaction-{{ loop.index }}">Reaction {{ loop.index }}</a></li>

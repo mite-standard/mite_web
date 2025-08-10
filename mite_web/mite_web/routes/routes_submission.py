@@ -54,19 +54,6 @@ from rdkit import Chem
 from mite_web.routes import bp
 
 
-def get_schema_vals() -> dict:
-    """Extract values from MITE JSON Schema"""
-    with open(SchemaManager().entry) as f:
-        schema = json.load(f)
-
-    return {
-        "evidence": schema["$defs"]["evidence"]["enum"],
-        "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
-        "inorganic": schema["$defs"]["inorganic"]["enum"],
-        "organic": schema["$defs"]["organic"]["enum"],
-    }
-
-
 def create_validated_parser(data: dict) -> MiteParser:
     """Creates validated MiteParser instance"""
     parser = MiteParser()
@@ -234,7 +221,8 @@ class ProcessingHelper(BaseModel):
                     form["orcid"] if form["orcid"] != "" else "AAAAAAAAAAAAAAAAAAAAAAAA"
                 ],
                 "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
-                "comment": form["changelog"],
+                "comment": form["changelog"]
+                + ("" if form["changelog"].endswith(".") else "."),
             }
         )
 
@@ -260,7 +248,10 @@ class ProcessingHelper(BaseModel):
 
         if form["reviewer-changelog"] != "":
             self.data["changelog"][-1]["comment"] = (
-                self.data["changelog"][-1]["comment"] + " " + form["reviewer-changelog"]
+                self.data["changelog"][-1]["comment"]
+                + " "
+                + form["reviewer-changelog"]
+                + ("" if form["reviewer-changelog"].endswith(".") else ".")
             )
 
     def validate_user_input(self: Self) -> None:
@@ -547,7 +538,7 @@ def submission_data(var: str, role: str) -> str | Response:
     return render_template(
         "submission_form.html",
         data=data,
-        form_vals=get_schema_vals(),
+        form_vals=current_app.config["FORM_VALS"],
         var=var,
         role=role,
     )
@@ -664,8 +655,6 @@ def submission_preview(var: str, role: str) -> str | Response:
                 current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
                 as_attachment=True,
             )
-
-        # todo: condition reviewer download -> returns the download as dump with added orcid or reviewer
 
     if role == "contributor":
         session["form_start"] = time.time()

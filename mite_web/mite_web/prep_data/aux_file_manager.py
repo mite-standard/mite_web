@@ -103,11 +103,12 @@ class SummaryManager(Locations):
                 mite_data = json.load(infile)
 
             if mite_data.get("status") == "active":
-                self.active_files.append(f"{mite_data.get("accession")}.json")
+                self.active_files.append(f"{mite_data["accession"]}.json")
 
             origin = self.get_organism(data=mite_data)
 
             self.summary["entries"][mite_data.get("accession")] = {
+                "accession": mite_data["accession"],
                 "status": '<i class="bi bi-check-circle-fill"></i>'
                 if mite_data.get("status") == "active"
                 else '<i class="bi bi-circle"></i>',
@@ -280,7 +281,7 @@ class AuxFileManager(Locations):
         smarts: dict of reaction SMARTS to be exported as csv file
         pickle_substrates: list with pre-calculated fingerprints for substructure search
         pickle_products: list with pre-calculated fingerprints for substructure search
-        pickle_smartsfps: dict with pre-calucated reaction smarts fingerprints for search
+        pickle_smartsfps: dict with pre-calculated reaction smarts fingerprints for search
     """
 
     smiles: dict = {"mite_id": [], "substrates": [], "products": []}
@@ -294,6 +295,7 @@ class AuxFileManager(Locations):
         "mite_id": [],
         "reactionsmarts": [],
         "reaction_fps": [],
+        "diff_reaction_pfs": [],
     }
 
     def run(self) -> None:
@@ -380,6 +382,11 @@ class AuxFileManager(Locations):
         for smarts in self.smarts.get("reactionsmarts"):
             self.pickle_smartsfps["reaction_fps"].append(
                 rdChemReactions.CreateStructuralFingerprintForReaction(
+                    rdChemReactions.ReactionFromSmarts(smarts)
+                )
+            )
+            self.pickle_smartsfps["diff_reaction_pfs"].append(
+                rdChemReactions.CreateDifferenceFingerprintForReaction(
                     rdChemReactions.ReactionFromSmarts(smarts)
                 )
             )

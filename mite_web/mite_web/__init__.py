@@ -24,17 +24,18 @@ SOFTWARE.
 import json
 import logging
 import os
-import subprocess
 import sys
 from importlib import metadata
 from pathlib import Path
 
 import coloredlogs
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from mite_schema import SchemaManager
 
 from mite_web.api.mite_api import mite_ns
-from mite_web.config.extensions import api
+from mite_web.config.extensions import api, db
 from mite_web.routes import bp
 
 
@@ -46,6 +47,14 @@ def create_app() -> Flask:
     """
     app = Flask(__name__, instance_relative_config=True)
     app = configure_app(app)
+
+    db.init_app(app)
+    from mite_web.seed import seed_data
+
+    with app.app_context():
+        db.create_all()
+        seed_data()
+
     app.url_map.strict_slashes = False
     verify_data(app)
 
@@ -71,6 +80,7 @@ def configure_app(app: Flask) -> Flask:
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
     app.config["MITE_DATA"] = Path(__file__).parent.joinpath("mite_data")
@@ -84,6 +94,24 @@ def configure_app(app: Flask) -> Flask:
         app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+    app.config["QUERIES"].mkdir(parents=True, exist_ok=True)
+
+    with open(app.config["DATA_SUMMARY"]) as infile:
+        summary = json.load(infile)
+        app.config["SUMMARY"] = summary["entries"]
+        app.config["ACCESSIONS"] = { acc for acc in summary["entries"].keys() }
+
+    with open(SchemaManager().entry) as f:
+        schema = json.load(f)
+        app.config["FORM_VALS"] = {
+            "evidence": schema["$defs"]["evidence"]["enum"],
+            "tailoring": schema["$defs"]["tailoringFunction"]["enum"],
+            "inorganic": schema["$defs"]["inorganic"]["enum"],
+            "organic": schema["$defs"]["organic"]["enum"],
+        }
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     csrf = CSRFProtect()
     csrf.init_app(app)

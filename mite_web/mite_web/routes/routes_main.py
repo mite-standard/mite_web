@@ -23,7 +23,7 @@ SOFTWARE.
 
 from pathlib import Path
 
-from flask import Response, render_template, send_file
+from flask import Response, current_app, render_template, send_file
 
 from mite_web.routes import bp
 
@@ -159,4 +159,11 @@ def download_identifier(identifier: str) -> Response | None:
             as_attachment=True,
         )
     else:
-        return
+        try:
+            return send_file(
+                current_app.config["QUERIES"].joinpath(f"{identifier}.csv"),
+                as_attachment=True,
+            )
+        except Exception as e:
+            current_app.logger.warning(f"Download failed - {e!s}")
+            return Response(status=204)
