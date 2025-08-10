@@ -65,24 +65,24 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <div class="form-floating">
-                            <input id="reaction_query" name="reaction_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Search MITE for a reaction SMARTS with a similarity score cutoff. Search can be either greedy (matching the full reaction) or non-greedy (matching the smallest possible reaction).">
+                            <input id="reaction_query" name="reaction_query" class="form-control form-control-sm" type="text" placeholder="n/a" title="Search MITE for a reaction SMARTS. Converts query to a fingerprint and matches against MITE entries at a given similarity.">
                             <label for="reaction_query" class="form-label">Insert reaction SMARTS query <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input id="similarity" name="similarity" class="form-control form-control-sm" type="number" value="0.9" min="0.1" max="1.0" step="0.1" placeholder="n/a" title="Similarity score cutoff (the higher, the more stringent match).">
+                            <input id="similarity" name="similarity" class="form-control form-control-sm" type="number" value="0.7" min="0.1" max="1.0" step="0.1" placeholder="n/a" title="Similarity score cutoff (the higher, the more stringent match).">
                             <label for="similarity" class="form-label">Similarity <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
                     <div class="col-auto">
                         <div class="form-check">
-                            <input class="form-check-input" value="greedy" type="radio" name="reaction_smarts_radio" id="greedy" checked>
-                            <label class="form-check-label" for="greedy">Greedy</label>
+                            <input class="form-check-input" value="nongreedy" type="radio" name="reaction_smarts_radio" id="nongreedy" title="Fingerprint of the transformation pattern - reactants subtracted from products ('What structural features were gained or lost during the reaction?'). Uses RDKit's 'CreateDifferenceFingerprintForReaction'" checked>
+                            <label class="form-check-label" for="nongreedy">Differential FP</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" value="nongreedy" type="radio" name="reaction_smarts_radio" id="nongreedy">
-                            <label class="form-check-label" for="smarts">Non-Greedy</label>
+                            <input class="form-check-input" value="greedy" type="radio" name="reaction_smarts_radio" id="greedy" title="Fingerprint of the union of all reactants, agents, and products of the reaction SMARTS ('What chemical groups and substructures appear anywhere in the reaction?'). Uses RDKit's 'CreateStructuralFingerprintForReaction'.">
+                            <label class="form-check-label" for="greedy">Structural FP</label>
                         </div>
                     </div>
                 </div>

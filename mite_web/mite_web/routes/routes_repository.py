@@ -37,7 +37,13 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from flask import current_app, flash, render_template, request
 from pydantic import BaseModel
-from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools, rdChemReactions
+from rdkit.Chem import (
+    DataStructs,
+    MolFromSmarts,
+    MolFromSmiles,
+    PandasTools,
+    rdChemReactions,
+)
 from rdkit.DataStructs import FingerprintSimilarity
 from sqlalchemy import and_, inspect, or_
 
@@ -127,12 +133,13 @@ class StructureManager(BaseModel):
 
         return mite_accessions
 
-    def query_reaction(self, query: str, sim_score: float) -> set:
+    def query_reaction(self, query: str, sim_score: str, mode: str) -> set:
         """Query dataset for a reaction and filter summary for matching entries
 
         Arguments:
             query: a reaction SMARTS string
             sim_score: the minimum similarity score to consider an entry
+            mode: greedy (structural) or nongreedy (differential) fingerprint to use
 
         Returns:
             A set of relevant MITE accessions
@@ -147,15 +154,25 @@ class StructureManager(BaseModel):
         with open(self.reaction_pickle, "rb") as infile:
             reaction_dict = pickle.load(infile)
 
-        query_fp = rdChemReactions.CreateStructuralFingerprintForReaction(
-            rdChemReactions.ReactionFromSmarts(query)
-        )
+        if mode == "greedy":
+            query_fp = rdChemReactions.CreateStructuralFingerprintForReaction(
+                rdChemReactions.ReactionFromSmarts(query)
+            )
 
-        similarities = [
-            FingerprintSimilarity(query_fp, lib_fp)
-            for lib_fp in reaction_dict["reaction_fps"]
-        ]
-        reaction_dict["similarities"] = similarities
+            similarities = [
+                FingerprintSimilarity(query_fp, lib_fp)
+                for lib_fp in reaction_dict["reaction_fps"]
+            ]
+            reaction_dict["similarities"] = similarities
+        else:
+            query_fp = rdChemReactions.CreateDifferenceFingerprintForReaction(
+                rdChemReactions.ReactionFromSmarts(query)
+            )
+            similarities = [
+                DataStructs.TanimotoSimilarity(query_fp, lib_fp)
+                for lib_fp in reaction_dict["diff_reaction_pfs"]
+            ]
+            reaction_dict["similarities"] = similarities
 
         mite_accessions = set()
         df = pd.DataFrame(reaction_dict)
@@ -443,6 +460,7 @@ def overview() -> str:
                     structure_manager.query_reaction(
                         query=forms.get("reaction_query"),
                         sim_score=forms.get("similarity"),
+                        mode=forms.get("reaction_smarts_radio"),
                     )
                 )
                 summary = structure_manager.return_summary()
