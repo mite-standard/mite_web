@@ -24,7 +24,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 *Nota bene: since version `1.5.0`, development is only possible using the docker-container*
 
-### Development
+### Development build
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Create a file `mite_web/instance/config.py` with the content indicated below. Set `Online` to `False`
@@ -34,13 +34,13 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container (`gunicorn` does not support reloading on change with the current build)
 - Changes in the PostgreSQL DB will only be applied if old tables are dropped with `docker-compose down -v`
 
-### Deploy Docker to production
+### Production build
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Create a file `mite_web/instance/config.py` with the content indicated below
 - Add the `.env` file with content indicated below
 - Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
-- Start the docker `docker-compose -f docker-compose.yml up` (potentially with `sudo`)
+- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
 - Take the database down with `docker-compose down -v`
 
