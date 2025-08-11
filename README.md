@@ -42,7 +42,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Create a file `mite_web/instance/config.py` with the content indicated below
 - Add the `.env` file with content indicated below
 - Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
-- Start the docker `docker-compose -f docker-compose.yml up -ddocker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
+- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
 - Take the database down with `docker-compose down -v`
 
