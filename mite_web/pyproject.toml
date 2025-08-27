@@ -84,5 +84,7 @@ ignore = [
     # combine nested if conditionals
     "SIM102",
     # if-else block
-    "SIM108"
+    "SIM108",
+    # Unnecessary `set` comprehension
+    "C416"
 ]

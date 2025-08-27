@@ -98,8 +98,17 @@ def configure_app(app: Flask) -> Flask:
 
     with open(app.config["DATA_SUMMARY"]) as infile:
         summary = json.load(infile)
-        app.config["SUMMARY"] = summary["entries"]
-        app.config["ACCESSIONS"] = { acc for acc in summary["entries"].keys() }
+        app.config["SUMMARY_ACTIVE"] = {
+            key: val
+            for key, val in summary["entries"].items()
+            if val.get("status_plain") == "active"
+        }
+        app.config["ACCESSIONS_ACTIVE"] = {acc for acc in app.config["SUMMARY_ACTIVE"]}
+        app.config["SUMMARY_RETIRED"] = {
+            key: val
+            for key, val in summary["entries"].items()
+            if val.get("status_plain") == "retired"
+        }
 
     with open(SchemaManager().entry) as f:
         schema = json.load(f)

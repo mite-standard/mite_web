@@ -35,7 +35,8 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repository</a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{{ url_for('routes.overview') }}">Overview</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.overview') }}">Overview - Active Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.overview_retired') }}">Overview - Retired Entries</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('routes.submission') }}">Submit an Entry</a></li>
                     </ul>
                 </li>
@@ -44,7 +45,7 @@
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="{{ url_for('routes.tutorial') }}">Tutorial</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.faqs') }}">Frequently asked questions</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('routes.faqs') }}">Frequently Asked Questions</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('doc') }}">API Documentation</a></li>
                     </ul>

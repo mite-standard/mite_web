@@ -397,8 +397,8 @@ def overview() -> str:
     Returns:
         The overview.html page as string.
     """
-    summary = copy.deepcopy(current_app.config["SUMMARY"])
-    accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+    summary = copy.deepcopy(current_app.config["SUMMARY_ACTIVE"])
+    accessions = copy.deepcopy(current_app.config["ACCESSIONS_ACTIVE"])
     headers = [
         ("accession", "MITE Accession"),
         ("status", "Status"),
@@ -490,8 +490,8 @@ def overview() -> str:
             )
     except Exception as e:
         flash(f"An error occurred during search: '{e!s}'")
-        summary = copy.deepcopy(current_app.config["SUMMARY"])
-        accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+        summary = copy.deepcopy(current_app.config["SUMMARY_ACTIVE"])
+        accessions = copy.deepcopy(current_app.config["ACCESSIONS_ACTIVE"])
 
     summary = [val for key, val in summary.items() if key in accessions]
     return render_template(
@@ -500,6 +500,31 @@ def overview() -> str:
         headers=headers,
         form_vals=current_app.config["FORM_VALS"],
         filtered=filtered,
+    )
+
+
+@bp.route("/overview_retired/")
+def overview_retired() -> str:
+    """Show an overview of the retired entries
+
+    Returns:
+        The overview of retired entries as string
+    """
+    summary = [val for key, val in current_app.config["SUMMARY_RETIRED"].items()]
+    headers = [
+        ("accession", "MITE Accession"),
+        ("status", "Status"),
+        ("name", "Enzyme Name"),
+        ("tailoring", "Tailoring Reaction"),
+        ("description", "Enzyme Description"),
+        ("organism", "Organism"),
+        ("family", "Family"),
+        ("reaction_description", "Reaction Description"),
+    ]
+    return render_template(
+        "overview_retired.html",
+        entries=summary,
+        headers=headers,
     )
 
 
