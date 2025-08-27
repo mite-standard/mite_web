@@ -8,7 +8,6 @@ function initCustomQueryBuilder(form_vals) {
   $('#builder').queryBuilder({
     plugins: ['bt-tooltip-errors'],
     allow_groups: false,
-    allow_empty: true,
     operators: [
       'equal',
       'not_equal',

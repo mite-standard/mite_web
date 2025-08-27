@@ -403,10 +403,10 @@ def overview() -> str:
         ("accession", "MITE Accession"),
         ("status", "Status"),
         ("name", "Enzyme Name"),
-        ("tailoring", "Tailoring Reaction"),
+        ("tailoring", "Reaction Tailoring Term"),
         ("description", "Enzyme Description"),
-        ("organism", "Organism"),
-        ("family", "Family"),
+        ("organism", "Taxonomy Organism"),
+        ("family", "Taxonomy Family"),
         ("reaction_description", "Reaction Description"),
     ]
     filtered = False
@@ -515,10 +515,10 @@ def overview_retired() -> str:
         ("accession", "MITE Accession"),
         ("status", "Status"),
         ("name", "Enzyme Name"),
-        ("tailoring", "Tailoring Reaction"),
+        ("tailoring", "Reaction Tailoring Term"),
         ("description", "Enzyme Description"),
-        ("organism", "Organism"),
-        ("family", "Family"),
+        ("organism", "Taxonomy Organism"),
+        ("family", "Taxonomy Family"),
         ("reaction_description", "Reaction Description"),
     ]
     return render_template(
