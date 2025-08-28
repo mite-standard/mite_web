@@ -80,6 +80,7 @@ def configure_app(app: Flask) -> Flask:
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["DOWNLOAD"] = Path(__file__).parent.joinpath("data/download")
     app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")

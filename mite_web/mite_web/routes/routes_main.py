@@ -21,7 +21,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from pathlib import Path
+import re
+import uuid
 
 from flask import Response, current_app, render_template, send_file
 
@@ -112,58 +113,67 @@ def downloads() -> str:
 def download_identifier(identifier: str) -> Response | None:
     """Delivers the file in question for download to user
 
+    'else' condition: assumes a search query uuid ID
+
     Arguments:
         identifier: the string identifier of the file
 
     Returns:
         A Response object containing the file or None
     """
-    # TODO(MMZ 24.7.): use current_app variables instead of constructing Paths
-
-    if identifier == "smarts":
-        return send_file(
-            Path(__file__).parent.parent.joinpath("data/download/dump_smarts.csv"),
-            as_attachment=True,
-        )
-    elif identifier == "smiles":
-        return send_file(
-            Path(__file__).parent.parent.joinpath("data/download/dump_smiles.csv"),
-            as_attachment=True,
-        )
-    elif identifier == "blastlib":
-        return send_file(
-            Path(__file__).parent.parent.joinpath("data/download/MiteBlastDB.zip"),
-            as_attachment=True,
-        )
-    elif identifier == "mite_zip":
-        return send_file(
-            Path(__file__).parent.parent.joinpath(
-                "data/download/MITE_all_active_entries.zip"
-            ),
-            as_attachment=True,
-        )
-    elif identifier.startswith("MITE"):
-        # TODO(MMZ 24.7.): implement check for existing
-        return send_file(
-            Path(__file__).parent.parent.joinpath(f"data/data/{identifier}.json"),
-            as_attachment=True,
-        )
-    elif identifier == "mite_fasta":
-        return send_file(
-            Path(__file__).parent.parent.joinpath("data/download/mite_concat.fasta"),
-            as_attachment=True,
-        )
-    elif identifier == "mite_overview":
-        return send_file(
-            Path(__file__).parent.parent.joinpath("data/summary.csv"),
-            as_attachment=True,
-        )
-    else:
-        try:
+    try:
+        if identifier == "smarts":
             return send_file(
-                current_app.config["QUERIES"].joinpath(f"{identifier}.csv"),
+                current_app.config["DOWNLOAD"].joinpath("dump_smarts.csv"),
                 as_attachment=True,
             )
-        except Exception as e:
-            current_app.logger.warning(f"Download failed - {e!s}")
-            return Response(status=204)
+        elif identifier == "smiles":
+            return send_file(
+                current_app.config["DOWNLOAD"].joinpath("dump_smiles.csv"),
+                as_attachment=True,
+            )
+        elif identifier == "blastlib":
+            return send_file(
+                current_app.config["DOWNLOAD"].joinpath("MiteBlastDB.zip"),
+                as_attachment=True,
+            )
+        elif identifier == "mite_zip":
+            return send_file(
+                current_app.config["DOWNLOAD"].joinpath("MITE_all_active_entries.zip"),
+                as_attachment=True,
+            )
+        elif identifier == "mite_fasta":
+            return send_file(
+                current_app.config["DOWNLOAD"].joinpath("mite_concat.fasta"),
+                as_attachment=True,
+            )
+        elif identifier == "mite_overview":
+            return send_file(
+                current_app.config["DOWNLOAD"].parent.joinpath("summary.csv"),
+                as_attachment=True,
+            )
+        elif re.fullmatch(r"MITE[0-9]{7}", identifier):
+            path = current_app.config["DATA_JSON"].joinpath(f"{identifier}.json")
+
+            if not path.is_file():
+                raise ValueError(f"{identifier} does not exist as MITE entry")
+            else:
+                return send_file(
+                    path,
+                    as_attachment=True,
+                )
+        else:
+            uuid.UUID(identifier)
+            path = current_app.config["QUERIES"].joinpath(f"{identifier}.csv")
+
+            if not path.is_file():
+                raise ValueError(f"{identifier} does not exist as a search query")
+            else:
+                return send_file(
+                    path,
+                    as_attachment=True,
+                )
+
+    except Exception as e:
+        current_app.logger.warning(f"Download failed - {e!s}")
+        return Response(status=204)
