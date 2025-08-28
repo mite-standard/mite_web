@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">Pathway Visualization</h1>
+            <p class="lead">
+              This page allows to simulate a pathway <i>in silico</i> by providing a substrate and a number of MITE reactions.
+              Starting from the substrate, reactions will be applied sequentially, always processing the product of the preceding reaction.
+              The <i>in silico</i> reaction stops if the preceding reaction does not result in a product.
+            </p>
+            <p class="lead">
+              <i>Nota bene</i>: for simplicity, only the first product of a reaction will be considered, if multiple products are possible.
+            </p>
+        </div>
+    </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="row">
+        <div class="card card-body">
+            <div class="col text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during in silico biosynthesis</h4>
+                <ul class="lh-base list-unstyled">
+                {% for message in messages %}
+                    <li><p class="lead mb-1">{{ message }}</p></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="row">
+        <div class="col-6">
+            <form id="queryForm" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-floating">
+                            <input type="text" class="form-control form-control-sm" id="substrate" placeholder="n/a" name="substrate" title="Insert SMILES substrate (e.g. 'C1CCCCC1')" required>
+                            <label for="substrate" class="form-label">Insert substrate SMILES <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="reaction-fields">
+                    <div class="row g-2 mb-2 align-items-center reaction-field">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="accession_id" name="accession_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
+                                <label for="accession_id" class="form-label">MITE accession <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="reaction_number" name="reaction_number" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
+                                <label for="reaction_number" class="form-label">Reaction # <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                          <button type="button" class="btn btn-danger" onclick="removeField(this)"><i class="bi bi-x"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-secondary mb-3" onclick="addField()">Add reaction <i class="bi bi-plus-circle"></i></button>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Run Reactions</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if svgs %}
+    <div class="row align-items-center justify-content-end mb-3">
+        <div class="col">
+            <h2 class="mb-0">Pathway visualization</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('routes.download_identifier', identifier=job_id ~ '.csv') }}">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download report as .csv-file.">
+                <i class="bi bi-filetype-csv"></i>
+                </button>
+            </a>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('routes.download_identifier', identifier=job_id ~ '.svg') }}">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download biosynthesis schema as .svg-file.">
+                <i class="bi bi-filetype-svg"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+          {{ svgs|safe }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+function addField() {
+  const container = document.getElementById("reaction-fields");
+  const fieldGroup = document.createElement("div");
+  fieldGroup.className = "row g-2 mb-2 align-items-center reaction-field";
+
+  fieldGroup.innerHTML = `
+    <div class="col">
+        <div class="form-floating">
+            <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="accession_id" name="accession_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
+            <label for="accession_id" class="form-label">MITE accession<i class="bi bi-question-circle"></i></label>
+        </div>
+    </div>
+    <div class="col">
+        <div class="form-floating">
+            <input type="number" class="form-control" id="reaction_number" name="reaction_number" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
+            <label for="reaction_number" class="form-label">Reaction #<i class="bi bi-question-circle"></i></label>
+        </div>
+    </div>
+    <div class="col-auto">
+      <button type="button" class="btn btn-danger" onclick="removeField(this)"><i class="bi bi-x"></i></button>
+    </div>
+  `;
+  container.appendChild(fieldGroup);
+}
+
+function removeField(button) {
+  button.closest(".reaction-field").remove();
+}
+</script>
+{% endblock %}

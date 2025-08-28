@@ -163,11 +163,11 @@ def download_identifier(identifier: str) -> Response | None:
                     as_attachment=True,
                 )
         else:
-            uuid.UUID(identifier)
-            path = current_app.config["QUERIES"].joinpath(f"{identifier}.csv")
+            uuid.UUID(identifier.split(".")[0])
+            path = current_app.config["QUERIES"].joinpath(f"{identifier}")
 
             if not path.is_file():
-                raise ValueError(f"{identifier} does not exist as a search query")
+                raise ValueError(f"{identifier} does not exist as a job ID")
             else:
                 return send_file(
                     path,
