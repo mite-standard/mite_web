@@ -33,7 +33,6 @@ from pathlib import Path
 from typing import Any, ClassVar
 
 import pandas as pd
-import svgutils.transform as sg
 from Bio import Blast, SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -581,6 +580,10 @@ def pathway() -> str:
 
     def _smiles_to_svg(s: str) -> str:
         m = MolFromSmiles(s)
+
+        if not m:
+            raise ValueError(f"Substrate is not a valid SMILES string: {s}")
+
         for atom in m.GetAtoms():
             atom.SetAtomMapNum(0)
         m = rdMolDraw2D.PrepareMolForDrawing(m)
