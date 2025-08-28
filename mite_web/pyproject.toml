@@ -40,7 +40,7 @@ dependencies = [
     "pandas~=2.2",
     "psycopg2-binary",
     "requests~=2.32",
-    "rdkit==2024.3.6"
+    "rdkit==2024.3.6",
 ]
 
 [tool.hatch.envs.default]

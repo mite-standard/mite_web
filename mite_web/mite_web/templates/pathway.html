@@ -87,18 +87,34 @@
                 </button>
             </a>
         </div>
-        <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier=job_id ~ '.svg') }}">
-                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download biosynthesis schema as .svg-file.">
-                <i class="bi bi-filetype-svg"></i>
-                </button>
-            </a>
-        </div>
     </div>
     <div class="row">
-        <div class="col">
-          {{ svgs|safe }}
+        {% for svg in svgs %}
+        <div class="col-3">
+            <div class="molecule">
+                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ svg }}">
+            </div>
         </div>
+
+            {% if not loop.last %}
+                <div class="col-1 arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 10">
+                        <line x1="0" y1="5" x2="50" y2="5" stroke="black" stroke-width="2"
+                              marker-end="url(#arrowhead)" />
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                                    refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="black" />
+                            </marker>
+                        </defs>
+                    </svg>
+                    <div class="arrow-label text-center">
+                        <div>{{ report.enzyme_name[loop.index0] }}</div>
+                        <div>{{ report.MITE_acc[loop.index0] }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
     </div>
     {% endif %}
 </div>

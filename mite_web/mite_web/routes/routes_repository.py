@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import base64
 import copy
 import json
 import os
@@ -30,9 +31,9 @@ import subprocess
 import uuid
 from pathlib import Path
 from typing import Any, ClassVar
-from xml.etree import ElementTree
 
 import pandas as pd
+import svgutils.transform as sg
 from Bio import Blast, SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -588,106 +589,8 @@ def pathway() -> str:
         dopts.clearBackground = False
         drawer.DrawMolecule(m)
         drawer.FinishDrawing()
-        return drawer.GetDrawingText()
-
-    def _combine_mols(mol_svgs: list, annot: dict) -> str:
-        """Combine mol svgs into a reaction depiction w. arrows
-
-        Args:
-            mol_svgs: a list of generated svgs
-            annot: a dict of corresponding annotations
-
-        Returns:
-            the svg as a string
-        """
-
-        def _strip_ns(tree):
-            """Recursively strip namespace from ElementTree elements."""
-            for elem in tree.iter():
-                if "}" in elem.tag:
-                    elem.tag = elem.tag.split("}", 1)[1]  # remove {namespace}
-            return tree
-
-        width, height, spacing = 500, 400, 200
-        total_width = len(mol_svgs) * (width + spacing)
-
-        svg = ElementTree.Element(
-            "svg",
-            xmlns="http://www.w3.org/2000/svg",
-            width=str(total_width),
-            height=str(height),
-        )
-
-        defs = ElementTree.SubElement(svg, "defs")
-        marker = ElementTree.SubElement(
-            defs,
-            "marker",
-            {
-                "id": "arrow",
-                "markerWidth": "10",
-                "markerHeight": "10",
-                "refX": "10",
-                "refY": "3",
-                "orient": "auto",
-                "markerUnits": "strokeWidth",
-            },
-        )
-        ElementTree.SubElement(
-            marker, "path", {"d": "M0,0 L0,6 L9,3 z", "fill": "black"}
-        )
-
-        x_offset = 0
-        for i, mol_svg in enumerate(mol_svgs):
-            mol_tree = ElementTree.fromstring(mol_svg)
-            # Strip incorrect namespace resulting from RDKit
-            mol_tree = _strip_ns(mol_tree)
-
-            # Get viewBox to compute scaling
-            vb = mol_tree.attrib.get("viewBox", "0 0 250 200")
-            _, _, vb_w, vb_h = map(float, vb.split())
-
-            # Uniform scale to preserve aspect ratio
-            scale = min(width / vb_w, height / vb_h)
-            y_offset = (height - vb_h * scale) / 2  # center vertically
-
-            g = ElementTree.SubElement(
-                svg,
-                "g",
-                transform=f"translate({x_offset},{y_offset}) scale({scale},{scale})",
-            )
-
-            # copy children of inner svg into <g>
-            for child in mol_tree:
-                g.append(child)
-
-            if i < len(mol_svgs) - 1:
-                arrow_x = x_offset + width
-                ElementTree.SubElement(
-                    svg,
-                    "line",
-                    {
-                        "x1": str(arrow_x),
-                        "y1": "100",
-                        "x2": str(arrow_x + spacing - 20),
-                        "y2": "100",
-                        "stroke": "black",
-                        "marker-end": "url(#arrow)",
-                    },
-                )
-                ElementTree.SubElement(
-                    svg,
-                    "text",
-                    {
-                        "x": str(arrow_x + 10),
-                        "y": "90",
-                        "font-size": "14",
-                        "text-anchor": "start",
-                    },
-                ).text = f"{annot['MITE_acc'][i]}"
-
-            x_offset += width + spacing
-
-        return ElementTree.tostring(svg, encoding="unicode")
+        svg = drawer.GetDrawingText()
+        return base64.b64encode(svg.encode("utf-8")).decode("utf-8")
 
     if request.method == "POST":
         try:
@@ -733,27 +636,22 @@ def pathway() -> str:
                     svgs.append(_smiles_to_svg(products[0]))
                 else:
                     report["product"].append("")
-                    svgs.append("")
                     break
 
                 substrate = products[0]
 
-            svg_combined = _combine_mols(svgs, report)
-
             job_uuid = uuid.uuid1()
-            src = current_app.config["QUERIES"].joinpath(f"{job_uuid}.svg")
-            with open(src, "w", encoding="utf-8") as f:
-                f.write(svg_combined)
-
             df = pd.DataFrame(report)
             src = current_app.config["QUERIES"].joinpath(f"{job_uuid}.csv")
             df.to_csv(src, index=False)
 
-            return render_template("pathway.html", svgs=svg_combined, job_id=job_uuid)
+            return render_template(
+                "pathway.html", svgs=svgs, report=report, job_id=job_uuid
+            )
 
         except Exception as e:
             current_app.logger.error(f"Error during pathway rendering: {e!s}")
             flash(f"Error during pathway rendering: {e!s}")
-            return render_template("pathway.html", svgs=None)
+            return render_template("pathway.html", svg=None)
 
-    return render_template("pathway.html", svgs=None)
+    return render_template("pathway.html", svg=None)
