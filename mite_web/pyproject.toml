@@ -36,7 +36,7 @@ dependencies = [
     "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=23.0",
-    "mite_extras==1.5.1",
+    "mite_extras",
     "pandas~=2.2",
     "psycopg2-binary",
     "requests~=2.32",
