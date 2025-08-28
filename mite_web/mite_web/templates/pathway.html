@@ -35,6 +35,14 @@
         <div class="col-6">
             <form id="queryForm" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="row my-2">
+                    <div class="col">
+                        <h6 class="fw-semibold lh-2">Reaction builder</h6>
+                        <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
+                        <div id="builder"></div>
+                        <input type="hidden" name="rules" id="rules-input">
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <div class="col">
                         <div class="form-floating">
@@ -67,18 +75,18 @@
                         <button type="button" class="btn btn-secondary mb-3" onclick="addField()">Add reaction <i class="bi bi-plus-circle"></i></button>
                     </div>
                 </div>
-                <div class="row mb-4">
+                <div class="row my-4 text-center">
                     <div class="col">
-                        <button type="submit" class="btn btn-primary">Run Reactions</button>
+                        <button type="submit" id="submit-button" class="btn btn-primary">Run Reactions</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
     {% if svgs %}
-    <div class="row align-items-center justify-content-end mb-3">
+    <div class="row align-items-center justify-content-end my-3">
         <div class="col">
-            <h2 class="mb-0">Pathway visualization</h2>
+            <h3 class="mb-0">In silico biosynthesis</h3>
         </div>
         <div class="col-auto">
             <a href="{{ url_for('routes.download_identifier', identifier=job_id ~ '.csv') }}">
@@ -88,33 +96,36 @@
             </a>
         </div>
     </div>
-    <div class="row">
-        {% for svg in svgs %}
-        <div class="col-3">
-            <div class="molecule">
-                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ svg }}">
-            </div>
-        </div>
-
-            {% if not loop.last %}
-                <div class="col-1 arrow">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 10">
-                        <line x1="0" y1="5" x2="50" y2="5" stroke="black" stroke-width="2"
-                              marker-end="url(#arrowhead)" />
-                        <defs>
-                            <marker id="arrowhead" markerWidth="10" markerHeight="7"
-                                    refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="black" />
-                            </marker>
-                        </defs>
-                    </svg>
-                    <div class="arrow-label text-center">
-                        <div>{{ report.enzyme_name[loop.index0] }}</div>
-                        <div>{{ report.MITE_acc[loop.index0] }}</div>
+    <div class="card g-2 m-2">
+        <div class="card-body">
+            <div class="row mb-5">
+                {% for svg in svgs %}
+                <div class="col-3">
+                    <div class="molecule">
+                        <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ svg }}">
                     </div>
                 </div>
-            {% endif %}
-        {% endfor %}
+                {% if not loop.last %}
+                    <div class="col-1 arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 10">
+                            <line x1="0" y1="5" x2="50" y2="5" stroke="black" stroke-width="2"
+                                  marker-end="url(#arrowhead)" />
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7"
+                                        refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="black" />
+                                </marker>
+                            </defs>
+                        </svg>
+                        <div class="arrow-label text-center">
+                            <div>{{ report.enzyme_name[loop.index0] }}</div>
+                            <div>{{ report.MITE_acc[loop.index0] }}</div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
@@ -144,8 +155,19 @@ function addField() {
   container.appendChild(fieldGroup);
 }
 
-function removeField(button) {
-  button.closest(".reaction-field").remove();
-}
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('queryForm');
+        const button = document.getElementById('submit-button');
+
+        form.addEventListener('submit', function (event) {
+              if (!form.checkValidity()) {
+                  return;
+              }
+              button.disabled = true;
+              button.innerText = 'Submitting...';
+          });
+    });
 </script>
 {% endblock %}
