@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] 29-08-2025
+
+### Fixed
+
+- Fixed issue where non-filled query rule would prevent search submission
+
 ## [1.6.0] 29-08-2025
 
 ### Added

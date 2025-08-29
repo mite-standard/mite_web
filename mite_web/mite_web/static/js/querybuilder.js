@@ -203,11 +203,6 @@ function initCustomQueryBuilder(form_vals) {
 
   $('form').on('submit', function (e) {
     const rules = $('#builder').queryBuilder('getRules');
-    if (!rules || !rules.valid) {
-      alert("Invalid query!");
-      e.preventDefault(); // stop form from submitting
-      return;
-    }
     $('#rules-input').val(JSON.stringify(rules));
   });
 };
