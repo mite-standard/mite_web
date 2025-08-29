@@ -54,7 +54,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Pull the newest release
 - Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
 - Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
-- Transfer the `dumps` folder: `docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web/dumps/`
+- Transfer the `dumps` folder: `docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web`
 
 
 #### Config files
