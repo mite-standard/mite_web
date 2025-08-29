@@ -38,13 +38,24 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 ### Production build
 
+#### First startup
+
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Create a file `mite_web/instance/config.py` with the content indicated below
 - Add the `.env` file with content indicated below
 - Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
 - Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
+
+#### Update
+
+- Save `dumps` dir (preserves open `mite_data` PR previews) `docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .`
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
 - Take the database down with `docker-compose down -v`
+- Pull the newest release
+- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
+- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
+- Transfer the `dumps` folder: `docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web/dumps/`
+
 
 #### Config files
 
