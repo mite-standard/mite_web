@@ -1,5 +1,21 @@
 // Checks for Firefox Mobile browser which is not supported
 
+/**
+ * Escape a string for safe insertion into HTML attributes or text content.
+ * Converts &, ", ', <, > to HTML entities.
+ *
+ * @param {string} str - The string to escape
+ * @returns {string} - Escaped string
+ */
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
 function testFirefoxMobile() {
     if (navigator.userAgent.indexOf("Firefox") != -1 && /Mobile/i.test(navigator.userAgent)) {
         alert("Sorry, form completion with Firefox Mobile is not supported on this site. Please use an alternative browser or use Firefox Desktop");
@@ -32,7 +48,7 @@ function removeField(button, class_ref) {
 function createHtmlEnzymeName(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_name" name="enzyme_name" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.name ?? ""}' required title="The commonly used enzyme name (e.g. 'McjB')">
+            <input id="enzyme_name" name="enzyme_name" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.name ?? "")}" required title="The commonly used enzyme name (e.g. 'McjB')">
             <label for="enzyme_name" class="form-label" >Name<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -43,7 +59,7 @@ function createHtmlEnzymeName(container, data = {}) {
 function createHtmlEnzymeDescription(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_description" name="enzyme_description" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.description ?? ""}' maxlength="50" required title="Enzyme type description (e.g. 'O-methyltransferase')">
+            <input id="enzyme_description" name="enzyme_description" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.description ?? "")}" maxlength="50" required title="Enzyme type description (e.g. 'O-methyltransferase')">
             <label for="enzyme_description" class="form-label">Type<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -54,7 +70,7 @@ function createHtmlEnzymeDescription(container, data = {}) {
 function createGeneralComment(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="comment" maxlength="300" name="comment" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.comment ?? ""}' title="Brief free-text comment on enzyme and/or reaction details not applicable to other form fields.">
+            <input id="comment" maxlength="300" name="comment" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.comment ?? "")}" title="Brief free-text comment on enzyme and/or reaction details not applicable to other form fields.">
             <label for="comment" class="form-label">General comment <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -65,7 +81,7 @@ function createGeneralComment(container, data = {}) {
 function createHtmlEnzymeUniprot(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_uniprot" name="enzyme_uniprot" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.databaseIds?.uniprot ?? ""}' title="UniProtKB or UniParc ID of enzyme">
+            <input id="enzyme_uniprot" name="enzyme_uniprot" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.uniprot ?? "")}" title="UniProtKB or UniParc ID of enzyme">
             <label for="enzyme_description" class="form-label" >UniProt ID<span class="mandatory">**</span> <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -76,7 +92,7 @@ function createHtmlEnzymeUniprot(container, data = {}) {
 function createHtmlEnzymeGenpept(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_genpept" name="enzyme_genpept" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.databaseIds?.genpept ?? ""}' title="NCBI GenPept ID of enzyme">
+            <input id="enzyme_genpept" name="enzyme_genpept" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.genpept ?? "")}" title="NCBI GenPept ID of enzyme">
             <label for="enzyme_genpept" class="form-label">GenPept ID<span class="mandatory">**</span> <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -87,7 +103,7 @@ function createHtmlEnzymeGenpept(container, data = {}) {
 function createHtmlEnzymeMibig(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_mibig" name="enzyme_mibig" pattern="^BGC.+" minlength="10" maxlength="10" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.databaseIds?.mibig ?? ""}' title="MIBiG ID of the BGC containing the enzyme">
+            <input id="enzyme_mibig" name="enzyme_mibig" pattern="^BGC.+" minlength="10" maxlength="10" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.mibig ?? "")}" title="MIBiG ID of the BGC containing the enzyme">
             <label for="enzyme_mibig" class="form-label">MIBiG ID <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -98,7 +114,7 @@ function createHtmlEnzymeMibig(container, data = {}) {
 function createHtmlEnzymeWikidata(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_wikidata" name="enzyme_wikidata" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.enzyme?.databaseIds?.wikidata ?? ""}' title="The Wikidata QID of the enzyme">
+            <input id="enzyme_wikidata" name="enzyme_wikidata" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.wikidata ?? "")}" title="The Wikidata QID of the enzyme">
             <label for="enzyme_wikidata" class="form-label">Wikidata ID <i class="bi bi-question-circle"></i></label>
         </div>
     `;
@@ -270,13 +286,13 @@ function createHtmlAuxEnyzme(data = {}, index) {
                 <div class="row m-2 g-2">
                     <div class="col">
                          <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]name" id="auxenzyme[${index}]name" class="form-control form-control-sm" placeholder="n/a" value='${data?.name ?? ""}' required title="The commonly used name of the auxiliary enzyme (e.g. 'McjB')">
+                            <input type="text" name="auxenzyme[${index}]name" id="auxenzyme[${index}]name" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.name ?? "")}" required title="The commonly used name of the auxiliary enzyme (e.g. 'McjB')">
                             <label for="auxenzyme[${index}]name" class="form-label">Name<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control form-control-sm" placeholder="n/a" maxlength="50" value='${data?.description ?? ""}' required title="Auxiliary enzyme type description (e.g. 'Peptidase')">
+                            <input type="text" name="auxenzyme[${index}]description" id="auxenzyme[${index}]description" class="form-control form-control-sm" placeholder="n/a" maxlength="50" value="${escapeHtml(data?.description ?? "")}" required title="Auxiliary enzyme type description (e.g. 'Peptidase')">
                             <label for="auxenzyme[${index}]description" class="form-label">Type<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
@@ -284,19 +300,19 @@ function createHtmlAuxEnyzme(data = {}, index) {
                 <div class="row m-2 g-2">
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control form-control-sm" placeholder="n/a" value='${data?.databaseIds?.uniprot ?? ""}' title="UniProtKB or UniParc ID of the enzyme">
+                            <input type="text" name="auxenzyme[${index}]uniprot" id="auxenzyme[${index}]uniprot" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.databaseIds?.uniprot ?? "")}" title="UniProtKB or UniParc ID of the enzyme">
                             <label for="auxenzyme[${index}]uniprot" class="form-label">UniProt ID<span class="mandatory">**</span> <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control form-control-sm" placeholder="n/a" value='${data?.databaseIds?.genpept ?? ""}' title="NCBI GenPept ID of the enzyme">
+                            <input type="text" name="auxenzyme[${index}]genpept" id="auxenzyme[${index}]genpept" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.databaseIds?.genpept ?? "")}" title="NCBI GenPept ID of the enzyme">
                             <label for="auxenzyme[${index}]genpept" class="form-label">GenPept ID<span class="mandatory">**</span> <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-floating">
-                            <input type="text" name="auxenzyme[${index}]wikidata" id="auxenzyme[${index}]wikidata" class="form-control form-control-sm" placeholder="n/a" value='${data?.databaseIds?.wikidata ?? ""}' title="Wikidata QID of the enzyme">
+                            <input type="text" name="auxenzyme[${index}]wikidata" id="auxenzyme[${index}]wikidata" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.databaseIds?.wikidata ?? "")}" title="Wikidata QID of the enzyme">
                             <label for="auxenzyme[${index}]wikidata" class="form-label">Wikidata ID <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
@@ -332,7 +348,7 @@ function createHtmlReaction(data = {}, index, form_vals) {
                         <div class="row m-2 g-2">
                             <div class="col">
                                 <div class="form-floating">
-                                    <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.reactionSMARTS ?? ""}' required title="Reaction SMARTS describing substrate specificity and the introduced changes. Include any (covalent) co-factors the substrate(s)/product(s) may be attached to. Use e.g. Ketcher to draw the reaction SMARTS.">
+                                    <input id="reaction[${index}]smarts" name="reaction[${index}]smarts" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.reactionSMARTS ?? "")}" required title="Reaction SMARTS describing substrate specificity and the introduced changes. Include any (covalent) co-factors the substrate(s)/product(s) may be attached to. Use e.g. Ketcher to draw the reaction SMARTS.">
                                     <label for="reaction[${index}]smart" class="form-label">Reaction SMARTS<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                                 </div>
                             </div>
@@ -340,7 +356,7 @@ function createHtmlReaction(data = {}, index, form_vals) {
                         <div class="row m-2 g-2">
                             <div class="col">
                                 <div class="form-floating">
-                                    <input id="reaction[${index}]description" name="reaction[${index}]description" class="form-control form-control-sm"  placeholder="n/a" type="text" value='${data?.description ?? ""}' required title="Brief description of the reaction.">
+                                    <input id="reaction[${index}]description" name="reaction[${index}]description" class="form-control form-control-sm"  placeholder="n/a" type="text" value="${escapeHtml(data?.description ?? "")}" required title="Brief description of the reaction.">
                                     <label for="reaction[${index}]description" class="form-label">Description<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                                 </div>
                             </div>
@@ -348,13 +364,13 @@ function createHtmlReaction(data = {}, index, form_vals) {
                         <div class="row m-2 g-2">
                             <div class="col">
                                 <div class="form-floating">
-                                    <input id="reaction[${index}]rhea" name="reaction[${index}]rhea" class="form-control form-control-sm" type="text" placeholder="n/a" value='${data?.databaseIds?.rhea ?? ""}' title="RHEA Knowledgebase ID of reaction (e.g. '32647')">
+                                    <input id="reaction[${index}]rhea" name="reaction[${index}]rhea" class="form-control form-control-sm" type="text" placeholder="n/a" value="${escapeHtml(data?.databaseIds?.rhea ?? "")}" title="RHEA Knowledgebase ID of reaction (e.g. '32647')">
                                     <label for="reaction[${index}]rhea" class="form-label">RHEA ID <i class="bi bi-question-circle"></i></label>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-floating">
-                                    <input id="reaction[${index}]ec" name="reaction[${index}]ec" pattern="^[0-9]+\..+" class="form-control form-control-sm" placeholder="n/a" type="text" value='${data?.databaseIds?.ec ?? ""}' title="The EC (Enzyme Commission) Number of the reaction (e.g. '1.14.19.59')">
+                                    <input id="reaction[${index}]ec" name="reaction[${index}]ec" pattern="^[0-9]+\..+" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.databaseIds?.ec ?? "")}" title="The EC (Enzyme Commission) Number of the reaction (e.g. '1.14.19.59')">
                                     <label for="reaction[${index}]ec" class="form-label">EC Number <i class="bi bi-question-circle"></i></label>
                                 </div>
                             </div>
@@ -510,7 +526,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
             <div class="row m-2 g-2">
                 <div class="col">
                     <div class="form-floating">
-                        <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]substrate" id="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-control form-control-sm" placeholder="n/a" value='${data?.substrate ?? ""}' required title="The reaction substrate(s) SMILES string. Covalently attached co-factors must be specified. Multiple substrates/non-covalent co-factors can be specified using dot notation ('substrate1.substrate2'). Use e.g. Ketcher to draw the SMILES.">
+                        <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]substrate" id="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.substrate ?? "")}" required title="The reaction substrate(s) SMILES string. Covalently attached co-factors must be specified. Multiple substrates/non-covalent co-factors can be specified using dot notation ('substrate1.substrate2'). Use e.g. Ketcher to draw the SMILES.">
                         <label for="reaction[${index_outer}]knownreaction[${index_inner}]substrate" class="form-label">Substrate SMILES<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                     </div>
                 </div>
@@ -518,7 +534,7 @@ function addHtmlKnownReaction(data, index_outer, index_inner) {
             <div class="row m-2 g-2">
                 <div class="col">
                     <div class="form-floating">
-                        <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]description" id="reaction[${index_outer}]knownreaction[${index_inner}]description" class="form-control form-control-sm" placeholder="n/a" value='${data?.description ?? ""}' title="Description of the reaction example">
+                        <input type="text" name="reaction[${index_outer}]knownreaction[${index_inner}]description" id="reaction[${index_outer}]knownreaction[${index_inner}]description" class="form-control form-control-sm" placeholder="n/a" value="${escapeHtml(data?.description ?? "")}" title="Description of the reaction example">
                         <label for="reaction[${index_outer}]knownreaction[${index_inner}]description" class="form-label">Description <i class="bi bi-question-circle"></i></label>
                     </div>
                 </div>
