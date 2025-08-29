@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added Overview page for retired entries
 - Implemented in silico biosynthesis page
+- Embedded tutorial videos
 
 ### Changed
 

@@ -43,8 +43,15 @@
     {% endif %}
     {% endwith %}
     <div class="row my-4">
+        <div class="col">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/wYX6cbh35W0?si=TgxKpKXgPsI1ELf5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <div class="col">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/OqFg9jCZq6U?si=ZNIAkjzkuChVDtSv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+    </div>
+    <div class="row my-4">
         <div class="col text-center mx-auto">
-            <h6>For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h6>
             <h6>See also our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a> and <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>SMILES canonicalizer</b></a> tool.</h6>
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
