@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "1.5.0"
+version = "1.6.0"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
 authors = [
@@ -36,11 +36,11 @@ dependencies = [
     "Flask-WTF~=1.2",
     "gevent~=24.2",
     "gunicorn~=23.0",
-    "mite_extras==1.5.1",
+    "mite_extras",
     "pandas~=2.2",
     "psycopg2-binary",
     "requests~=2.32",
-    "rdkit==2024.3.6"
+    "rdkit==2024.3.6",
 ]
 
 [tool.hatch.envs.default]
@@ -84,5 +84,7 @@ ignore = [
     # combine nested if conditionals
     "SIM102",
     # if-else block
-    "SIM108"
+    "SIM108",
+    # Unnecessary `set` comprehension
+    "C416"
 ]

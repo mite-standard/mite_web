@@ -81,8 +81,22 @@ class ProcessingHelper(BaseModel):
     dump_name: str
     data: dict | None = None
     # TODO(MMZ 24.7.25): add reviewers after briefing
-    reviewer_tags: tuple = ("@mmzdouc",)
-    reviewer_orcids: tuple = ("0000-0001-6534-6609",)
+    reviewer_tags: tuple = (
+        "@mmzdouc",
+        "@marnixmedema",
+        "@BT287",
+        "@cbeemelm",
+        "@corkdagga",
+        "@iaco-vtt",
+    )
+    reviewer_orcids: tuple = (
+        "0000-0001-6534-6609",
+        "0000-0002-2191-2821",
+        "0009-0008-3623-3734",
+        "0000-0002-9747-3423",
+        "0000-0002-8323-5416",
+        "0000-0003-4819-2251",
+    )
 
     def parse_user_input(self: Self, data: dict, original_data: dict):
         """Reads the user_input json dict and brings it in the mite-format
@@ -391,14 +405,16 @@ class ProcessingHelper(BaseModel):
         body = f"""
 A submission was performed via the MITE web portal and needs reviewing.
 
+Submission ID: {branch}
+
 ## Review requested
 
 {", ".join(self.reviewer_tags)}
 
 ## TODO Reviewers
 
-- Review the entry [HERE](https://mite.bioinformatics.nl/submission/preview/{branch}/reviewer)
-- Fix any issues, add your ORCID, download the file, and append it to this PR
+- Inspect the entry [HERE](https://mite.bioinformatics.nl/submission/preview/{branch}/reviewer) (this link will only work for the current MITE release)
+- Review the entry following the [Reviewer Guidelines](https://github.com/mite-standard/mite_data/wiki/How-to-Review-Entries)
 
 *This action was performed by `mite-bot`*
 """
@@ -443,7 +459,7 @@ A submission was performed via the MITE web portal and needs reviewing.
                 "--repo",
                 "mite-standard/mite_data",
                 "--title",
-                f"Contributor submission {branch}",
+                f"Contributor submission {self.data['enzyme']['name']}",
                 "--body",
                 "Automated submission from webapp",
                 "--draft",

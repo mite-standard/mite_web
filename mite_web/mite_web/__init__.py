@@ -80,6 +80,7 @@ def configure_app(app: Flask) -> Flask:
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["DOWNLOAD"] = Path(__file__).parent.joinpath("data/download")
     app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
@@ -98,8 +99,17 @@ def configure_app(app: Flask) -> Flask:
 
     with open(app.config["DATA_SUMMARY"]) as infile:
         summary = json.load(infile)
-        app.config["SUMMARY"] = summary["entries"]
-        app.config["ACCESSIONS"] = { acc for acc in summary["entries"].keys() }
+        app.config["SUMMARY_ACTIVE"] = {
+            key: val
+            for key, val in summary["entries"].items()
+            if val.get("status_plain") == "active"
+        }
+        app.config["ACCESSIONS_ACTIVE"] = {acc for acc in app.config["SUMMARY_ACTIVE"]}
+        app.config["SUMMARY_RETIRED"] = {
+            key: val
+            for key, val in summary["entries"].items()
+            if val.get("status_plain") == "retired"
+        }
 
     with open(SchemaManager().entry) as f:
         schema = json.load(f)

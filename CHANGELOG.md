@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] 29-08-2025
+
+### Added
+
+- Added Overview page for retired entries
+- Implemented in silico biosynthesis page
+- Embedded tutorial videos
+
+### Changed
+
+- Removed retired entries from ovrview table
+- Updated website descriptions
+
+### Fixed
+
+- Implemented escaping of problematic characters for input fields
+
 ## [1.5.0] 10-08-2025
 
 ### Changed

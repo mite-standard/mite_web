@@ -121,15 +121,17 @@
                                 </ul>
                             </td>
                         </tr>
+                        {% for substrate in exp_react.substrate %}
                         <tr>
-                            <td width="15%"><b>Substrate</b></td>
+                            <td width="15%"><b>Substrate {{ loop.index }}</b></td>
                             <td>
-                                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ exp_react.substrate[1] }}" alt="substrate SMILES">
+                                <img class="img-fluid mx-auto d-block" src="data:image/svg+xml;base64,{{ substrate[1] }}" alt="substrate SMILES">
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <button class="btn btn-light btn-sm" data-clipboard-text="{{ exp_react.substrate[0] }}">Copy SMILES</button>
+                                    <button class="btn btn-light btn-sm" data-clipboard-text="{{ substrate[0] }}">Copy SMILES</button>
                                 </div>
                             </td>
                         </tr>
+                        {% endfor %}
                         {% for product in exp_react.products %}
                         <tr>
                             <td width="15%"><b>Product {{ loop.index }}</b></td>

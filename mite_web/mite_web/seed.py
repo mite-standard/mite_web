@@ -35,10 +35,14 @@ def seed_data() -> None:
                 orcids=get_orcids(data["changelog"]),
                 references=get_references(data),
                 evidences=get_evidence(data["reactions"]),
-                tailoring=get_tailoring(data["reactions"])
+                tailoring=get_tailoring(data["reactions"]),
             )
 
-            entry.enzyme = get_enzyme(entry, data["enzyme"], current_app.config["SUMMARY"].get(data["accession"], {}))
+            entry.enzyme = get_enzyme(
+                entry,
+                data["enzyme"],
+                current_app.config["SUMMARY_ACTIVE"].get(data["accession"], {}),
+            )
             entry.reactions = get_reactions(entry, data["reactions"])
 
             db.session.add(entry)
@@ -55,6 +59,7 @@ def get_orcids(logs: list) -> str:
             seen_orcids.add(orcid)
     return "|".join(seen_orcids)
 
+
 def get_references(data: dict) -> str:
     """Parse data and concatenate references in a string"""
     seen_refs = set()
@@ -67,13 +72,15 @@ def get_references(data: dict) -> str:
 
     return "|".join(seen_refs)
 
+
 def get_evidence(reactions: list) -> str:
-    """Parse data and concatenate evidence """
+    """Parse data and concatenate evidence"""
     seen_evidence = set()
     for r in reactions:
         for evidence in r["evidence"]["evidenceCode"]:
             seen_evidence.add(evidence)
     return "|".join(seen_evidence)
+
 
 def get_tailoring(reactions: list) -> str:
     """Parse data and concatenate tailoring terms"""
@@ -92,6 +99,7 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
         data: a MITE JSON enzyme dict
         summary: the summary of the MITE entry containing taxonomy info
     """
+
     def _add_cofactors() -> str:
         """Returns concatenated cofactors"""
         cofactor_set = set()
@@ -124,7 +132,6 @@ def get_enzyme(entry: Entry, data: dict, summary: dict) -> Enzyme:
 
 
 def get_reactions(entry: Entry, data: list) -> list[Reaction]:
-
     def _create_example_reaction(item: dict, r_ref: Reaction) -> ExampleReaction:
         example_reaction = ExampleReaction(
             smiles_substrate=item["substrate"],

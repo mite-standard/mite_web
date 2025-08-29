@@ -7,36 +7,35 @@
             <h1 class="fw-semibold lh-2">About</h1>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-auto">
             <h2 class="fw-semibold lh-2">Background</h2>
             <p class="lead mb-4 ">
-                Tailoring enzymes play an essential role in the maturation of natural products (a.k.a. specialized or secondary metabolites).
-                While the core biosynthetic enzymes of a biosynthetic gene cluster (BGC) are responsible for scaffold formation (the immature compound), tailoring enzymes modify the structure and often enhance biological properties.
-                Moreover, tailoring enzymes strongly vary in their substrate specificities, and this knowledge can be used in machine learning, <i>in silico</i> biosynthesis, or synthetic biology.
+                Tailoring enzymes play an essential role in the maturation of secondary metabolites, also known as specialized metabolites.
+                While the core biosynthetic enzymes of a biosynthetic gene cluster are responsible for scaffold formation (the immature compound),
+                tailoring enzymes modify the structure and often enhance biological properties.
+                However, tailoring enzymes strongly vary in their substrate specificities and reaction mechanisms, and even closely related enzymes can act on vastly different substrates.
             </p>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-6">
             <h2 class="fw-semibold lh-2">Why MITE?</h2>
             <p class="lead mb-2">
-                Knowledge about reaction and substrate specificities of tailoring enzymes is often scattered in the literature.
-                This does not only require researchers to perform time-consuming literature review, but also hampers the application of machine learning.
+                Knowledge about reaction and substrate specificities of tailoring enzymes is essential for understanding biosynthesis, but this information is often scattered as narrative articles in the literature.
+                This does not only require researchers to perform time-consuming literature review, but also hampers its use in machine learning-applications.
             </p>
             <p class="lead mb-2">
-                To close this gap, the Minimum Information about a Tailoring Enzyme (MITE) data standard and the accompanying data repository were created.
-                The MITE data standard provides a framework to structure (meta)data in a both human- and machine-readable fashion, while the MITE data repository stores the actual data.
-            </p>
-            <p class="lead mb-4">
-                All data in MITE is assembled, curated, and reviewed by volunteers and can be used under a permissible open source license.
+                To close this gap, we created the <b>Minimum Information about a Tailoring Enzyme (MITE) database</b>, an expert-curated resource dedicated to secondary metabolite-acting tailoring enzymes.
+                This database allows to capture the reaction and substrate specificities of tailoring enzymes in a permissive and machine-readable fashion.
+                All entries in the MITE database are expert-reviewed, and freely available as part of the public domain (CC0).
             </p>
         </div>
         <div class="col-md-6 d-flex align-items-center justify-content-center">
             <img class="d-none d-sm-block my-3" style="min-width: 100%; max-width: 200%; height: auto;" src="{{ url_for('static', filename='images/workflow.svg') }}" alt="MITE workflow" >
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-6">
             <h2 class="fw-semibold lh-2">What data is stored in MITE?</h2>
             <p class="lead mb-2">
@@ -45,7 +44,7 @@
             <p class="lead mb-2">
                 Each MITE entry describes a <b>single, non-redundant enzyme-encoding gene</b> and one or more associated tailoring reactions.
                 These reactions are described as <b>reaction SMARTS</b>, which describe the substrate specificity-reaction relationship of the enzyme.
-                These reaction SMARTS are examplified by one or more substrate(s) -> product(s) pairs in <b>SMILES</b> format.
+                These reaction SMARTS are exemplified by one or more substrate(s) -> product(s) pairs in <b>SMILES</b> format.
             </p>
             <p class="lead mb-2">
                 Taken together, the tailoring reaction is summarized in a both human- and machine-readable fashion.
@@ -55,35 +54,19 @@
             <img class="d-none d-sm-block my-3" style="max-width: 100%; height: auto;" src="{{ url_for('static', filename='images/reaction_example.svg') }}" alt="Example reaction of a tryptophan being halogenated in position 7.">
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-auto">
             <h2 class="fw-semibold lh-2">How to contribute?</h2>
             <p class="lead mb-2 ">
-                MITE lives from contributions by its users (known as Contributors).
-                Contributors can create new entries using the <a class="link" href="{{ url_for('routes.submission') }}">MITE Submission Portal</a>, or modify existing entries in the MITE Repository.
-                These submissions are then reviewed by topic matter experts (Reviewers) and released as updates on a monthly basis.
-                All data on MITE is available from <a class="link" href="https://doi.org/10.5281/zenodo.13294303" target="_blank">Zenodo</a><b> for free, forever.</b>
+                To expand its coverage, MITE relies on data contributions by its users.
+                Users can create new entries using the <a class="custom-link" href="{{ url_for('routes.submission') }}">MITE Submission Portal</a>, or modify existing entries in the MITE database.
+                These submissions are then reviewed by topic matter experts (reviewers) and the database is updated regularly.
+                All data on MITE is available from <a class="custom-link" href="https://doi.org/10.5281/zenodo.13294303" target="_blank">Zenodo</a><b> for free, forever.</b>
             </p>
             <p class="lead mb-4">
-                Interested? <a class="link" href="{{ url_for('routes.contact') }}">Get in touch</a> or see the resources below.
+                Interested? Take a look at the <a class="custom-link" href="{{ url_for('routes.tutorial') }}">data submission tutorial</a> or <a class="custom-link" href="{{ url_for('routes.contact') }}">get in touch</a>.
+                For more information, free to take a look at our <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">publication.</a>
             </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-auto">
-            <h2 class="fw-semibold lh-2">How to cite MITE?</h2>
-            <p class="lead mb-4 ">If you have found the data/software useful, please consider citing us. We are currently preparing a new manuscript, and until it is published, please cite <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">our preprint.</a></p>
-            <pre><code><b>
-                Mitja M. Zdouc, David Meijer, Friederike Biermann, Jonathan Holme, Aleksandra
-                Korenskaia, Annette Lien, Nico L. L. Louwen, Jorge C. Navarro-Muñoz, Giang-Son Nguyen,
-                Adriano Rutz, Anastasia Sveshnikova, Judith Szenei, Barbara Terlouw, Rosina Torres
-                Ortega, Marc Feuermann, Alan J. Bridge, Justin J.J. van der Hooft, Tilmann Weber,
-                Nadine Ziemert, Kai Blin and Marnix H. Medema
-
-                The Minimum Information about a Tailoring Enzyme/Maturase data standard for capturing natural product biosynthesis.
-
-                ChemRxiv. 2024; doi:10.26434/chemrxiv-2024-78mtl
-            </b></code></pre>
         </div>
     </div>
 </div>

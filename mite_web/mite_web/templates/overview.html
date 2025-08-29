@@ -4,7 +4,8 @@
 <div class="container mt-5">
     <div class="row mb-5">
         <div class="col">
-            <h1 class="fw-semibold lh-2">Repository</h1>
+            <h1 class="fw-semibold lh-2">Repository - active entries</h1>
+            <p class="mb-2">Click <a class="custom-link" href="{{ url_for('routes.overview_retired') }}"><b>here</b></a> to go to the retired entries.</p>
         </div>
     </div>
     <div class="row my-3">
@@ -34,6 +35,7 @@
         <div class="row my-2">
             <div class="col">
                 <h6 class="fw-semibold lh-2">Query builder</h6>
+                <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
                 <div id="builder"></div>
                 <input type="hidden" name="rules" id="rules-input">
             </div>
@@ -122,7 +124,7 @@
             <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier=job_id) }}">
+            <a href="{{ url_for('routes.download_identifier', identifier=job_id ~ '.csv') }}">
                 <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
                 <i class="bi bi-download"></i>
                 </button>

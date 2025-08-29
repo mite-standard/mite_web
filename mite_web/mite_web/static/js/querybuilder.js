@@ -8,7 +8,7 @@ function initCustomQueryBuilder(form_vals) {
   $('#builder').queryBuilder({
     plugins: ['bt-tooltip-errors'],
     allow_groups: false,
-    allow_empty: true,
+    allow_empty: false,
     operators: [
       'equal',
       'not_equal',
@@ -199,11 +199,6 @@ function initCustomQueryBuilder(form_vals) {
         ]
       },
     ]
-  });
-
-  $('#builder').queryBuilder('setRules', {
-      condition: 'AND',
-      rules: []
   });
 
   $('form').on('submit', function (e) {

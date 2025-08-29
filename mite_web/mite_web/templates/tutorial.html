@@ -106,37 +106,5 @@
             <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help7.png') }}" alt="Example 1 Figure 7" >
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            <h5 class="fw-semibold lh-2 my-3">Example 2: phenol halogenase PltM - balanced reaction</h5>
-            <p class="lead my-2">In this example, we will characterize the reaction of the enzyme PltM, a <a class="custom-link" target="_blank" href="https://doi.org/10.1038/s41467-019-09215-9">phenol halogenase</a>. This time, we will draw a balanced reaction, including multiple reactants.</p>
-            <p class="lead my-2">In the publication, PltM is described to halogenate the phloroglucinol substrate, resulting in a mono- or di-halogenated product, with either chloride, bromide, or iodide substituents. Here, we will model the balanced mono-chlorination reaction.</p>
-        </div>
-    </div>
-    <div class="row d-flex align-items-center">
-        <div class="col-md-6">
-            <p class="lead my-2">1. As before, we first draw phloroglucinol. This time, we also add HCl which provides chlorine for the halogenation. We export the drawing as a SMILES string, which results in the string <b>“c1c(O)cc(O)cc1O.Cl”</b>. Notice the dot inside the SMILES string: this indicates a <b>composite SMILES</b>. For balanced reactions, the substrate SMILES <b>must be a composite SMILES</b> to be accepted by MITE.</p>
-        </div>
-        <div class="col-md-6 d-flex flex-column align-items-center">
-            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help8.png') }}" alt="Example 2 Figure 1" >
-        </div>
-    </div>
-    <div class="row d-flex align-items-center">
-        <div class="col-md-6">
-            <p class="lead my-2">2. Next, we draw the products. Each product must be drawn and exported separately. For a balanced reaction, the <b>product SMILES must NOT be a composite SMILES</b> to be accepted by MITE. At first, this is perhaps confusing, but it helps to prevent ambiguities during data validation. Here, the product SMILES are <b>“c1c(O)cc(O)c(Cl)c1O”</b> and <b>“[HH]”</b>, and they are to be entered in separate "product" fields.</p>
-        </div>
-        <div class="col-md-6 d-flex flex-column align-items-center">
-            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help9.png') }}" alt="Example 2 Figure 2" >
-            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help10.png') }}" alt="Example 2 Figure 3" >
-        </div>
-    </div>
-    <div class="row d-flex align-items-center">
-        <div class="col-md-6">
-            <p class="lead my-2">3. Next, we prepare the reaction: we first draw the reaction as before (only including the main reactants), add indices to the atoms using the Reaction Auto Mapping Tool, and <b>only then</b> add the additional substrates. This prevents the indexing of the auxiliary molecules, which can lead to errors in the validation. The resulting reaction SMARTS is <b>“[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2]:[#6:3]:1-[#8:7].Cl>>[#6:1]1:[#6:5](-[#8:9]):[#6:6]:[#6:4](-[#8:8]):[#6:2](-Cl):[#6:3]:1-[#8:7].[H]”</b>. With substrate and product SMILES and reaction SMARTS prepared, the MITE entry can be filled in and submitted.</p>
-        </div>
-        <div class="col-md-6 d-flex flex-column align-items-center">
-            <img class="d-none d-sm-block my-2" style="min-width: 60%; max-width: 60%; height: auto;" src="{{ url_for('static', filename='images/help/help11.png') }}" alt="Example 2 Figure 2" >
-        </div>
-    </div>
 </div>
 {% endblock %}

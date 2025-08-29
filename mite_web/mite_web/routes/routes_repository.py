@@ -21,6 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import base64
 import copy
 import json
 import os
@@ -41,9 +42,11 @@ from rdkit.Chem import (
     DataStructs,
     MolFromSmarts,
     MolFromSmiles,
+    MolToSmiles,
     PandasTools,
     rdChemReactions,
 )
+from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.DataStructs import FingerprintSimilarity
 from sqlalchemy import and_, inspect, or_
 
@@ -397,16 +400,16 @@ def overview() -> str:
     Returns:
         The overview.html page as string.
     """
-    summary = copy.deepcopy(current_app.config["SUMMARY"])
-    accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+    summary = copy.deepcopy(current_app.config["SUMMARY_ACTIVE"])
+    accessions = copy.deepcopy(current_app.config["ACCESSIONS_ACTIVE"])
     headers = [
         ("accession", "MITE Accession"),
         ("status", "Status"),
         ("name", "Enzyme Name"),
-        ("tailoring", "Tailoring Reaction"),
+        ("tailoring", "Reaction Tailoring Term"),
         ("description", "Enzyme Description"),
-        ("organism", "Organism"),
-        ("family", "Family"),
+        ("organism", "Taxonomy Organism"),
+        ("family", "Taxonomy Family"),
         ("reaction_description", "Reaction Description"),
     ]
     filtered = False
@@ -489,9 +492,10 @@ def overview() -> str:
                 job_id=job_id,
             )
     except Exception as e:
-        flash(f"An error occurred during search: '{e!s}'")
-        summary = copy.deepcopy(current_app.config["SUMMARY"])
-        accessions = copy.deepcopy(current_app.config["ACCESSIONS"])
+        current_app.logger.error(f"An error occurred during search: '{e!s}'")
+        flash(f"An error occurred during search: {e!s}")
+        summary = copy.deepcopy(current_app.config["SUMMARY_ACTIVE"])
+        accessions = copy.deepcopy(current_app.config["ACCESSIONS_ACTIVE"])
 
     summary = [val for key, val in summary.items() if key in accessions]
     return render_template(
@@ -500,6 +504,31 @@ def overview() -> str:
         headers=headers,
         form_vals=current_app.config["FORM_VALS"],
         filtered=filtered,
+    )
+
+
+@bp.route("/overview_retired/")
+def overview_retired() -> str:
+    """Show an overview of the retired entries
+
+    Returns:
+        The overview of retired entries as string
+    """
+    summary = [val for key, val in current_app.config["SUMMARY_RETIRED"].items()]
+    headers = [
+        ("accession", "MITE Accession"),
+        ("status", "Status"),
+        ("name", "Enzyme Name"),
+        ("tailoring", "Reaction Tailoring Term"),
+        ("description", "Enzyme Description"),
+        ("organism", "Taxonomy Organism"),
+        ("family", "Taxonomy Family"),
+        ("reaction_description", "Reaction Description"),
+    ]
+    return render_template(
+        "overview_retired.html",
+        entries=summary,
+        headers=headers,
     )
 
 
@@ -539,3 +568,93 @@ def repository(mite_acc: str) -> str:
         fwd_acc=fwd_acc,
         max_entry_reached=max_entry_reached,
     )
+
+
+@bp.route("/pathway/", methods=["GET", "POST"])
+def pathway() -> str:
+    """Render the pathway visualization page
+
+    Returns:
+        The pathway.html page as string.
+    """
+
+    def _smiles_to_svg(s: str) -> str:
+        m = MolFromSmiles(s)
+
+        if not m:
+            raise ValueError(f"Substrate is not a valid SMILES string: {s}")
+
+        for atom in m.GetAtoms():
+            atom.SetAtomMapNum(0)
+        m = rdMolDraw2D.PrepareMolForDrawing(m)
+        drawer = rdMolDraw2D.MolDraw2DSVG(-1, -1)
+        dopts = drawer.drawOptions()
+        dopts.clearBackground = False
+        drawer.DrawMolecule(m)
+        drawer.FinishDrawing()
+        svg = drawer.GetDrawingText()
+        return base64.b64encode(svg.encode("utf-8")).decode("utf-8")
+
+    if request.method == "POST":
+        try:
+            svgs = []
+            report = {"substrate": [], "MITE_acc": [], "enzyme_name": [], "product": []}
+
+            substrate = request.form["substrate"]
+            accession_ids = request.form.getlist("accession_id")
+            reaction_numbers = request.form.getlist("reaction_number")
+            reactions = list(zip(accession_ids, reaction_numbers, strict=False))
+
+            svgs.append(_smiles_to_svg(substrate))
+
+            for step in reactions:
+                if not re.fullmatch(r"MITE[0-9]{7}", step[0]):
+                    raise ValueError(f"Not a valid MITE accession: {step[0]}")
+
+                src = current_app.config["DATA_JSON"].joinpath(f"{step[0]}.json")
+                if not src.is_file():
+                    raise ValueError(f"MITE entry does not exist: {step[0]}")
+                with open(src) as infile:
+                    data = json.load(infile)
+
+                index = int(step[1]) - 1
+                if not 0 <= index < len(data["reactions"]):
+                    raise IndexError(f"Reaction does not exist in {step[0]}: {step[1]}")
+
+                rd_substrate = MolFromSmiles(substrate)
+                rd_reaction = rdChemReactions.ReactionFromSmarts(
+                    data["reactions"][index]["reactionSMARTS"]
+                )
+                products = rd_reaction.RunReactants([rd_substrate])
+                products = {MolToSmiles(product[0]) for product in products}
+                products = list(products)
+                products.sort()
+
+                report["substrate"].append(substrate)
+                report["MITE_acc"].append(f"{step[0]}:{step[1]}")
+                report["enzyme_name"].append(data["enzyme"]["name"])
+
+                if len(products) != 0:
+                    report["product"].append(products[0])
+                    svgs.append(_smiles_to_svg(products[0]))
+                else:
+                    report["product"].append("")
+                    break
+
+                substrate = products[0]
+
+            job_uuid = uuid.uuid1()
+            df = pd.DataFrame(report)
+            src = current_app.config["QUERIES"].joinpath(f"{job_uuid}.csv")
+            df.to_csv(src, index=False)
+
+            return render_template(
+                "pathway.html", svgs=svgs, report=report, job_id=job_uuid
+            )
+
+        except Exception as e:
+            current_app.logger.error(f"Error during pathway rendering: {e!s}")
+            flash(f"Error during pathway rendering: {e!s}")
+            return render_template("pathway.html", svg=None)
+
+    return render_template("pathway.html", svg=None)
