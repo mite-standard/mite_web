@@ -419,7 +419,7 @@ def overview() -> str:
             forms = request.form.to_dict()
 
             rules = json.loads(forms["rules"])
-            if len(rules["rules"]) > 0:
+            if rules and len(rules["rules"]) > 0:
                 db_manager = DatabaseManager()
                 accessions.intersection_update(db_manager.query_db(rules))
 
