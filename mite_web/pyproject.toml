@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "1.6.1"
+version = "1.6.2"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12"
 authors = [
@@ -42,9 +42,6 @@ dependencies = [
     "requests~=2.32",
     "rdkit==2024.3.6",
 ]
-
-[tool.hatch.envs.default]
-installer = "uv"
 
 [tool.ruff]
 line-length = 88

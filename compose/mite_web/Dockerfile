@@ -28,24 +28,24 @@ RUN (type -p wget >/dev/null || (apt update && apt install wget -y)) \
 # Install Python and Hatch for package management
 RUN add-apt-repository ppa:deadsnakes/ppa && apt-get update && apt-get install -y python3.12 python3.12-dev python3-pip
 RUN pip install --upgrade pip
-RUN pip install hatch
+RUN pip install uv
 ENV PYTHONUNBUFFERED=1
 
 # Set up data and variables
 ENV INSTALL_PATH=/mite_web
 RUN mkdir -p $INSTALL_PATH
 WORKDIR $INSTALL_PATH
-COPY ./mite_web/pyproject.toml .
+COPY ./mite_web/pyproject.toml ./mite_web/uv.lock ./
 RUN mkdir -p mite_web && touch mite_web/__init__.py
 
 # Create the environment, download Python dependencies
-RUN hatch env create
+RUN uv sync
 
 # Copy the rest of the files
 COPY ./mite_web .
 
 # Populate the app with data
-RUN hatch run python3.12 mite_web/prepare_mite_data.py
+RUN uv run python3.12 mite_web/prepare_mite_data.py
 
 # Create the enzyme images
 RUN chmod +x ./mite_web/run_pymol.sh

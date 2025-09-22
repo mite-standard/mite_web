@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from flask import current_app
 
@@ -21,6 +22,9 @@ def seed_data() -> None:
 
     src = current_app.config["DATA_JSON"]
     for entry in src.iterdir():
+        if not re.fullmatch(r"MITE[0-9]{7}.json", entry.name):
+            continue
+
         with open(entry) as infile:
             data = json.load(infile)
 
