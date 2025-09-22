@@ -17,7 +17,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
 - Start the docker `docker-compose up -d` (potentially with `sudo`)
-- Open the application in any browser with the URL http://0.0.0.0:8004/
+- Open the application in any browser with the URL http://127.0.0.1:1340/
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
 
 ## For developers
@@ -29,8 +29,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Create a file `mite_web/instance/config.py` with the content indicated below. Set `Online` to `False`
 - Add the `.env` file with content indicated below
-- Run the data preparation script from inside the `mite_web` folder using `hatch run python mite_web/prepare_mite_data.py`.
-- Remove the hatch environment again with `hatch env remove`
+- Run the data preparation script from inside the `mite_web` folder using `uv sync && uv run python mite_web/prepare_mite_data.py`.
 - Build the docker image `docker-compose build`. This will mount the `mite_web` dir for more convenient file editing (no need to rebuild every time).
 - Start the docker image with `docker-compose up`
 - Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container (`gunicorn` does not support reloading on change with the current build)
@@ -40,36 +39,66 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 #### First startup
 
-- Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Create a file `mite_web/instance/config.py` with the content indicated below
-- Add the `.env` file with content indicated below
-- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
-- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
-
-#### Update
-
-- Save `dumps` dir (preserves open `mite_data` PR previews) `docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .`
-- To stop the application, run `docker-compose stop` (potentially with `sudo`)
-- Take the database down with `docker-compose down -v`
-- Pull the newest release
-- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir. If `summary.json` was acccidentally deleted due to a `docker-compose up`, delete the created mount with `docker-compose down -v --rmi all` and follow the "first startup" procedure.
-- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
-- Transfer the `dumps` folder: `docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web`
-
-
-#### Config files
-
-`config.py`
+1. Clone the repository
+```commandline
+git clone https://github.com/mite-standard/mite_web
+cd mite_web
+```
+2. Create configuration files
 ```python
+# mite_web/instance/config.py
 SECRET_KEY: str = "your_secret_key"
 ONLINE: bool = True
 ```
-
-`.env`
 ```commandline
+# .env
 GITHUB_TOKEN=<personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo')>
 GITHUB_NAME=<gh-acc name>
 GITHUB_MAIL=<gh-acc mail>
 POSTGRES_PASSWORD=<yoursecurepassword>
 POSTGRES_DB=mite_database
+```
+3. Build Docker images
+```commandline
+docker-compose -f docker-compose.yml build --no-cache
+```
+This builds both `mite_web` and `nginx` images. The mite_web directory is not mounted in production; all code is baked into the image.
+4. Start the services
+```commandline
+docker-compose -f docker-compose.yml up -d
+```
+5. Remove all services
+```commandline
+docker-compose down -v --rmi all
+```
+
+#### Update/redeploy
+
+*Nota bene*: make sure to announce the downtime in the [Web App Status](https://github.com/orgs/mite-standard/discussions/5) thread.
+
+1. Save existing dumps
+```commandline
+docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .
+```
+optional; preserves open `mite_data` PR previews
+2. Stop the `mite_web` application 
+```commandline
+docker-compose stop mite_web postgres && docker-compose rm -v postgres
+```
+This assumes that only the `mite_web` container is updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
+3. Pull the newest release
+```commandline
+git pull
+```
+4. Build the `mite_web` image
+```commandline
+docker-compose build --no-cache mite_web
+```
+5. Restart the `mite_web` image
+```commandline
+docker compose up -d postgres && docker compose up -d mite_web
+```
+6. Transfer existing dumps
+```commandline
+docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web
 ```

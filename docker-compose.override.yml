@@ -5,8 +5,6 @@ services:
       context: .
       dockerfile: ./compose/mite_web/Dockerfile
     restart: unless-stopped
-    ports:
-      - 8004:8004
     volumes:
       - ./mite_web:/mite_web
     depends_on:
