@@ -43,9 +43,6 @@ dependencies = [
     "rdkit==2024.3.6",
 ]
 
-[tool.hatch.envs.default]
-installer = "uv"
-
 [tool.ruff]
 line-length = 88
 

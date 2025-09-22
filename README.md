@@ -52,7 +52,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
 - Take the database down with `docker-compose down -v`
 - Pull the newest release
-- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir.
+- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`). Will not mount the `mite_web` dir. If `summary.json` was acccidentally deleted due to a `docker-compose up`, delete the created mount with `docker-compose down -v --rmi all` and follow the "first startup" procedure.
 - Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
 - Transfer the `dumps` folder: `docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web`
 
