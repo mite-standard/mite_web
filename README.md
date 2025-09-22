@@ -39,12 +39,12 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 
 #### First startup
 
-1. Clone the repository
+##### 1. Clone the repository
 ```commandline
 git clone https://github.com/mite-standard/mite_web
 cd mite_web
 ```
-2. Create configuration files
+##### 2. Create configuration files
 ```python
 # mite_web/instance/config.py
 SECRET_KEY: str = "your_secret_key"
@@ -58,16 +58,16 @@ GITHUB_MAIL=<gh-acc mail>
 POSTGRES_PASSWORD=<yoursecurepassword>
 POSTGRES_DB=mite_database
 ```
-3. Build Docker images
+##### 3. Build Docker images
 ```commandline
 docker-compose -f docker-compose.yml build --no-cache
 ```
 This builds both `mite_web` and `nginx` images. The mite_web directory is not mounted in production; all code is baked into the image.
-4. Start the services
+##### 4. Start the services
 ```commandline
 docker-compose -f docker-compose.yml up -d
 ```
-5. Remove all services
+##### (5. Remove all services)
 ```commandline
 docker-compose down -v --rmi all
 ```
@@ -76,29 +76,29 @@ docker-compose down -v --rmi all
 
 *Nota bene*: make sure to announce the downtime in the [Web App Status](https://github.com/orgs/mite-standard/discussions/5) thread.
 
-1. Save existing dumps
+##### 1. Save existing dumps
 ```commandline
 docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .
 ```
 optional; preserves open `mite_data` PR previews
-2. Stop the `mite_web` application 
+##### 2. Stop the `mite_web` application 
 ```commandline
 docker-compose stop mite_web postgres && docker-compose rm -v postgres
 ```
 This assumes that only the `mite_web` container is updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
-3. Pull the newest release
+##### 3. Pull the newest release
 ```commandline
 git pull
 ```
-4. Build the `mite_web` image
+##### 4. Build the `mite_web` image
 ```commandline
 docker-compose build --no-cache mite_web
 ```
-5. Restart the `mite_web` image
+##### 5. Restart the `mite_web` image
 ```commandline
 docker compose up -d postgres && docker compose up -d mite_web
 ```
-6. Transfer existing dumps
+##### 6. Transfer existing dumps
 ```commandline
 docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web
 ```
