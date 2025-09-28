@@ -19,6 +19,7 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Start the docker `docker-compose up -d` (potentially with `sudo`)
 - Open the application in any browser with the URL http://127.0.0.1:1340/
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
+- To take down the database, run `docker-compose down -v`
 
 ## For developers
 
@@ -30,9 +31,9 @@ For more information, see the README of the [MITE-Standard organisation page](ht
 - Create a file `mite_web/instance/config.py` with the content indicated below. Set `Online` to `False`
 - Add the `.env` file with content indicated below
 - Run the data preparation script from inside the `mite_web` folder using `uv sync && uv run python mite_web/prepare_mite_data.py`.
-- Build the docker image `docker-compose build`. This will mount the `mite_web` dir for more convenient file editing (no need to rebuild every time).
-- Start the docker image with `docker-compose up`
-- Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container (`gunicorn` does not support reloading on change with the current build)
+- Build the docker image using `docker-compose build`. This will mount the `mite_web` dir for more convenient file editing (no need to rebuild every time).
+- Start the docker image with `docker-compose up`. The image will be available at http://127.0.0.1:1340/.
+- Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container with `docker-compose stop && docker-compose up` (`gunicorn` does not support reloading on change with the current build)
 - Changes in the PostgreSQL DB will only be applied if old tables are dropped with `docker-compose down -v`
 
 ### Production build
