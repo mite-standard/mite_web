@@ -1,6 +1,3 @@
-# This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to generate yours today!
-
 cff-version: 1.2.0
 title: mite_web
 message: >-
@@ -8,7 +5,7 @@ message: >-
   paper.
 type: software
 authors:
-  - affiliation: 'Wageningen University and Research'
+  - affiliation: 'Bioinformatics Group, Wageningen University & Research'
     family-names: Zdouc
     given-names: Mitja M.
     orcid: 'https://orcid.org/0000-0001-6534-6609'
@@ -21,106 +18,259 @@ keywords:
   - data standard
 license: MIT
 preferred-citation:
-  type: preprint
+  type: article
   authors:
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Zdouc
-      given-names: Mitja M.
-      orcid: 'https://orcid.org/0000-0001-6534-6609'
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Meijer
-      given-names: David
-      orcid: 'https://orcid.org/0000-0001-6406-4394'
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Biermann
-      given-names: Friederike
-    - address: 'SINTEF Industry, P.O. Box 4760 Torgard, N-7465, Trondheim, Norway'
-      affiliation: 'Department of Biotechnology and Nanomedicine'
-      family-names: Holme
-      given-names: Jonathan
-      orcid: 'https://orcid.org/0009-0007-1652-9477'
-    - address: 'University of Tübingen, Germany'
-      affiliation: 'Interfaculty Institute of Microbiology and Infection Medicine Tübingen (IMIT)'
-      family-names: Korenskaia
-      given-names: Aleksandra
-      orcid: 'https://orcid.org/0000-0003-3002-6458'
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Lien
-      given-names: Annette
-      orcid: 'https://orcid.org/0009-0006-0578-9225'
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Louwen
-      given-names: Nico L. L.
-      orcid: 'https://orcid.org/0000-0002-4431-5499'
-    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Navarro-Muñoz
-      given-names: Jorge C.
-      orcid: 'https://orcid.org/0000-0003-2992-1607'
-    - address: 'SINTEF Industry, P.O. Box 4760 Torgard, N-7465, Trondheim, Norway'
-      affiliation: 'Department of Biotechnology and Nanomedicinev'
-      family-names: Nguyen
-      given-names: Giang-Son
-      orcid: 'https://orcid.org/0000-0001-5730-3326'
-    - address: 'ETH Zurich, Zurich, Switzerland'
-      affiliation: 'Institute of Molecular Systems Biology'
+    - address: 'Otto-Stern-Weg 3, 8093 Zürich, Switzerland'
+      affiliation: 'Institute for Molecular Systems Biology, ETH Zürich'
       family-names: Rutz
       given-names: Adriano
       orcid: 'https://orcid.org/0000-0003-0443-9902'
-    - address: 'Centre Medical Universitaire, 1 rue Michel Servet, CH-1211, Geneva, Switzerland'
-      affiliation: 'SIB Swiss Institute of Bioinformatics'
-      family-names: Sveshnikova
-      given-names: Anastasia
-      orcid: 'https://orcid.org/0000-0001-9291-0965'
-    - address: 'University of Denmark, Kgs. Lyngby, Denmark'
-      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical'
-      family-names: Szenei
-      given-names: Judith
-    - address: 'Sylviusweg 72, 2333 BE Leiden, The Netherlands'
-      affiliation: 'Institute of Biology, Leiden University'
-      family-names: Terlouw
-      given-names: Barbara
     - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Torres Ortega
-      given-names: Rosina
-    - address: 'Centre Medical Universitaire, 1 rue Michel Servet, CH-1211, Geneva, Switzerland'
-      affiliation: 'SIB Swiss Institute of Bioinformatics'
-      family-names: Feuermann
-      given-names: Marc
-    - address: 'Centre Medical Universitaire, 1 rue Michel Servet, CH-1211, Geneva, Switzerland'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Probst
+      given-names: Daniel
+      orcid: 'https://orcid.org/0000-0003-1737-4407'
+    - address: 'Av. Eugenio Garza Sada 2501 sur, Nuevo Leon, 64700, México'
+      affiliation: 'Industrial Genomics Laboratory, Centro de Biotecnología FEMSA, Escuela de Ingeniería y Ciencias, Tecnológico de Monterrey'
+      family-names: Aguilar
+      given-names: César
+      orcid: 'https://orcid.org/0000-0001-7044-2419'
+    - address: 'Department of Organic Chemistry, Institute of Chemistry, University of Campinas (UNICAMP)'
+      affiliation: 'Rua Monteiro Lobato 270, Campinas, São Paulo, 13.083-862, Brazil'
+      family-names: Akiyama
+      given-names: Daniel Y.
+      orcid: 'https://orcid.org/0000-0003-2859-1992'
+    - address: 'Gibbet Hill Road, Coventry, CV4 7AL, UK'
+      affiliation: 'School of Life Sciences, University of Warwick'
+      family-names: Alberti
+      given-names: Fabrizio
+      orcid: 'https://orcid.org/0000-0001-6585-0696'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Augustijn
+      given-names: Hannah E.
+      orcid: 'https://orcid.org/0000-0002-1862-6699'
+    - address: 'Irvine, 856 Health Sciences Road, Irvine, California, USA 92697'
+      affiliation: 'Department of Pharmaceutical Sciences, University of California'
+      family-names: Avalon
+      given-names: Nicole E.
+      orcid: 'https://orcid.org/0000-0003-3588-892X'
+    - address: 'Campus E8.1, 66123 Saarbrücken, Germany'
+      affiliation: 'Helmholtz Institute for Pharmaceutical Research Saarland (HIPS), Helmholtz Centre for Infection Research (HZI)'
+      family-names: Beemelmanns
+      given-names: Christine
+      orcid: 'https://orcid.org/0000-0002-9747-3423'
+    - address: 'Rua Monteiro Lobato 270, Campinas, São Paulo, 13.083-862, Brazil'
+      affiliation: 'Department of Organic Chemistry, Institute of Chemistry, University of Campinas (UNICAMP)'
+      family-names: Bertoletti Barbieri
+      given-names: Hellen
+      orcid: 'https://orcid.org/0000-0002-6270-3874'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Biermann
+      given-names: Friederike
+      orcid: 'https://orcid.org/0000-0002-9152-2562'
+    - address: 'SIB Swiss Institute of Bioinformatics, Centre Medical Universitaire, 1 rue Michel Servet, 1211 Geneva 4, Switzerland'
       affiliation: 'SIB Swiss Institute of Bioinformatics'
       family-names: Bridge
       given-names: Alan J.
       orcid: 'https://orcid.org/0000-0003-2148-9135'
     - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
-      family-names: Hooft
-      name-particle: van der
-      given-names: Justin J. J.
-      orcid: 'https://orcid.org/0000-0002-9340-5511'
-    - address: 'University of Denmark, Kgs. Lyngby, Denmark'
-      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical'
-      family-names: Weber
-      given-names: Tilmann
-    - address: 'University of Tübingen, Germany'
-      affiliation: 'Interfaculty Institute of Microbiology and Infection Medicine Tübingen (IMIT)'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Charria Girón
+      given-names: Esteban
+      orcid: 'https://orcid.org/0000-0002-3823-1416'
+    - address: 'Schneiderberg 38, 30167 Hannover, Germany'
+      affiliation: 'Institute for Organic Chemistry and BMWZ, Leibniz Universität Hannover'
+      family-names: Cox
+      given-names: Russell
+      orcid: 'https://orcid.org/0000-0002-1844-0157'
+    - address: 'Max-von-Laue-Str. 9, 60438 Frankfurt am Main, Germany'
+      affiliation: 'Institute for Pharmaceutical Biology, Goethe University Frankfurt'
+      family-names: Crüsemann
+      given-names: Max
+      orcid: 'https://orcid.org/0000-0001-6660-2715'
+    - address: 'Campus E8.1, 66123 Saarbrücken, Germany'
+      affiliation: 'Helmholtz Institute for Pharmaceutical Research Saarland (HIPS), Helmholtz Centre for Infection Research (HZI)'
+      family-names: D'Agostino
+      given-names: Paul M.
+      orcid: 'https://orcid.org/0000-0002-8323-5416'
+    - address: 'SIB Swiss Institute of Bioinformatics, Centre Medical Universitaire, 1 rue Michel Servet, 1211 Geneva 4, Switzerland'
+      affiliation: 'SIB Swiss Institute of Bioinformatics'
+      family-names: Feuermann
+      given-names: Marc
+      orcid: 'https://orcid.org/0000-0002-4187-2863'
+    - address: 'Schneiderberg 38, 30167 Hannover, Germany'
+      affiliation: 'Institute for Organic Chemistry and BMWZ, Leibniz Universität Hannover'
+      family-names: Gerke
+      given-names: Jennifer
+      orcid: 'https://orcid.org/0000-0001-7301-2676'
+    - address: '3520 San Martin Dr, Baltimore, MD, 21218, USA'
+      affiliation: 'Biosphere Sciences and Engineering Division, Carnegie Institution for Science'
+      family-names: Gutiérrez García
+      given-names: Karina
+      orcid: 'https://orcid.org/0000-0002-6077-7490'
+    - address: 'P.O.Box 4760 Torgard, N-7465 Trondheim, Norway'
+      affiliation: 'Department of Biotechnology and Nanomedicine, SINTEF Industry'
+      family-names: Holme
+      given-names: Jonathan E.
+      orcid: 'https://orcid.org/0009-0007-1652-9477'
+    - address: 'Frederick, Maryland 21702-1201, USA'
+      affiliation: 'Molecular Targets Program, Center for Cancer Research, National Cancer Institute'
+      family-names: Hwang
+      given-names: Ji-Yeon
+      orcid: 'https://orcid.org/0009-0005-0157-5724'
+    - address: 'Maarintie 3, 02150 Espoo, Finland'
+      affiliation: 'Production Host Engineering Team, VTT Technical Research Centre of Finland Ltd'
+      family-names: Iacovelli
+      given-names: Riccardo
+      orcid: 'https://orcid.org/0000-0003-4819-2251'
+    - address: 'Rua Monteiro Lobato 270, Campinas, São Paulo, 13.083-862, Brazil'
+      affiliation: 'Department of Organic Chemistry, Institute of Chemistry, University of Campinas (UNICAMP)'
+      family-names: Jeronimo Barbosa
+      given-names: Júlio César
+      orcid: 'https://orcid.org/0000-0001-8831-831X'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Kaur
+      given-names: Navneet
+      orcid: 'https://orcid.org/0009-0002-2037-5945'
+    - address: 'Beutenbergstr. 11a, 07745 Jena, Germany'
+      affiliation: 'Department of Paleobiotechnology, Leibniz Institute for Natural Product Research and Infection Biology Hans Knöll Institute'
+      family-names: Klapper
+      given-names: Martin
+      orcid: 'https://orcid.org/0000-0002-4977-2541'
+    - address: 'Schneiderberg 38, 30167 Hannover, Germany'
+      affiliation: 'Institute for Organic Chemistry and BMWZ, Leibniz Universität Hannover'
+      family-names: Köhler
+      given-names: Anna M.
+      orcid: 'https://orcid.org/0000-0002-2715-8954'
+    - address: 'Auf der Morgenstelle 24, 72076 Tübingen, Germany'
+      affiliation: 'Translational Genome Mining for Natural Products, Interfaculty Institute of Microbiology and Infection Medicine Tübingen (IMIT), Interfaculty Institute for Biomedical Informatics (IBMI), University of Tübingen'
+      family-names: Korenskaia
+      given-names: Aleksandra
+      orcid: 'https://orcid.org/0000-0003-3002-6458'
+    - address: 'Auf der Morgenstelle 24, 72076 Tübingen, Germany'
+      affiliation: 'Translational Genome Mining for Natural Products, Interfaculty Institute of Microbiology and Infection Medicine Tübingen (IMIT), Interfaculty Institute for Biomedical Informatics (IBMI), University of Tübingen'
+      family-names: Kubach
+      given-names: Noel
+      orcid: 'https://orcid.org/0009-0008-7609-4484'
+    - address: 'Daejeon 34141, Republic of Korea'
+      affiliation: 'Institute of Applied Sciences, Korea Advanced Institute of Science and Technology (KAIST)'
+      family-names: Lee
+      given-names: Byung T.
+      orcid: 'https://orcid.org/0009-0008-3623-3734'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Loureiro
+      given-names: Catarina
+      orcid: 'https://orcid.org/0000-0002-6258-2080'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Mantri
+      given-names: Shrikant
+      orcid: 'https://orcid.org/0000-0002-7493-459X'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Narula
+      given-names: Simran
+      orcid: 'https://orcid.org/0009-0001-9399-9671'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Meijer
+      given-names: David
+      orcid: 'https://orcid.org/0000-0001-6406-4394'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Navarro-Muñoz
+      given-names: Jorge C.
+      orcid: 'https://orcid.org/0000-0003-2992-1607'
+    - address: 'P.O.Box 4760 Torgard, N-7465 Trondheim, Norway'
+      affiliation: 'Department of Biotechnology and Nanomedicine, SINTEF Industry'
+      family-names: Nguyen
+      given-names: Giang-Son
+      orcid: 'https://orcid.org/0000-0001-5730-3326'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Paliyal
+      given-names: Sunaina
+      orcid: 'https://orcid.org/0009-0003-1714-1678'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Panghal
+      given-names: Mohit
+      orcid: 'https://orcid.org/0009-0001-3436-5302'
+    - address: 'Sector 81, S.A.S. Nagar, Mohali, Punjab 140306, India'
+      affiliation: 'Computational Biology Lab, National Agri-Food and Biomanufacturing Institute (NABI)'
+      family-names: Latika
+      given-names: Latika
+      orcid: 'https://orcid.org/0009-0000-2169-0598'
+    - address: 'Winterthurerstrasse 190, 8057 Zurich, Switzerland'
+      affiliation: 'Department of Chemistry, University of Zurich'
+      family-names: Sieber
+      given-names: Simon
+      orcid: 'https://orcid.org/0000-0003-1763-2525'
+    - address: 'Antonius Deusinglaan 1, 9713AV Groningen, The Netherlands'
+      affiliation: 'Department of Chemical and Pharmaceutical Biology, University of Groningen'
+      family-names: Sokolova
+      given-names: Nika
+      orcid: 'https://orcid.org/0000-0003-4129-2890'
+    - address: 'Klingelbergstrasse 50, 4056 Basel, Switzerland'
+      affiliation: 'Department of Pharmaceutical Sciences, University of Basel'
+      family-names: Sowa
+      given-names: Sven T.
+      orcid: 'https://orcid.org/0000-0001-7411-5925'
+    - address: 'Building 220, Søltofts Plads, 2800 Kongens Lyngby, Denmark'
+      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical University of Denmark'
+      family-names: Szenei
+      given-names: Judit
+      orcid: 'https://orcid.org/0009-0006-9871-5187'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Terlouw
+      given-names: Barbara R.
+      orcid: 'https://orcid.org/0000-0002-4058-6718'
+    - address: 'Klingelbergstrasse 50, 4056 Basel, Switzerland'
+      affiliation: 'Department of Pharmaceutical Sciences, University of Basel'
+      family-names: Weddeling
+      given-names: Heiner G.
+      orcid: 'https://orcid.org/0009-0003-2819-1486'
+    - address: '1088 Xueyuan Avenue, Shenzhen 518055, P.R. China'
+      affiliation: 'Institute of Plant and Food Science, Department of Biology, School of Life Sciences, Southern University of Science and Technology'
+      family-names: Yu
+      given-names: Jingwei
+      orcid: 'https://orcid.org/0000-0003-4268-436X'
+    - address: 'Auf der Morgenstelle 24, 72076 Tübingen, Germany'
+      affiliation: 'Translational Genome Mining for Natural Products, Interfaculty Institute of Microbiology and Infection Medicine Tübingen (IMIT), Interfaculty Institute for Biomedical Informatics (IBMI), University of Tübingen'
       family-names: Ziemert
       given-names: Nadine
-    - address: 'University of Denmark, Kgs. Lyngby, Denmark'
-      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical'
+      orcid: 'https://orcid.org/0000-0002-7264-1857'
+    - address: 'Building 220, Søltofts Plads, 2800 Kongens Lyngby, Denmark'
+      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical University of Denmark'
+      family-names: Weber
+      given-names: Tilmann
+      orcid: 'https://orcid.org/0000-0002-8260-5120'
+    - address: 'Building 220, Søltofts Plads, 2800 Kongens Lyngby, Denmark'
+      affiliation: 'The Novo Nordisk Foundation Center for Biosustainability, Technical University of Denmark'
       family-names: Blin
       given-names: Kai
+      orcid: 'https://orcid.org/0000-0003-3764-6051'
     - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
-      affiliation: 'Wageningen University and Research'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: van der Hooft
+      given-names: Justin J.J.
+      orcid: 'https://orcid.org/0000-0002-9340-5511'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
       family-names: Medema
       given-names: Marnix H.
-  title: The Minimum Information about a Tailoring Enzyme/Maturase data standard for capturing natural product biosynthesis.
-  journal: ChemRxiv
-  year: 2024
-  doi: 10.26434/chemrxiv-2024-78mtl
+      orcid: 'https://orcid.org/0000-0002-2191-2821'
+    - address: 'Droevendaalsesteeg 1, 6708 PB Wageningen, the Netherlands'
+      affiliation: 'Bioinformatics Group, Wageningen University & Research'
+      family-names: Zdouc
+      given-names: Mitja M.
+      orcid: 'https://orcid.org/0000-0001-6534-6609'
+  title: 'MITE: the Minimum Information about a Tailoring Enzyme database for capturing specialized metabolite biosynthesis'
+  journal: Nucleic Acids Research
+  year: 2025
+  doi: 10.1093/nar/gkaf969

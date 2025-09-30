@@ -19,7 +19,7 @@
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark navbar-custom p-1">
           <div class="container-fluid px-5 navbar-font-size">
             <a class="navbar-brand" href="{{ url_for('routes.index') }}">
-              <img src="{{ url_for('static', filename='/images/mite_logo_alt.svg') }}"
+              <img src="{{ url_for('static', filename='images/mite_logo_alt.svg') }}"
                    alt="MITE alt logo" width="150" height="40">
             </a>
             <button class="navbar-toggler" type="button"
@@ -95,7 +95,8 @@
             <div class="d-flex flex-column text-center">
               <div class="mt-auto px-5">
                 <h6 class="text-uppercase fw-bold mb-1"><a rel="mite_web repository" href="https://github.com/mite-standard/mite_web" class="custom-link" target="_blank">MITE Website</a> v{{version_mite_web}} hosting <a rel="mite_data repository" href="https://github.com/mite-standard/mite_data" class="custom-link" target="_blank">MITE Data</a> v{{version_mite_data}}</h6>
-                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('routes.contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.26434/chemrxiv-2024-78mtl" class="custom-link" target="_blank">cite us.</a></p>
+                <p class="mb-0">Please submit bug reports through the <a rel="mite_web issues" href="https://github.com/mite-standard/mite_web/issues" class="custom-link" target="_blank">Issues tracker</a>. For feature requests and general discussions, feel free to open a <a rel="mite_web discussion" href="https://github.com/orgs/mite-standard/discussions" class="custom-link" target="_blank">new discussion</a> on the MITE Discussions board.</p>
+                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('routes.contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.1093/nar/gkaf969" class="custom-link" target="_blank">cite us.</a></p>
                 <div>
                   <a class="nav-link" href="https://github.com/mite-standard" target="_blank" rel="noopener" aria-label="GitHub MITE-Standard Organisation Page"><i class="bi bi-github"></i></a>
                 </div>
