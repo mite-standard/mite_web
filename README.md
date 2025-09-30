@@ -82,8 +82,10 @@ docker-compose down -v --rmi all
 docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .
 ```
 optional; preserves open `mite_data` PR previews
-##### 2. Stop the `mite_web` application 
+##### 2. Toggle maintenance mode and stop the `mite_web` application 
 ```commandline
+docker exec mite_web-nginx-1 touch /etc/nginx/maintenance.flag
+docker exec mite_web-nginx-1 nginx -s reload
 docker-compose stop mite_web postgres && docker-compose rm -v postgres
 ```
 This assumes that only the `mite_web` container is updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
@@ -95,9 +97,11 @@ git pull
 ```commandline
 docker-compose build --no-cache mite_web
 ```
-##### 5. Restart the `mite_web` image
+##### 5. Restart the `mite_web` image and switch off maintenance mode
 ```commandline
 docker compose up -d postgres && docker compose up -d mite_web
+docker exec mite_web-nginx-1 rm /etc/nginx/maintenance.flag
+docker exec mite_web-nginx-1 nginx -s reload
 ```
 ##### 6. Transfer existing dumps
 ```commandline
