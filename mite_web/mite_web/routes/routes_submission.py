@@ -419,7 +419,19 @@ Submission ID: {branch}
 *This action was performed by `mite-bot`*
 """
         subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-b", branch],
+            ["git", "-C", current_app.config["MITE_DATA"], "fetch", "origin", "main"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "pull", "origin", "main"],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-B", branch],
             check=True,
         )
         subprocess.run(
