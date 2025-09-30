@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4] 30-09-2025
+
+### Changed
+
+- Fixes for pushing submissions to github
 
 ## [1.6.3] 30-09-2025
 
@@ -12,7 +17,6 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - Added an explicit `maintenance.html` page to catch errors
 - Updated `CITATION.cff` for publication in *NAR*
-- 
 
 ## [1.6.2] 22-09-2025
 
