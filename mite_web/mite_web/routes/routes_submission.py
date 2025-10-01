@@ -651,7 +651,10 @@ def submission_preview(var: str, role: str) -> str | Response:
 
             processing_helper.add_changelog(user_input)
             processing_helper.dump_json()
-            processing_helper.create_pr()
+            try:
+                processing_helper.create_pr()
+            except subprocess.CalledProcessError as e:
+                render_template("submission_failure.html", error=str(e))
 
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
