@@ -150,7 +150,7 @@ docker exec mite_web-nginx-1 nginx -s reload
 docker-compose stop mite_web postgres && docker-compose rm -v postgres
 ```
 
-This assumes that only the `mite_web` container is updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
+This assumes that only the `mite_web` container needs to be updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
 
 ##### 3. Pull the newest release
 
@@ -167,7 +167,7 @@ docker-compose -f docker-compose.yml build --no-cache mite_web
 ##### 5. Restart the `mite_web` image and switch off maintenance mode
 
 ```commandline
-docker-compose -f docker-compose.yml up -d postgres && docker-compose -f docker-compose.yml up -d mite_web
+docker-compose -f docker-compose.yml up -d --build --force-recreate postgres && docker-compose -f docker-compose.yml up -d --build --force-recreate mite_web
 docker exec mite_web-nginx-1 rm /etc/nginx/maintenance.flag
 docker exec mite_web-nginx-1 nginx -s reload
 ```
@@ -177,3 +177,7 @@ docker exec mite_web-nginx-1 nginx -s reload
 ```commandline
 docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web
 ```
+
+##### 7. Perform a test submission
+
+Check if submission system works by performing a test submission. If not, there are possibly issues with the connection to GitHub.

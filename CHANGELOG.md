@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Fixes for pushing submissions to github
+- Fixes for pushing submissions to GitHub (old `mite_data` folder persisted)
 
 ## [1.6.3] 30-09-2025
 
