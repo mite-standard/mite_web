@@ -390,16 +390,6 @@ class ProcessingHelper(BaseModel):
             )
             return
 
-        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
-        trgt = current_app.config["MITE_DATA"].joinpath(
-            f"mite_data/data/{self.dump_name}"
-        )
-        if self.data["accession"] != "MITE9999999":
-            trgt = current_app.config["MITE_DATA"].joinpath(
-                f"mite_data/data/{self.data["accession"]}.json"
-            )
-        shutil.copy(src, trgt)
-
         branch = self.dump_name.split(".")[0]
 
         body = f"""
@@ -419,10 +409,6 @@ Submission ID: {branch}
 *This action was performed by `mite-bot`*
 """
         subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "fetch", "origin", "main"],
-            check=True,
-        )
-        subprocess.run(
             ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
             check=True,
         )
@@ -430,6 +416,17 @@ Submission ID: {branch}
             ["git", "-C", current_app.config["MITE_DATA"], "pull", "origin", "main"],
             check=True,
         )
+
+        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
+        trgt = current_app.config["MITE_DATA"].joinpath(
+            f"mite_data/data/{self.dump_name}"
+        )
+        if self.data["accession"] != "MITE9999999":
+            trgt = current_app.config["MITE_DATA"].joinpath(
+                f"mite_data/data/{self.data["accession"]}.json"
+            )
+        shutil.copy(src, trgt)
+
         subprocess.run(
             ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-B", branch],
             check=True,

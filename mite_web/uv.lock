@@ -488,7 +488,7 @@ wheels = [
 
 [[package]]
 name = "mite-web"
-version = "1.6.3"
+version = "1.6.4"
 source = { editable = "." }
 dependencies = [
     { name = "alphafetcher" },

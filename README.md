@@ -161,13 +161,13 @@ git pull
 ##### 4. Build the `mite_web` image
 
 ```commandline
-docker-compose build --no-cache mite_web
+docker-compose -f docker-compose.yml build --no-cache mite_web
 ```
 
 ##### 5. Restart the `mite_web` image and switch off maintenance mode
 
 ```commandline
-docker compose up -d postgres && docker compose up -d mite_web
+docker-compose -f docker-compose.yml up -d postgres && docker-compose -f docker-compose.yml up -d mite_web
 docker exec mite_web-nginx-1 rm /etc/nginx/maintenance.flag
 docker exec mite_web-nginx-1 nginx -s reload
 ```
