@@ -48,11 +48,12 @@ Dependencies including exact versions are specified in the [pyproject.toml](./py
 ### Deploy Docker locally
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Build the docker image `docker-compose build --no-cache` (potentially with `sudo`)
-- Start the docker `docker-compose up -d` (potentially with `sudo`)
+- Add the `.env` file as indicated below (with at least the **mandatory** params)
+- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`)
+- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
 - Open the application in any browser with the URL http://127.0.0.1:1340/
 - To stop the application, run `docker-compose stop` (potentially with `sudo`)
-- To take down the database, run `docker-compose down -v`
+- To take down the database, run `docker-compose down -v --rmi all`
 
 ## Attribution
 
@@ -75,8 +76,7 @@ This work was supported by the Netherlands Organization for Scientific Research 
 ### Development build
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Create a file `mite_web/instance/config.py` with the content indicated below. Set `Online` to `False`
-- Add the `.env` file with content indicated below
+- Add the `.env` file as indicated below (with at least the **mandatory** params)
 - Run the data preparation script from inside the `mite_web` folder using `uv sync && uv run python mite_web/prepare_mite_data.py`.
 - Build the docker image using `docker-compose build`. This will mount the `mite_web` directory for more convenient file editing (no need to rebuild every time).
 - Start the docker image with `docker-compose up -d`. The image will be available at http://127.0.0.1:1340/.
@@ -94,21 +94,19 @@ git clone https://github.com/mite-standard/mite_web
 cd mite_web
 ```
 
-##### 2. Create configuration files
-
-```python
-# mite_web/instance/config.py
-SECRET_KEY: str = "your_secret_key"
-ONLINE: bool = True
-```
+##### 2. Create configuration file
 
 ```commandline
 # .env
+# mandatory
+POSTGRES_PASSWORD=<yoursecurepassword>
+POSTGRES_DB=mite_database
+# optional
 GITHUB_TOKEN=<personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo')>
 GITHUB_NAME=<gh-acc name>
 GITHUB_MAIL=<gh-acc mail>
-POSTGRES_PASSWORD=<yoursecurepassword>
-POSTGRES_DB=mite_database
+SECRET_KEY=<your_secret_key>
+ONLINE=True
 ```
 
 ##### 3. Build Docker images

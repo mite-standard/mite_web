@@ -383,8 +383,7 @@ class ProcessingHelper(BaseModel):
 
     def create_pr(self) -> None:
         """Create PR on mite_data using mite_bot's credentials"""
-
-        if not current_app.config.get("ONLINE", False):
+        if current_app.config.get("ONLINE") == "False":
             current_app.logger.warning(
                 f"{self.dump_name}: Prevented PR in offline mode"
             )
