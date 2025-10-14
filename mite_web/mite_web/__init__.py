@@ -74,29 +74,62 @@ def configure_app(app: Flask) -> Flask:
         app: The Flask app instance
     """
     app = config_logger(app)
+    app = set_paths(app)
 
-    app.config["SECRET_KEY"] = "dev"
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev")
+    if app.config["SECRET_KEY"] == "dev":
+        app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
+    app.config["ONLINE"] = os.getenv("ONLINE", "False")
+    if app.config["ONLINE"] == "False":
+        app.logger.critical("OFFLINE MODE: WILL BLOCK PRS TO GITHUB!")
+
+    app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
+    app.config["QUERIES"].mkdir(parents=True, exist_ok=True)
+    app.config["OPEN_PRS"].mkdir(parents=True, exist_ok=True)
+
+    app = diff_active_retired(app)
+    app = populate_form_data(app)
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+
+    return app
+
+
+def set_paths(app: Flask) -> Flask:
+    """Set all paths required by the program
+
+    Args:
+        app: The Flask app
+
+    Returns:
+        The Flask app with defined paths
+    """
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["OPEN_PRS"] = Path(__file__).parent.joinpath("open_prs")
     app.config["DOWNLOAD"] = Path(__file__).parent.joinpath("data/download")
     app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")
     app.config["DATA_SUMMARY"] = Path(__file__).parent.joinpath("data/summary.json")
     app.config["MITE_DATA"] = Path(__file__).parent.joinpath("mite_data")
+    return app
 
-    config_file = Path(__file__).parent.parent.joinpath("instance/config.py")
-    if config_file.exists():
-        app.config.from_pyfile(config_file)
-        app.logger.info("Successfully loaded configuration from 'config.py'.")
-    else:
-        app.logger.warning("No 'config.py' file found. Default to dev settings.")
-        app.logger.critical("INSECURE DEV MODE: DO NOT DEPLOY TO PRODUCTION!")
 
-    app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
-    app.config["QUERIES"].mkdir(parents=True, exist_ok=True)
+def diff_active_retired(app: Flask) -> Flask:
+    """Populate separate lists for active and retired entries to show in overview page
 
+    Arguments:
+        app: the Flask app as reference
+
+    Returns:
+        The unmodified Flask app
+    """
     with open(app.config["DATA_SUMMARY"]) as infile:
         summary = json.load(infile)
         app.config["SUMMARY_ACTIVE"] = {
@@ -110,7 +143,18 @@ def configure_app(app: Flask) -> Flask:
             for key, val in summary["entries"].items()
             if val.get("status_plain") == "retired"
         }
+    return app
 
+
+def populate_form_data(app: Flask) -> Flask:
+    """Retrieve dropdown lists to populate forms
+
+    Args:
+        app: The Flask aap
+
+    Returns:
+        The unmodified app
+    """
     with open(SchemaManager().entry) as f:
         schema = json.load(f)
         app.config["FORM_VALS"] = {
@@ -119,13 +163,6 @@ def configure_app(app: Flask) -> Flask:
             "inorganic": schema["$defs"]["inorganic"]["enum"],
             "organic": schema["$defs"]["organic"]["enum"],
         }
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    csrf = CSRFProtect()
-    csrf.init_app(app)
-
     return app
 
 

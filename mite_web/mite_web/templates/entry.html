@@ -92,6 +92,9 @@
                 <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
+        <div class="col-auto">
+            <a href="{{ url_for('routes.download_identifier', identifier=submission_id) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
+        </div>
     </div>
     <form id="form-contr-submit" method="post" enctype="multipart/form-data" action="">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
