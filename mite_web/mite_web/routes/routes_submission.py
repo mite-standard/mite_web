@@ -34,6 +34,7 @@ from typing import Self
 
 import pandas as pd
 import requests
+from filelock import FileLock
 from flask import (
     Response,
     abort,
@@ -80,7 +81,6 @@ class ProcessingHelper(BaseModel):
 
     dump_name: str
     data: dict | None = None
-    # TODO(MMZ 24.7.25): add reviewers after briefing
     reviewer_tags: tuple = (
         "@mmzdouc",
         "@marnixmedema",
@@ -382,7 +382,14 @@ class ProcessingHelper(BaseModel):
             outfile.write(json.dumps(self.data, indent=4, ensure_ascii=False))
 
     def create_pr(self) -> None:
-        """Create PR on mite_data using mite_bot's credentials"""
+        """Create PR on mite_data using mite_bot's credentials
+
+        If Online == False, only register the PR-ready file but do not open PR
+        """
+        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
+        shutil.copy(src, current_app.config["OPEN_PRS"].joinpath(f"{self.dump_name}"))
+        current_app.logger.info(f"Registered PR-ready file '{self.dump_name}'")
+
         if current_app.config.get("ONLINE") == "False":
             current_app.logger.warning(
                 f"{self.dump_name}: Prevented PR in offline mode"
@@ -407,101 +414,139 @@ Submission ID: {branch}
 
 *This action was performed by `mite-bot`*
 """
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
-            check=True,
-        )
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "pull", "origin", "main"],
-            check=True,
-        )
 
-        src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
-        trgt = current_app.config["MITE_DATA"].joinpath(
-            f"mite_data/data/{self.dump_name}"
-        )
-        if self.data["accession"] != "MITE9999999":
-            trgt = current_app.config["MITE_DATA"].joinpath(
-                f"mite_data/data/{self.data["accession"]}.json"
+        lock = FileLock("/tmp/mite_git.lock")
+        with lock:
+            subprocess.run(
+                ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
+                check=True,
             )
-        shutil.copy(src, trgt)
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    current_app.config["MITE_DATA"],
+                    "pull",
+                    "origin",
+                    "main",
+                ],
+                check=True,
+            )
 
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "-B", branch],
-            check=True,
-        )
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "add", "mite_data/data/"],
-            check=True,
-        )
-        subprocess.run(
-            [
-                "git",
-                "-C",
-                current_app.config["MITE_DATA"],
-                "commit",
-                "-m",
-                f"Contributor submission {self.data['enzyme']['name']}",
-            ],
-            check=True,
-        )
+            trgt = current_app.config["MITE_DATA"].joinpath(
+                f"mite_data/data/{self.dump_name}"
+            )
+            if self.data["accession"] != "MITE9999999":
+                trgt = current_app.config["MITE_DATA"].joinpath(
+                    f"mite_data/data/{self.data["accession"]}.json"
+                )
+            shutil.copy(src, trgt)
 
-        subprocess.run(
-            [
-                "git",
-                "-C",
-                current_app.config["MITE_DATA"],
-                "push",
-                "-u",
-                "origin",
-                branch,
-            ],
-            check=True,
-        )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    current_app.config["MITE_DATA"],
+                    "checkout",
+                    "-B",
+                    branch,
+                ],
+                check=True,
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    current_app.config["MITE_DATA"],
+                    "add",
+                    "mite_data/data/",
+                ],
+                check=True,
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    current_app.config["MITE_DATA"],
+                    "commit",
+                    "-m",
+                    f"Contributor submission {self.data['enzyme']['name']}",
+                ],
+                check=True,
+            )
 
-        subprocess.run(
-            [
-                "gh",
-                "pr",
-                "create",
-                "--repo",
-                "mite-standard/mite_data",
-                "--title",
-                f"Contributor submission {self.data['enzyme']['name']}",
-                "--body",
-                "Automated submission from webapp",
-                "--draft",
-                "--base",
-                "main",
-                "--head",
-                branch,
-                "--body",
-                body,
-            ],
-            check=True,
-        )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    current_app.config["MITE_DATA"],
+                    "push",
+                    "-u",
+                    "origin",
+                    branch,
+                ],
+                check=True,
+            )
 
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
-            check=True,
-        )
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "pull"], check=True
-        )
-        subprocess.run(
-            ["git", "-C", current_app.config["MITE_DATA"], "branch", "-D", branch],
-            check=True,
-        )
+            subprocess.run(
+                [
+                    "gh",
+                    "pr",
+                    "create",
+                    "--repo",
+                    "mite-standard/mite_data",
+                    "--title",
+                    f"Contributor submission {self.data['enzyme']['name']}",
+                    "--body",
+                    "Automated submission from webapp",
+                    "--draft",
+                    "--base",
+                    "main",
+                    "--head",
+                    branch,
+                    "--body",
+                    body,
+                ],
+                check=True,
+            )
+
+            subprocess.run(
+                ["git", "-C", current_app.config["MITE_DATA"], "checkout", "main"],
+                check=True,
+            )
+            subprocess.run(
+                ["git", "-C", current_app.config["MITE_DATA"], "pull"], check=True
+            )
+            subprocess.run(
+                ["git", "-C", current_app.config["MITE_DATA"], "branch", "-D", branch],
+                check=True,
+            )
+            current_app.logger.info(f"Created PR for file '{self.dump_name}'")
 
 
 @bp.route("/submission/")
 def submission() -> str:
-    """Render the submission page of mite_web
+    """Render the submission page of mite_web and populate it with open PRs
 
     Returns:
         The submission.html page as string.
     """
-    return render_template("submission.html")
+    entries = []
+    for f in current_app.config.get("OPEN_PRS").iterdir():
+        with open(f) as infile:
+            data = json.load(infile)
+        entries.append(
+            {
+                "name": data.get("enzyme", {}).get("name"),
+                "description": data.get("enzyme", {}).get(
+                    "description", "No description available"
+                ),
+                "uuid": f.stem,
+                "link_gh": f"https://github.com/mite-standard/mite_data/pulls?q=is%3Apr+is%3Aopen+{f.stem}",
+            }
+        )
+
+    return render_template("submission.html", entries=entries)
 
 
 @bp.route("/submission/<var>/<role>", methods=["GET", "POST"])

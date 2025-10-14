@@ -164,15 +164,23 @@ def download_identifier(identifier: str) -> Response | None:
                 )
         else:
             uuid.UUID(identifier.split(".")[0])
-            path = current_app.config["QUERIES"].joinpath(f"{identifier}")
 
-            if not path.is_file():
-                raise ValueError(f"{identifier} does not exist as a job ID")
-            else:
+            if current_app.config["QUERIES"].joinpath(f"{identifier}").is_file():
                 return send_file(
-                    path,
+                    current_app.config["QUERIES"].joinpath(f"{identifier}"),
                     as_attachment=True,
                 )
+            elif (
+                current_app.config["DATA_DUMPS"]
+                .joinpath(f"{identifier}.json")
+                .is_file()
+            ):
+                return send_file(
+                    current_app.config["DATA_DUMPS"].joinpath(f"{identifier}.json"),
+                    as_attachment=True,
+                )
+            else:
+                raise ValueError(f"{identifier} does not exist")
 
     except Exception as e:
         current_app.logger.warning(f"Download failed - {e!s}")

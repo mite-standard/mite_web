@@ -86,6 +86,7 @@ def configure_app(app: Flask) -> Flask:
 
     app.config["DATA_DUMPS"].mkdir(parents=True, exist_ok=True)
     app.config["QUERIES"].mkdir(parents=True, exist_ok=True)
+    app.config["OPEN_PRS"].mkdir(parents=True, exist_ok=True)
 
     app = diff_active_retired(app)
     app = populate_form_data(app)
@@ -111,6 +112,7 @@ def set_paths(app: Flask) -> Flask:
     app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
+    app.config["OPEN_PRS"] = Path(__file__).parent.joinpath("open_prs")
     app.config["DOWNLOAD"] = Path(__file__).parent.joinpath("data/download")
     app.config["QUERIES"] = Path(__file__).parent.joinpath("queries")
     app.config["DATA_IMG"] = Path(__file__).parent.joinpath("static/img")

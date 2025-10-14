@@ -13,6 +13,24 @@
             <p class="lead lh-2">All submissions are tracked via the <a target="_blank" class="custom-link" href="https://github.com/mite-standard/mite_data/pulls">MITE Data GitHub webpage.</a></p>
         </div>
     </div>
+    <table class="my-3 table table-striped table-hover">
+        <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>GitHub Link</th>
+            </tr>
+        </thead>
+        <tbody class="align-middle mb-3">
+        {% for row in entries %}
+          <tr>
+              <td>{{ row["name"] }}</td>
+              <td>{{ row["description"] }}</td>
+              <td><a class="custom-link" target="_blank" href="{{ row['link_gh'] }}">{{ row['uuid'] }}</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
     <div class="row my-3">
         <div class="col-auto">
             <h2 class="fw-semibold lh-2">Submit a new entry</h2>
