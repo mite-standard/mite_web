@@ -127,7 +127,11 @@
         </div>
         <div class="row flex justify-content-center">
             <div class="col-auto">
+                {% if registered %}
+                <button class="btn btn-primary btn-sm disabled">Entry already submitted</button>
+                {% else %}
                 <button id="contr-submit" name="contr-submit" value="contr-submit" type="submit" class="btn btn-primary btn-sm">Submit entry for review</button>
+                {% endif %}
             </div>
         </div>
     </form>
