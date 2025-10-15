@@ -16,14 +16,16 @@
     <table class="my-3 table table-striped table-hover">
         <thead>
             <tr>
+              <th>MITE Accession</th>
               <th>Name</th>
               <th>Description</th>
               <th>GitHub Link</th>
             </tr>
         </thead>
-        <tbody class="align-middle mb-3">
+        <tbody class="align-middle">
         {% for row in entries %}
           <tr>
+              <td><a class="custom-link" target="_blank" href="{{ url_for('routes.submission_preview', var=row['uuid'], role='contributor') }}">{{ row['accession'] }}</a></td>
               <td>{{ row["name"] }}</td>
               <td>{{ row["description"] }}</td>
               <td><a class="custom-link" target="_blank" href="{{ row['link_gh'] }}">{{ row['uuid'] }}</a></td>
@@ -31,7 +33,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <div class="row my-3">
+    <div class="row my-5">
         <div class="col-auto">
             <h2 class="fw-semibold lh-2">Submit a new entry</h2>
             <p class="lead lh-2">

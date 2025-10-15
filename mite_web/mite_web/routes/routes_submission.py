@@ -387,12 +387,20 @@ class ProcessingHelper(BaseModel):
         If Online == False, only register the PR-ready file but do not open PR
         """
         src = current_app.config["DATA_DUMPS"].joinpath(f"{self.dump_name}")
-        shutil.copy(src, current_app.config["OPEN_PRS"].joinpath(f"{self.dump_name}"))
-        current_app.logger.info(f"Registered PR-ready file '{self.dump_name}'")
+        trgt = current_app.config["OPEN_PRS"].joinpath(f"{self.dump_name}")
+
+        if trgt.exists():
+            current_app.logger.warning(
+                f"{self.dump_name}: Blocked submission - already present in 'open_prs'."
+            )
+            return
+        else:
+            shutil.copy(src, trgt)
+            current_app.logger.info(f"{self.dump_name}: Registered in 'open_prs'.")
 
         if current_app.config.get("ONLINE") == "False":
             current_app.logger.warning(
-                f"{self.dump_name}: Prevented PR in offline mode"
+                f"{self.dump_name}: Blocked submission in offline mode"
             )
             return
 
@@ -537,6 +545,9 @@ def submission() -> str:
             data = json.load(infile)
         entries.append(
             {
+                "accession": data["accession"]
+                if data["accession"] != "MITE9999999"
+                else "New entry",
                 "name": data.get("enzyme", {}).get("name"),
                 "description": data.get("enzyme", {}).get(
                     "description", "No description available"
@@ -736,6 +747,7 @@ def submission_preview(var: str, role: str) -> str | Response:
             mode="preview",
             preview=True,
             submission_id=var,
+            registered=current_app.config["OPEN_PRS"].joinpath(f"{var}.json").exists(),
         )
     else:
         return render_template(
