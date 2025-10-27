@@ -132,16 +132,6 @@ def download_identifier(identifier: str) -> Response | None:
                 current_app.config["DOWNLOAD"].joinpath("dump_smiles.csv"),
                 as_attachment=True,
             )
-        elif identifier == "blastlib":
-            return send_file(
-                current_app.config["DOWNLOAD"].joinpath("MiteBlastDB.zip"),
-                as_attachment=True,
-            )
-        elif identifier == "mite_zip":
-            return send_file(
-                current_app.config["DOWNLOAD"].joinpath("MITE_all_active_entries.zip"),
-                as_attachment=True,
-            )
         elif identifier == "mite_fasta":
             return send_file(
                 current_app.config["DOWNLOAD"].joinpath("mite_concat.fasta"),

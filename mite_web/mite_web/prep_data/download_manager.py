@@ -188,19 +188,19 @@ class DownloadManager(BaseModel):
             src=trgt.joinpath(subdir)
             .joinpath("mite_data/metadata/product_list.pickle")
             .resolve(),
-            dst=download.resolve(),
+            dst=self.location.resolve(),
         )
         shutil.move(
             src=trgt.joinpath(subdir)
             .joinpath("mite_data/metadata/reaction_fps.pickle")
             .resolve(),
-            dst=download.resolve(),
+            dst=self.location.resolve(),
         )
         shutil.move(
             src=trgt.joinpath(subdir)
             .joinpath("mite_data/metadata/substrate_list.pickle")
             .resolve(),
-            dst=download.resolve(),
+            dst=self.location.resolve(),
         )
         shutil.move(
             src=trgt.joinpath(subdir)
