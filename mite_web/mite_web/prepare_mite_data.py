@@ -29,7 +29,6 @@ import sys
 import coloredlogs
 
 from mite_web.prep_data.download_manager import DownloadManager
-from mite_web.prep_data.html_json_manager import HtmlJsonManager
 
 logger = logging.getLogger("prep_data")
 logger.setLevel("DEBUG")
@@ -46,9 +45,6 @@ def main():
 
     download_manager = DownloadManager()
     download_manager.run()
-
-    json_manager = HtmlJsonManager()
-    json_manager.run()
 
     logger.info("Completed 'mite_web' data preparation.")
 

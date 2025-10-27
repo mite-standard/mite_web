@@ -64,6 +64,8 @@ class DownloadManager(BaseModel):
         self.download_mite_web_extras()
         self.organize_mite_web_extras()
 
+        self.generate_summary()
+
         logger.info("DownloadManager: Completed")
 
     def download_mite_data(self) -> None:
@@ -243,6 +245,10 @@ class DownloadManager(BaseModel):
             dst=self.location.resolve(),
         )
         shutil.move(
+            src=trgt.joinpath(subdir).joinpath("data/html").resolve(),
+            dst=self.location.resolve(),
+        )
+        shutil.move(
             src=trgt.joinpath(subdir).joinpath("data/img").resolve(),
             dst=self.location.parent.joinpath("static").resolve(),
         )
@@ -269,3 +275,36 @@ class DownloadManager(BaseModel):
         logger.info(
             "DownloadManager: Completed organization of mite_web_extras download"
         )
+
+    def generate_summary(self) -> None:
+        """Creates summary file from metadata_general.json"""
+        summary = {"entries": {}}
+
+        with open(self.location.joinpath("metadata_general.json")) as infile:
+            metadata = json.load(infile)
+
+        for key, val in metadata["entries"].items():
+            summary["entries"][key] = {
+                "accession": val["accession"],
+                "status": val["status_icon"],
+                "status_plain": val["status"],
+                "name": val["enzyme_name"],
+                "tailoring": val["tailoring"],
+                "cofactors_organic": val["cofactors_organic"],
+                "cofactors_inorganic": val["cofactors_inorganic"],
+                "description": val["enzyme_description"],
+                "reaction_description": val["reaction_description"],
+                "organism": val["organism"],
+                "domain": val["domain"],
+                "kingdom": val["kingdom"],
+                "phylum": val["phylum"],
+                "class": val["class"],
+                "order": val["order"],
+                "family": val["family"],
+            }
+
+        keys = sorted(summary.get("entries").keys())
+        summary = {"entries": {key: summary["entries"][key] for key in keys}}
+
+        with open(self.location.joinpath("summary.json"), "w") as f:
+            f.write(json.dumps(summary))

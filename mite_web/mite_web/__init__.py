@@ -109,7 +109,7 @@ def set_paths(app: Flask) -> Flask:
     Returns:
         The Flask app with defined paths
     """
-    app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/data_html")
+    app.config["DATA_HTML"] = Path(__file__).parent.joinpath("data/html")
     app.config["DATA_JSON"] = Path(__file__).parent.joinpath("data/data")
     app.config["DATA_DUMPS"] = Path(__file__).parent.joinpath("dumps")
     app.config["OPEN_PRS"] = Path(__file__).parent.joinpath("open_prs")
