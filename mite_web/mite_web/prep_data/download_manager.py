@@ -239,7 +239,7 @@ class DownloadManager(BaseModel):
         subdir = matching_dirs[0]
 
         shutil.move(
-            src=trgt.joinpath(subdir).joinpath("data/blast").resolve(),
+            src=trgt.joinpath(subdir).joinpath("data/blastlib").resolve(),
             dst=self.location.resolve(),
         )
         shutil.move(
