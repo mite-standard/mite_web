@@ -9,6 +9,7 @@ config.py
 .idea
 .ruff-cache
 .env
+mite_web/.venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

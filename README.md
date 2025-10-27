@@ -73,6 +73,8 @@ This work was supported by the Netherlands Organization for Scientific Research 
 
 **Nota bene: since version `1.5.0`, development is only possible using the docker-container**
 
+**Nota bene: regularly update `uv.lock` using `uv lock --upgrade`**
+
 ### Development build
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)

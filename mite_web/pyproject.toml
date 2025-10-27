@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mite_web"
-version = "1.6.6"
+version = "1.7.0"
 description = "Code for web presence of the Minimum Information about a Tailoring Enzyme (MITE) data standard"
 requires-python = ">=3.12.0,<3.13.0" # because of rdkit 2024 in mite_extras
 authors = [
