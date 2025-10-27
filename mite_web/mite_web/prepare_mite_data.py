@@ -28,12 +28,8 @@ import sys
 
 import coloredlogs
 
-from mite_web.prep_data.aux_file_manager import AuxFileManager, SummaryManager
-from mite_web.prep_data.blast_manager import BlastManager
 from mite_web.prep_data.download_manager import DownloadManager
 from mite_web.prep_data.html_json_manager import HtmlJsonManager
-from mite_web.prep_data.image_manager import ImageManager
-from mite_web.prep_data.mibig_manager import MibigManager
 
 logger = logging.getLogger("prep_data")
 logger.setLevel("DEBUG")
@@ -44,37 +40,17 @@ console_handler.setFormatter(
 logger.addHandler(console_handler)
 
 
-def main() -> None | SystemExit:
+def main():
     """Prepares mite_data for use in mite_web"""
     logger.info("Started 'mite_web' data preparation.")
 
-    try:
-        download_manager = DownloadManager()
-        download_manager.run()
+    download_manager = DownloadManager()
+    download_manager.run()
 
-        json_manager = HtmlJsonManager()
-        json_manager.run()
+    json_manager = HtmlJsonManager()
+    json_manager.run()
 
-        summary_manager = SummaryManager()
-        summary_manager.run()
-
-        aux_manager = AuxFileManager()
-        aux_manager.run()
-
-        img_manager = ImageManager()
-        img_manager.run()
-
-        blast_manager = BlastManager()
-        blast_manager.run()
-
-        mibig_manager = MibigManager()
-        mibig_manager.run()
-
-        logger.info("Completed 'mite_web' data preparation.")
-
-    except Exception as e:
-        logger.fatal(f"An exception has occurred: {e}")
-        return sys.exit(1)
+    logger.info("Completed 'mite_web' data preparation.")
 
 
 if __name__ == "__main__":
