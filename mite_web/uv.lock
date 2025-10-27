@@ -3,19 +3,6 @@ revision = 2
 requires-python = ">=3.12.0, <3.13.0"
 
 [[package]]
-name = "alphafetcher"
-version = "0.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-    { name = "tqdm" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/23/dc/29cb4113277eda5721cf0ea9fbabb14c5a70453c1227f1859834600e2b05/AlphaFetcher-0.2.0.tar.gz", hash = "sha256:c641984999fbcece38dcb3676baf0553f143687d68f0e069da7a0759908aa346", size = 5976, upload-time = "2024-04-11T15:09:55.024Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b8/f9/53e88af0dd9b8fb79c7fe16b05da73363db821c94c464a6ff28c919fdd9c/AlphaFetcher-0.2.0-py3-none-any.whl", hash = "sha256:6d22bdca137978dbd551ba82408af533ee6f949ad3f8ad39b628499d687611f1", size = 6599, upload-time = "2024-04-11T15:09:53.895Z" },
-]
-
-[[package]]
 name = "aniso8601"
 version = "10.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -424,7 +411,6 @@ name = "mite-web"
 version = "1.7.0"
 source = { editable = "." }
 dependencies = [
-    { name = "alphafetcher" },
     { name = "biopython" },
     { name = "coloredlogs" },
     { name = "filelock" },
@@ -443,7 +429,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "alphafetcher", specifier = "~=0.2" },
     { name = "biopython", specifier = "~=1.84" },
     { name = "coloredlogs", specifier = "~=15.0" },
     { name = "filelock", specifier = "~=3.20" },
@@ -733,18 +718,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/3b/3d/3116a9a7b63e780fb402799b6da227435be878b6846b192f076d2f838654/sqlalchemy-2.0.44-cp312-cp312-win32.whl", hash = "sha256:846541e58b9a81cce7dee8329f352c318de25aa2f2bbe1e31587eb1f057448b4", size = 2103447, upload-time = "2025-10-10T15:03:21.678Z" },
     { url = "https://files.pythonhosted.org/packages/25/83/24690e9dfc241e6ab062df82cc0df7f4231c79ba98b273fa496fb3dd78ed/sqlalchemy-2.0.44-cp312-cp312-win_amd64.whl", hash = "sha256:7cbcb47fd66ab294703e1644f78971f6f2f1126424d2b300678f419aa73c7b6e", size = 2130912, upload-time = "2025-10-10T15:03:24.656Z" },
     { url = "https://files.pythonhosted.org/packages/9c/5e/6a29fa884d9fb7ddadf6b69490a9d45fded3b38541713010dad16b77d015/sqlalchemy-2.0.44-py3-none-any.whl", hash = "sha256:19de7ca1246fbef9f9d1bff8f1ab25641569df226364a0e40457dc5457c54b05", size = 1928718, upload-time = "2025-10-10T15:29:45.32Z" },
-]
-
-[[package]]
-name = "tqdm"
-version = "4.67.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz", hash = "sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2", size = 169737, upload-time = "2024-11-24T20:12:22.481Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d0/30/dc54f88dd4a2b5dc8a0279bdd7270e735851848b762aeb1c1184ed1f6b14/tqdm-4.67.1-py3-none-any.whl", hash = "sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2", size = 78540, upload-time = "2024-11-24T20:12:19.698Z" },
 ]
 
 [[package]]
