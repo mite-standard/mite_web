@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 
 - Simplified docker build - auxiliary files are downloaded
+- Reworked submission portal - show pending and submitted entries
 
 ## [1.6.6] 15-10-2025
 
