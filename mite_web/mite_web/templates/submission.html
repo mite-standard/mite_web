@@ -19,6 +19,9 @@
               <th>MITE Accession</th>
               <th>Name</th>
               <th>Description</th>
+              <th>Submitter</th>
+              <th>Comment</th>
+              <th>Date</th>
               <th>GitHub Link</th>
             </tr>
         </thead>
@@ -28,6 +31,13 @@
               <td><a class="custom-link" target="_blank" href="{{ url_for('routes.submission_preview', var=row['uuid'], role='contributor') }}">{{ row['accession'] }}</a></td>
               <td>{{ row["name"] }}</td>
               <td>{{ row["description"] }}</td>
+                {% if row["submitter"] == "AAAAAAAAAAAAAAAAAAAAAAAA" %}
+                <td>Anonymous MITE contributor</td>
+                {% else %}
+                <td><a target="_blank" class="custom-link" href="https://orcid.org/{{ row['submitter'] }}">{{ row["submitter"] }}</a></td>
+                {% endif %}
+              <td>{{ row["comment"] }}</td>
+              <td>{{ row["date"] }}</td>
               <td><a class="custom-link" target="_blank" href="{{ row['link_gh'] }}">{{ row['uuid'] }}</a></td>
           </tr>
         {% endfor %}

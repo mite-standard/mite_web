@@ -552,6 +552,9 @@ def submission() -> str:
                 "description": data.get("enzyme", {}).get(
                     "description", "No description available"
                 ),
+                "submitter": data["changelog"][-1]["contributors"][0],
+                "comment": data["changelog"][-1]["comment"],
+                "date": data["changelog"][-1]["date"],
                 "uuid": f.stem,
                 "link_gh": f"https://github.com/mite-standard/mite_data/pulls?q=is%3Apr+is%3Aopen+{f.stem}",
             }
