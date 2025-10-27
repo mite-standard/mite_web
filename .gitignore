@@ -5,6 +5,7 @@ mite_web/mite_web/data
 mite_web/mite_web/mite_data
 mite_web/mite_web/static/img
 mite_web/mite_web/submissions
+mite_web/mite_web/open_prs
 config.py
 .idea
 .ruff-cache
