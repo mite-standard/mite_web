@@ -135,12 +135,12 @@ docker-compose down -v --rmi all
 
 *Nota bene*: make sure to announce the downtime in the [Web App Status](https://github.com/orgs/mite-standard/discussions/5) thread.
 
-##### 1. Save existing dumps
+##### 1. Save existing dumps (optional)
+Preserves links to any open `mite_data` PRs on GitHub
+
 ```commandline
 docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .
 ```
-
-optional; preserves open `mite_data` PR previews
 
 ##### 2. Toggle maintenance mode and stop the `mite_web` application 
 

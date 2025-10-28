@@ -395,9 +395,8 @@ class ProcessingHelper(BaseModel):
             )
             return
         else:
-            shutil.move(src, trgt)
+            shutil.copy(src, trgt)
             current_app.logger.info(f"{self.dump_name}: Registered in 'open_prs'.")
-            src = trgt
 
         if current_app.config.get("ONLINE") == "False":
             current_app.logger.warning(
@@ -533,7 +532,7 @@ Submission ID: {branch}
             current_app.logger.info(f"Created PR for file '{self.dump_name}'")
 
 
-@bp.route("/submission/")
+@bp.route("/submission/", methods=["GET"])
 def submission() -> str:
     """Render the submission page of mite_web and populate it with open PRs
 
@@ -541,7 +540,10 @@ def submission() -> str:
         The submission.html page as string.
     """
     pending = []
+    open_prs_names = {p.name for p in current_app.config.get("OPEN_PRS").iterdir()}
     for f in current_app.config.get("DATA_DUMPS").iterdir():
+        if f.name in open_prs_names:
+            continue
         with open(f) as infile:
             data = json.load(infile)
         if not data.get("accession"):
