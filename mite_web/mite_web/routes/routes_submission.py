@@ -395,8 +395,9 @@ class ProcessingHelper(BaseModel):
             )
             return
         else:
-            shutil.copy(src, trgt)
+            shutil.move(src, trgt)
             current_app.logger.info(f"{self.dump_name}: Registered in 'open_prs'.")
+            src = trgt
 
         if current_app.config.get("ONLINE") == "False":
             current_app.logger.warning(
@@ -539,11 +540,30 @@ def submission() -> str:
     Returns:
         The submission.html page as string.
     """
-    entries = []
+    pending = []
+    for f in current_app.config.get("DATA_DUMPS").iterdir():
+        with open(f) as infile:
+            data = json.load(infile)
+        if not data.get("accession"):
+            continue
+        pending.append(
+            {
+                "accession": data["accession"]
+                if data["accession"] != "MITE9999999"
+                else "New entry",
+                "name": data.get("enzyme", {}).get("name", "N/A"),
+                "description": data.get("enzyme", {}).get(
+                    "description", "No description available"
+                ),
+                "uuid": f.stem,
+            }
+        )
+
+    open_prs = []
     for f in current_app.config.get("OPEN_PRS").iterdir():
         with open(f) as infile:
             data = json.load(infile)
-        entries.append(
+        open_prs.append(
             {
                 "accession": data["accession"]
                 if data["accession"] != "MITE9999999"
@@ -552,12 +572,15 @@ def submission() -> str:
                 "description": data.get("enzyme", {}).get(
                     "description", "No description available"
                 ),
+                "submitter": data["changelog"][-1]["contributors"][0],
+                "comment": data["changelog"][-1]["comment"],
+                "date": data["changelog"][-1]["date"],
                 "uuid": f.stem,
                 "link_gh": f"https://github.com/mite-standard/mite_data/pulls?q=is%3Apr+is%3Aopen+{f.stem}",
             }
         )
 
-    return render_template("submission.html", entries=entries)
+    return render_template("submission.html", open_prs=open_prs, pending=pending)
 
 
 @bp.route("/submission/<var>/<role>", methods=["GET", "POST"])

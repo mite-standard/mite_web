@@ -73,11 +73,13 @@ This work was supported by the Netherlands Organization for Scientific Research 
 
 **Nota bene: since version `1.5.0`, development is only possible using the docker-container**
 
+**Nota bene: regularly update `uv.lock` using `uv lock --upgrade`**
+
 ### Development build
 
 - Download or clone this [repository](https://github.com/mite-standard/mite_web)
 - Add the `.env` file as indicated below (with at least the **mandatory** params)
-- Run the data preparation script from inside the `mite_web` folder using `uv sync && uv run python mite_web/prepare_mite_data.py`.
+- Populate the app by changing into `mite_web` and running `uv run python mite_web/prepare_mite_data.py` (if applicable, remove `.venv`, `data` and `static/img` dirs)
 - Build the docker image using `docker-compose build`. This will mount the `mite_web` directory for more convenient file editing (no need to rebuild every time).
 - Start the docker image with `docker-compose up -d`. The image will be available at http://127.0.0.1:1340/.
 - Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container with `docker-compose stop && docker-compose up` (`gunicorn` does not support reloading on change with the current build)

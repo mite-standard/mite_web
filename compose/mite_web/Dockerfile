@@ -10,7 +10,6 @@ RUN apt-get update && apt-get upgrade -y && \
     libxtst6 \
     netcat \
     ncbi-blast+ \
-    pymol \
     wget && \
     rm -rf /var/lib/apt/lists/*
 
@@ -46,10 +45,6 @@ COPY ./mite_web .
 
 # Populate the app with data
 RUN uv run python3.12 mite_web/prepare_mite_data.py
-
-# Create the enzyme images
-RUN chmod +x ./mite_web/run_pymol.sh
-RUN ./mite_web/run_pymol.sh
 
 EXPOSE 8004
 

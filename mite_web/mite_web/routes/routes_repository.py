@@ -542,11 +542,6 @@ def repository(mite_acc: str) -> str:
     Returns:
         The mite entry using the entry.html page as string.
     """
-
-    def count_entries() -> int:
-        dirpath = Path(__file__).parent.parent.joinpath("data/data")
-        return sum(1 for entry in os.scandir(dirpath) if entry.is_file())
-
     src = current_app.config["DATA_HTML"].joinpath(f"{mite_acc}.json")
 
     if not src.exists():
@@ -559,14 +554,21 @@ def repository(mite_acc: str) -> str:
     ret_acc = f"MITE{str(acc_int - 1).zfill(7)}"
     fwd_acc = f"MITE{str(acc_int + 1).zfill(7)}"
 
-    max_entry_reached = True if count_entries() == acc_int else False
+    previous_exists = False
+    if current_app.config["DATA_HTML"].joinpath(f"{ret_acc}.json").exists():
+        previous_exists = True
+
+    next_exists = False
+    if current_app.config["DATA_HTML"].joinpath(f"{fwd_acc}.json").exists():
+        next_exists = True
 
     return render_template(
         "entry.html",
         data=data,
         ret_acc=ret_acc,
         fwd_acc=fwd_acc,
-        max_entry_reached=max_entry_reached,
+        previous_exists=previous_exists,
+        next_exists=next_exists,
     )
 
 

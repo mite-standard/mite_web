@@ -2,15 +2,32 @@
 
 {% block content %}
 <div class="container mt-5 bd-gutter">
-    <div class="row my-3">
+    <div class="row my-4">
         <div class="col-auto">
             <h1 class="fw-semibold lh-2">Submission Portal</h1>
         </div>
     </div>
-    <div class="row my-3">
+    <div class="row my-4">
         <div class="col-auto">
-            <h2 class="fw-semibold lh-2">Pending submissions</h2>
-            <p class="lead lh-2">All submissions are tracked via the <a target="_blank" class="custom-link" href="https://github.com/mite-standard/mite_data/pulls">MITE Data GitHub webpage.</a></p>
+            <h3 class="fw-semibold lh-2">Submit a new entry</h3>
+        </div>
+    </div>
+  <div class="row mb-3 d-flex align-items-center">
+    <div class="col-auto text-center">
+      <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission_data', var='new', role='contributor') }}">Prepare a new Entry</a></div>
+    </div>
+    <div class="col-6">
+      <h6 class="fw-semibold lh-2">Don't know where to start?</h6>
+      <p class="mb-0">
+        For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.
+        How about creating a new entry from one of the publications in the <a target="_blank" class="custom-link" href="https://docs.google.com/spreadsheets/d/1LlBKYoCEwuXa2GE-jD5aYYLyEKL9FUBMU4mExyq8Ve4/edit?usp=sharing"><b>MITE paper collection?</b></a>
+      </p>
+    </div>
+  </div>
+    <div class="row my-4">
+        <div class="col-auto">
+            <h3 class="fw-semibold lh-2">Submitted for review</h3>
+            <p class="mb-0">Entries submitted for peer review.</p>
         </div>
     </div>
     <table class="my-3 table table-striped table-hover">
@@ -19,33 +36,55 @@
               <th>MITE Accession</th>
               <th>Name</th>
               <th>Description</th>
+              <th>Submitter</th>
+              <th>Comment</th>
+              <th>Date</th>
               <th>GitHub Link</th>
             </tr>
         </thead>
         <tbody class="align-middle">
-        {% for row in entries %}
+        {% for row in open_prs %}
           <tr>
-              <td><a class="custom-link" target="_blank" href="{{ url_for('routes.submission_preview', var=row['uuid'], role='contributor') }}">{{ row['accession'] }}</a></td>
+              <td>{{ row['accession'] }}</td>
               <td>{{ row["name"] }}</td>
               <td>{{ row["description"] }}</td>
+                {% if row["submitter"] == "AAAAAAAAAAAAAAAAAAAAAAAA" %}
+                <td>Anonymous MITE contributor</td>
+                {% else %}
+                <td><a target="_blank" class="custom-link" href="https://orcid.org/{{ row['submitter'] }}">{{ row["submitter"] }}</a></td>
+                {% endif %}
+              <td>{{ row["comment"] }}</td>
+              <td>{{ row["date"] }}</td>
               <td><a class="custom-link" target="_blank" href="{{ row['link_gh'] }}">{{ row['uuid'] }}</a></td>
           </tr>
         {% endfor %}
         </tbody>
     </table>
-    <div class="row my-5">
+    <div class="row my-4">
         <div class="col-auto">
-            <h2 class="fw-semibold lh-2">Submit a new entry</h2>
-            <p class="lead lh-2">
-                Don't know where to start? How about creating a new entry from one of the publications in the <a target="_blank" class="custom-link" href="https://docs.google.com/spreadsheets/d/1LlBKYoCEwuXa2GE-jD5aYYLyEKL9FUBMU4mExyq8Ve4/edit?usp=sharing">MITE paper collection?</a>
-            </p>
+            <h3 class="fw-semibold lh-2">Pending entries</h3>
+            <p class="mb-0">Entries under preparation.</p>
         </div>
     </div>
-    <div class="row my-3">
-        <div class="col-auto mx-auto d-flex flex-column justify-content-center text-center">
-            <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission_data', var='new', role='contributor') }}">Submit a new Entry</a></div>
-            <h6 class="my-3">For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('routes.tutorial') }}"><b>Tutorial page</b></a>.</h6>
-        </div>
-    </div>
+    <table class="my-3 table table-striped table-hover">
+        <thead>
+            <tr>
+              <th>MITE Accession</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>UUID</th>
+            </tr>
+        </thead>
+        <tbody class="align-middle">
+        {% for row in open_prs %}
+          <tr>
+              <td>{{ row['accession'] }}</td>
+              <td>{{ row["name"] }}</td>
+              <td>{{ row["description"] }}</td>
+              <td>{{ row['uuid'] }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
