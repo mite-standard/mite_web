@@ -14,7 +14,10 @@
     </div>
   <div class="row mb-3 d-flex align-items-center">
     <div class="col-auto text-center">
-      <div><a class="btn btn-lg btn-primary fw-semibold" href="{{ url_for('routes.submission_data', var='new', role='contributor') }}">Prepare a new Entry</a></div>
+      <form id="newSubmission" method="post" action="{{ url_for('routes.submission_data', var='new', role='contributor') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-lg btn-primary fw-semibold" type="submit">Prepare a new Entry</button>
+      </form>
     </div>
     <div class="col-6">
       <h6 class="fw-semibold lh-2">Don't know where to start?</h6>
