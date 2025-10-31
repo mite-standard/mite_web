@@ -130,6 +130,12 @@
     {% endif %}
 </div>
 <script>
+function removeField(button) {
+    const targetDiv = button.closest('.reaction-field');
+    if (targetDiv) {
+        targetDiv.remove();
+    }
+}
 function addField() {
   const container = document.getElementById("reaction-fields");
   const fieldGroup = document.createElement("div");
@@ -154,7 +160,6 @@ function addField() {
   `;
   container.appendChild(fieldGroup);
 }
-
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
