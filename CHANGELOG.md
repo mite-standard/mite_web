@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
-- Changed "Edit Entry" from `GET` to `POST` to prevent bots creating `.json` dumps
+- Changed routing from `GET` to `POST` to prevent `GET` induced changes in state
 - Fixed failing "delete" on in silico synthesis page
 
 ## [1.7.1] 28-10-2025
