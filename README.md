@@ -175,7 +175,7 @@ docker exec mite_web-nginx-1 nginx -s reload
 ##### 6. Transfer existing dumps
 
 ```commandline
-docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web && docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web/open_prs
+docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web && docker cp ./dumps/. mite_web-mite_web-1:/mite_web/mite_web/open_prs
 ```
 
 ##### 7. Perform a test submission
