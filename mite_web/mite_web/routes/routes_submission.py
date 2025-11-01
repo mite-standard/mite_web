@@ -585,7 +585,7 @@ def submission() -> str:
     return render_template("submission.html", open_prs=open_prs, pending=pending)
 
 
-@bp.route("/submission/<var>/<role>", methods=["GET", "POST"])
+@bp.route("/submission/<var>/<role>", methods=["POST"])
 def submission_data(var: str, role: str) -> str | Response:
     """Initiate new submission and render form page
 
@@ -596,6 +596,25 @@ def submission_data(var: str, role: str) -> str | Response:
     Returns:
         Form page or redirect to 'entry_not_found' or 'retired' pages
     """
+
+    def dump_new(variable: uuid.UUID) -> None:
+        dummy_data = {
+            "changelog": [],
+            "enzyme": {"references": ["doi:"]},
+            "reactions": [
+                {
+                    "evidence": {"evidenceCode": [], "references": ["doi:"]},
+                    "reactions": [{"products": [""]}],
+                }
+            ],
+        }
+        with open(
+            current_app.config["DATA_DUMPS"].joinpath(f"{variable}.json"),
+            "w",
+            encoding="utf-8",
+        ) as handle:
+            handle.write(json.dumps(dummy_data, indent=4, ensure_ascii=False))
+
     if var.startswith("MITE"):
         src = current_app.config["DATA_JSON"].joinpath(f"{var}.json")
         if not src.exists():
@@ -614,28 +633,12 @@ def submission_data(var: str, role: str) -> str | Response:
         ) as h:
             h.write(json.dumps(data, indent=4, ensure_ascii=False))
 
-    elif var == "new":
-        data = {
-            "changelog": [],
-            "enzyme": {"references": ["doi:"]},
-            "reactions": [
-                {
-                    "evidence": {"evidenceCode": [], "references": ["doi:"]},
-                    "reactions": [{"products": [""]}],
-                }
-            ],
-        }
+    elif (
+        var == "new"
+        or not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists()
+    ):
         var = uuid.uuid1()
-        with open(
-            current_app.config["DATA_DUMPS"].joinpath(f"{var}.json"),
-            "w",
-            encoding="utf-8",
-        ) as h:
-            h.write(json.dumps(data, indent=4, ensure_ascii=False))
-
-    else:
-        if not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists():
-            return redirect(url_for("routes.submission_data", var="new"))
+        dump_new(var)
 
     with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
         data = json.load(infile)
@@ -649,7 +652,7 @@ def submission_data(var: str, role: str) -> str | Response:
     )
 
 
-@bp.route("/submission/process/<var>/<role>", methods=["GET", "POST"])
+@bp.route("/submission/process/<var>/<role>", methods=["POST"])
 def submission_process(var: str, role: str) -> str | Response:
     """Process submitted data for preview
 
@@ -661,37 +664,35 @@ def submission_process(var: str, role: str) -> str | Response:
         If submission error, show rendered page; else redirect to preview page
     """
     if not current_app.config["DATA_DUMPS"].joinpath(f"{var}.json").exists():
-        return redirect(
-            url_for("routes.submission_data", var="new", role="contributor")
+        render_template("405.html")
+
+    user_input = request.form.to_dict(flat=False)
+    processing_helper = ProcessingHelper(dump_name=f"{var}.json")
+
+    with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
+        data = json.load(infile)
+
+    try:
+        processing_helper.parse_user_input(data=user_input, original_data=data)
+    except Exception as e:
+        return render_template("submission_failure.html", error=str(e))
+
+    try:
+        processing_helper.validate_user_input()
+        processing_helper.dump_json()
+        return redirect(url_for("routes.submission_preview", var=var, role=role))
+    except Exception as e:
+        processing_helper.dump_json()
+        current_app.logger.critical(
+            f"{var}: Error during validation of submission: {e!s}"
         )
-
-    if request.method == "POST":
-        user_input = request.form.to_dict(flat=False)
-        processing_helper = ProcessingHelper(dump_name=f"{var}.json")
-
-        with open(current_app.config["DATA_DUMPS"].joinpath(f"{var}.json")) as infile:
-            data = json.load(infile)
-
-        try:
-            processing_helper.parse_user_input(data=user_input, original_data=data)
-        except Exception as e:
-            return render_template("submission_failure.html", error=str(e))
-
-        try:
-            processing_helper.validate_user_input()
-            processing_helper.dump_json()
-            return redirect(url_for("routes.submission_preview", var=var, role=role))
-        except Exception as e:
-            processing_helper.dump_json()
-            current_app.logger.critical(
-                f"{var}: Error during validation of submission: {e!s}"
-            )
-            flash(str(e))
-            return redirect(url_for("routes.submission_data", var=var, role=role))
-
-    else:
-        return redirect(
-            url_for("routes.submission_data", var="new", role="contributor")
+        flash(str(e))
+        return render_template(
+            "submission_form.html",
+            data=processing_helper.data,
+            form_vals=current_app.config["FORM_VALS"],
+            var=var,
+            role=role,
         )
 
 
@@ -739,12 +740,6 @@ def submission_preview(var: str, role: str) -> str | Response:
             return render_template(
                 "submission_success.html", sub_id=Path(processing_helper.dump_name).stem
             )
-        elif user_input.get("contr-modify"):
-            return redirect(
-                url_for("routes.submission_data", var=var, role="contributor")
-            )
-        elif user_input.get("reviewer-modify"):
-            return redirect(url_for("routes.submission_data", var=var, role="reviewer"))
         elif user_input.get("reviewer-submit"):
             try:
                 processing_helper.add_reviewer_info(user_input)

@@ -53,4 +53,4 @@ while ! nc -z postgres 5432; do
 done
 echo "PostgreSQL started."
 
-uv run gunicorn --worker-class gevent --workers 1 "mite_web:create_app()" --bind "0.0.0.0:8004"
+uv run gunicorn --worker-class gevent --workers 4 "mite_web:create_app()" --bind "0.0.0.0:8004"

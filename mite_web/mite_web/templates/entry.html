@@ -15,7 +15,7 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="">
+            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="{{ url_for('routes.submission_data', var=submission_id, role='reviewer') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
@@ -87,7 +87,7 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="">
+            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="{{ url_for('routes.submission_data', var=submission_id, role='contributor') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
@@ -161,7 +161,10 @@
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <a href="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Modify entry</button></a>
+            <form id="Edit" method="post" action="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-secondary btn-sm" type="submit"><i class="bi bi-pen"></i> Modify entry</button>
+            </form>
         </div>
         <div class="col-auto">
             <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
