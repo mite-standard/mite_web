@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] 07-12-2025
+
+### Changed
+
+- Moved validations of MIBiG and RHEA IDs to `mite_data`
+
 ## [1.7.2] 01-11-2025
 
 ### Fixed

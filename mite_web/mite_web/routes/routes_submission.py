@@ -317,61 +317,6 @@ class ProcessingHelper(BaseModel):
 
         self.data = parser.to_json()
 
-    # TODO(MMZ 23.7): re-implement as webhook
-    def check_mibig(self: Self) -> None:
-        """Check if genpept ID can be found in mibig genes
-
-        Raises:
-            RuntimeError: genpept found in MIBiG protein accession list
-        """
-        genpept = self.data["enzyme"]["databaseIds"].get("genpept")
-
-        df = pd.read_csv(
-            Path(__file__).parent.parent.joinpath("data/mibig_proteins.csv")
-        )
-        matches = df[df["genpept"].str.contains(genpept)]
-
-        if len(matches) > 0:
-            raise RuntimeError(
-                f"NCBI GenPept Accession '{genpept}' is associated to MIBiG entry '{matches["mibig"].iloc[0]}', but was not added in this form. Please consider adding this cross-reference. This message will appear only once."
-            )
-
-    # TODO(MMZ 23.7): re-implement as webhook
-    def check_rhea(self: Self) -> None:
-        """Check if rhea ids can be found for uniprot and/or are already added
-
-        Raises:
-            RuntimeError: found non-overlapping ids between uniprot rheas and form
-        """
-        rhea = set()
-        form = set()
-
-        response = requests.get(
-            url="https://www.rhea-db.org/rhea?",
-            params={
-                "query": self.data["enzyme"]["databaseIds"].get("uniprot"),
-                "columns": "rhea-id",
-                "format": "tsv",
-                "limit": 10,
-            },
-            timeout=3,
-        )
-        if response.status_code == 200:
-            rhea = {i.removeprefix("RHEA:") for i in response.text.split()[2:]}
-
-        for reaction in self.data["reactions"]:
-            if val := reaction.get("databaseIds", {}).get("rhea"):
-                form.add(val)
-
-        if len(rhea) == 0:
-            return
-        else:
-            diff = form.intersection(rhea)
-            if len(diff) == 0:
-                raise RuntimeError(
-                    f"The UniProt ID '{self.data["enzyme"]["databaseIds"].get("uniprot")}' is described in Rhea, but its Rhea IDs were not detected in the submission form. Please consider adding this cross-reference. This message will appear only once. The detected Rhea IDs are: {rhea}."
-                )
-
     def dump_json(self: Self):
         """Dumps dict as JSON to disk"""
         with open(
