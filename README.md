@@ -1,6 +1,9 @@
 mite_web
 =========
 
+# NOTA BENE: FULL REFACTOR IS UNDERWAY. README IS LIKELY OUTDATED
+
+
 [![DOI](https://zenodo.org/badge/874302233.svg)](https://doi.org/10.5281/zenodo.14933931)
 
 Contents
