@@ -11,6 +11,7 @@ config.py
 .ruff-cache/
 .env
 mite_web/.venv
+data/
 .venv
 
 # Byte-compiled / optimized / DLL files

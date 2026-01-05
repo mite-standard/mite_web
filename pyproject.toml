@@ -22,7 +22,7 @@ classifiers = [
 dependencies = [
     "aiomysql~=0.3.2",
     "biopython~=1.84",
-    "fastapi~=0.128.0",
+    "fastapi[standard]~=0.128.0",
     "mite_extras",
     "pandas~=2.2",
     "psycopg2-binary",

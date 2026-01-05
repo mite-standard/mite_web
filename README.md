@@ -4,6 +4,27 @@ mite_web
 # NOTA BENE: FULL REFACTOR IS UNDERWAY. README IS LIKELY OUTDATED
 
 
+
+## Production build
+
+```commandline
+docker build --tag mite-web-<version>-mite-data-<version> .
+docker run -p 8000:8000 mite-web-<version>-mite-data-<version>
+```
+
+## Development build
+
+Will watch for changes and hot reload
+
+```commandline
+docker compose -f dev-compose.yml up --watch
+```
+
+
+
+## OLD SETUP BELOW
+
+
 [![DOI](https://zenodo.org/badge/874302233.svg)](https://doi.org/10.5281/zenodo.14933931)
 
 Contents
