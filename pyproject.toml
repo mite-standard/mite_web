@@ -4,41 +4,36 @@ version = "2.0.0"
 description = "MITE (Minimum Information about a Tailoring Enzyme) Web App"
 readme = "README.md"
 requires-python = ">=3.12.0,<3.13.0" # because of rdkit 2024 in mite_extras
+license-files = ["LICENSE"]
 authors = [
     { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
 ]
-license-files = { paths = ["LICENSE"] }
 keywords = [
     "cheminformatics",
     "genomics"
 ]
 classifiers = [
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Chemistry"
 ]
 
-[project.urls]
-"Repository" = "https://github.com/mite-standard/mite_web"
-
 dependencies = [
+    "aiomysql~=0.3.2",
     "biopython~=1.84",
-    "coloredlogs~=15.0",
-    "filelock~=3.20",
-    "Flask~=3.0",
-    "flask-restx~=1.3",
-    "Flask-SQLAlchemy~=3.1",
-    "Flask-WTF~=1.2",
-    "gevent~=24.2",
-    "gunicorn~=23.0",
+    "fastapi~=0.128.0",
     "mite_extras",
     "pandas~=2.2",
     "psycopg2-binary",
     "requests~=2.32",
     "rdkit==2024.3.6",
+    "sqlalchemy~=2.0",
+    "uvicorn~=0.40.0",
 ]
+
+[project.urls]
+"Repository" = "https://github.com/mite-standard/mite_web"
 
 # Below are settings for different tools we use for testing and linting
 
