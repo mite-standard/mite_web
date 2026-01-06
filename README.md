@@ -7,19 +7,36 @@ mite_web
 
 ## Production build
 
+Will automatically download a specified version of mite_data and bake it into the container
 ```commandline
-docker build --tag mite-web-<version>-mite-data-<version> .
-docker run -p 8000:8000 mite-web-<version>-mite-data-<version>
+docker build --build-arg DATA=<mite_data record> EXTRAS=<mite_web_extras record> --tag web-<version>-data-<version>-extras-<version> .
+docker run -p 8000:8000 web-<version>-data-<version>-extras-<version>
 ```
 
 ## Development build
 
-Will watch for changes and hot reload
+Will watch for changes in the complete base directory and hot reload
+If a data/ folder is present, it will override downloading data from mite_data
 
+**Nota bene: assumes that `uv` is installed.**
+
+1. Install dependencies with `uv`
 ```commandline
-docker compose -f dev-compose.yml up --watch
+uv sync
 ```
 
+2. Run script to download data from Zenodo.
+```commandline
+uv run python scripts/prepare_data.py <mite_data record ID> <mite_web_extras record ID>
+```
+This data is considered dummy data for dev purposes only and will override data baked in during prod builds.
+
+3. Run docker compose
+```commandline
+docker compose -f dev-compose.yml build
+docker compose -f dev-compose.yml up --watch
+```
+Will watch base directory and reload on changes
 
 
 ## OLD SETUP BELOW

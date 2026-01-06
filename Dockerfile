@@ -10,14 +10,30 @@ ENV UV_PYTHON_INSTALL_DIR=/python UV_PYTHON_PREFERENCE=only-managed
 # Install Python before the project for caching
 RUN uv python install 3.12
 
+# Download and install dependencies
 WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project
+
+# Install project
 COPY . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
+
+# Download data to be baked in if no data present
+RUN set -eux; \
+    if [ -d "data" ]; then \
+        echo "Using existing data directory - skip download from Zenodo"; \
+    elif [ -n "$DATA" ] && [ -n "$EXTRAS" ]; then \
+        echo "Downloading data from Zenodo records $DATA and $EXTRAS"; \
+        python scripts/prepare_mite_data.py "$DATA" "$EXTRAS" ; \
+    else \
+        echo "No data directory found and no $DATA and $EXTRAS provided"; \
+        echo "   Either populate ./data or pass --build-arg $DATA=..." "$EXTRAS"; \
+        exit 1; \
+    fi
 
 FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive

@@ -1,16 +1,19 @@
-from typing import Union
+import os
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+from app.api.utils import load_json
+
+DATA_DIR = Path(os.environ.get("DATA_DIR", "/app/data"))
 
 app = FastAPI()
+app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
 
 
 @app.get("/")
 def read_root():
-    return {"Hello": "Wörld"}
+    version = load_json(DATA_DIR / "version_mite_data.json")
 
-
-@app.get("/item/{item_id}")
-def item(item_id: int, q: str | None):
-    """Returns item information"""
-    return {"name": "Banana", "item_id": item_id, "opt": q}
+    return {"mite_data": version["version_mite_data"]}

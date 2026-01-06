@@ -1,8 +1,6 @@
-"""Populates the app with data from mite_data
+"""Utility functions
 
-This script runs as part of the Dockerfile during container-building.
-
-Copyright (c) 2024-present Mitja Maximilian Zdouc, PhD
+Copyright (c) 2026-present Mitja Maximilian Zdouc, PhD
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,31 +21,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import logging
-import sys
-
-import coloredlogs
-
-from mite_web.prep_data.download_manager import DownloadManager
-
-logger = logging.getLogger("prep_data")
-logger.setLevel("DEBUG")
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setFormatter(
-    coloredlogs.ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-)
-logger.addHandler(console_handler)
+import json
+from pathlib import Path
 
 
-def main():
-    """Prepares mite_data for use in mite_web"""
-    logger.info("Started 'mite_web' data preparation.")
-
-    download_manager = DownloadManager()
-    download_manager.run()
-
-    logger.info("Completed 'mite_web' data preparation.")
-
-
-if __name__ == "__main__":
-    main()
+def load_json(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)

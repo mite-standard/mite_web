@@ -1,3 +1,4 @@
+# Inspired by https://github.com/astral-sh/uv-docker-example/blob/main/compose.yml
 services:
   app:
     # Build the image from the Dockerfile in the current directory
@@ -14,6 +15,7 @@ services:
     environment:
       - UV_NO_DEV=0
 
+    # Override production command with dev
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
     develop:
