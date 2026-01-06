@@ -76,7 +76,7 @@ class RecordManager(BaseModel):
         logger.info("RecordManager: Start mite_data download")
 
         rsps_meta = requests.get(
-            f"https://zenodo.org/api/records/{self.r_data}", timeout=10
+            f"https://zenodo.org/api/records/{self.r_data}", timeout=12.1
         )
         if rsps_meta.status_code != 200:
             raise RuntimeError(
@@ -88,7 +88,7 @@ class RecordManager(BaseModel):
 
         time.sleep(5)
 
-        rsps_data = requests.get(files_url, timeout=30)
+        rsps_data = requests.get(files_url, timeout=36.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_data' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"
@@ -111,7 +111,7 @@ class RecordManager(BaseModel):
         logger.info("RecordManager: Start mite_web_extras download")
 
         rsps_meta = requests.get(
-            f"https://zenodo.org/api/records/{self.r_extras}", timeout=10
+            f"https://zenodo.org/api/records/{self.r_extras}", timeout=12.1
         )
         if rsps_meta.status_code != 200:
             raise RuntimeError(
@@ -122,7 +122,7 @@ class RecordManager(BaseModel):
 
         time.sleep(5)
 
-        rsps_data = requests.get(files_url, timeout=30)
+        rsps_data = requests.get(files_url, timeout=36.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_web_extras' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"

@@ -1,9 +1,10 @@
+backup_data/
 .git/
 .github/
 .idea/
-.venv/
 mite_web/.venv/
 tests/
 .pre-commit-config.yaml
 .pytest_cache/
 .ruff_cache/
+.venv/

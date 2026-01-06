@@ -23,12 +23,14 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
 # Download data to be baked in if no data present
+ARG DATA=""
+ARG EXTRAS=""
 RUN set -eux; \
     if [ -d "data" ]; then \
         echo "Using existing data directory - skip download from Zenodo"; \
     elif [ -n "$DATA" ] && [ -n "$EXTRAS" ]; then \
         echo "Downloading data from Zenodo records $DATA and $EXTRAS"; \
-        python scripts/prepare_mite_data.py "$DATA" "$EXTRAS" ; \
+        uv run python scripts/prepare_data.py "$DATA" "$EXTRAS" ; \
     else \
         echo "No data directory found and no $DATA and $EXTRAS provided"; \
         echo "   Either populate ./data or pass --build-arg $DATA=..." "$EXTRAS"; \

@@ -7,16 +7,21 @@ mite_web
 
 ## Production build
 
-Will automatically download a specified version of mite_data and bake it into the container
+TL;DR: Intended for PAAS. Supports automated building with baked-in date
+
+0. Remove `data/` directory, if present
+
+1. Build (optionally, run) the container
 ```commandline
-docker build --build-arg DATA=<mite_data record> EXTRAS=<mite_web_extras record> --tag web-<version>-data-<version>-extras-<version> .
+docker build --build-arg DATA=<mite_data record> --build-arg EXTRAS=<mite_web_extras record> --tag web-<version>-data-<version>-extras-<version> .
 docker run -p 8000:8000 web-<version>-data-<version>-extras-<version>
 ```
+Bakes specified versions of `mite_data` and `mite_web_extras` in the container. 
+
 
 ## Development build
 
-Will watch for changes in the complete base directory and hot reload
-If a data/ folder is present, it will override downloading data from mite_data
+TL;DR: Hot reloading/watch, data injection, reads from .env
 
 **Nota bene: assumes that `uv` is installed.**
 
