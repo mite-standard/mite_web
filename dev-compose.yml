@@ -16,7 +16,7 @@ services:
       - UV_NO_DEV=0
 
     # Override production command with dev
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --reload --reload-include *.html --host 0.0.0.0 --port 8000
 
     develop:
       # Create a `watch` configuration to update the app

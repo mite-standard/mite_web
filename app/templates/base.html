@@ -10,16 +10,16 @@
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css">
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css">
-      <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
-      <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+      <link rel="shortcut icon" href="{{ url_for('static', path='images/favicon.ico') }}">
+      <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
   </head>
   <body class="d-flex flex-column vh-100 {% if preview %}preview-mode{% endif %}">
     {% block header%}
       <header>
         <nav class="navbar sticky-top navbar-expand-lg navbar-dark navbar-custom p-1">
           <div class="container-fluid px-5 navbar-font-size">
-            <a class="navbar-brand" href="{{ url_for('routes.index') }}">
-              <img src="{{ url_for('static', filename='images/mite_logo_alt.svg') }}"
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', path='images/mite_logo_alt.svg') }}"
                    alt="MITE alt logo" width="150" height="40">
             </a>
             <button class="navbar-toggler" type="button"
@@ -35,35 +35,36 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repository</a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{{ url_for('routes.overview') }}">Overview - Active Entries</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.overview_retired') }}">Overview - Retired Entries</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.submission') }}">Submit an Entry</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('overview') }}">Overview - Active Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('overview_retired') }}">Overview - Retired Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('submission') }}">Submit an Entry</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{{ url_for('routes.tutorial') }}">Tutorial</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.troubleshooting') }}">Troubleshooting</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.faqs') }}">Frequently Asked Questions</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('doc') }}">API Documentation</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('tutorial') }}">Tutorial</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('troubleshooting') }}">Troubleshooting</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('faqs') }}">Frequently Asked Questions</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('termsofuse') }}">Terms of Use</a></li>
+                      <li><a class="dropdown-item" href="{{ openapi_url }}">API Documentation (OpenAPI)</a></li>
+                      <li><a class="dropdown-item" href="{{ redoc_url }}">API Documentation (Redoc)</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Utilities</a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{{ url_for('routes.downloads') }}">Downloads</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.pathway') }}">In Silico Pathway Simulation</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.peptidesmiles') }}">Peptide SMILES Converter</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('routes.canonsmiles') }}">Canonicalize SMILES</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('downloads') }}">Downloads</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('pathway') }}">In Silico Pathway Simulation</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('peptidesmiles') }}">Peptide SMILES Converter</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('canonsmiles') }}">Canonicalize SMILES</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('routes.about') }}">About</a>
+                  <a class="nav-link" href="{{ url_for('about') }}">About</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('routes.contact') }}">Contact</a>
+                  <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
                 </li>
               </ul>
               <ul class="navbar-nav flex-row ml-auto">
@@ -96,7 +97,7 @@
               <div class="mt-auto px-5">
                 <h6 class="text-uppercase fw-bold mb-1"><a rel="mite_web repository" href="https://github.com/mite-standard/mite_web" class="custom-link" target="_blank">MITE Website</a> v{{version_mite_web}} hosting <a rel="mite_data repository" href="https://github.com/mite-standard/mite_data" class="custom-link" target="_blank">MITE Data</a> v{{version_mite_data}}</h6>
                 <p class="mb-0">Please submit bug reports through the <a rel="mite_web issues" href="https://github.com/mite-standard/mite_web/issues" class="custom-link" target="_blank">Issues tracker</a>. For feature requests and general discussions, feel free to open a <a rel="mite_web discussion" href="https://github.com/orgs/mite-standard/discussions" class="custom-link" target="_blank">new discussion</a> on the MITE Discussions board.</p>
-                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('routes.contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.1093/nar/gkaf969" class="custom-link" target="_blank">cite us.</a></p>
+                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.1093/nar/gkaf969" class="custom-link" target="_blank">cite us.</a></p>
                 <div>
                   <a class="nav-link" href="https://github.com/mite-standard" target="_blank" rel="noopener" aria-label="GitHub MITE-Standard Organisation Page"><i class="bi bi-github"></i></a>
                 </div>
@@ -112,7 +113,7 @@
       <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
 	    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"></script>
-      <script type="text/javascript" src="{{ url_for('static', filename='js/dark_theme.js') }}" defer></script>
+      <script type="text/javascript" src="{{ url_for('static', path='js/dark_theme.js') }}" defer></script>
     {% endblock %}
   </body>
 </html>

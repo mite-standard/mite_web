@@ -38,7 +38,6 @@ This data is considered dummy data for dev purposes only and will override data 
 
 3. Run docker compose
 ```commandline
-docker compose -f dev-compose.yml build
 docker compose -f dev-compose.yml up --watch
 ```
 Will watch base directory and reload on changes

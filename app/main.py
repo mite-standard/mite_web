@@ -1,19 +1,22 @@
 import os
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
-from app.api.utils import load_json
+from app.config.templates import configure_templates
+from app.web import pages
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "/app/data"))
 
 app = FastAPI()
+
 app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
+app.mount("/static", StaticFiles(directory="/app/app/static"), name="static")
+
+configure_templates(app)
+
+app.include_router(pages.router)
 
 
-@app.get("/")
-def read_root():
-    version = load_json(DATA_DIR / "version_mite_data.json")
-
-    return {"mite_data": version["version_mite_data"]}
+# TODO: implement on startup database connection, github authentication, S3 connection;
