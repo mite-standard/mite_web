@@ -1,10 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="fw-semibold lh-2">Frequently asked questions</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Question</th>
+                        <th scope="col">Answer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Where can I learn more about the reaction SMARTS format used in MITE?</td>
+                        <td>MITE uses two resources as references: the <a class="custom-link" href="https://www.daylight.com/dayhtml/doc/theory/theory.smarts.html" target="_blank" aria-label="Daylight SMARTS website">Daylight SMARTS reference</a> and the <a class="custom-link" href="https://www.rdkit.org/docs/RDKit_Book.html#reaction-smarts" target="_blank" aria-label="RDKit Book Chemical Reaction Handling">RDKit book</a>. As a rule of thumb, MITE accepts reaction SMARTS that RDKit also accepts, <b>except</b> CXSMARTS.</td>
+                    </tr>
+                    <tr>
+                        <td>I want to draw a reaction where the substrate is tethered to a coenzyme (e.g. via a thioesther to coenzyme A or 4'-phosphopantetheine, in the scope of an acyl carrier or peptidyl carrier protein). Do I need to draw the co-factor too?</td>
+                        <td>Yes, please also add any covalently bound co-factor/prosthetic groups to prevent ambiguity regarding the substrate specificity of the tailoring enzyme, and add a description. Instead of drawing the cofactor yourself, consider copying the SMILES from e.g. PubChem. Do not draw any of the peptidic structure of the carrier protein.</td>
+                    </tr>
+                    <tr>
+                        <td>In the reaction, there is an essential non-covalent co-factor. How can I depict this in the reaction SMARTS?</td>
+                        <td>Please specify non-covalent co-factors in the respective field. Do not include them in the reaction SMARTS.</td>
+                    </tr>
+                     <tr>
+                        <td>Should I specify stoichiometrically balanced reactions?</td>
+                        <td>No, balanced reactions are not required. While MITE can accept balanced reactions, its aim is to generalize reactions as much as possible. For balanced reaction, please consider submitting entries to the Rhea database instead.</td>
+                    </tr>
+                    <tr>
+                        <td>The tailoring enzyme that I want to describe requires another, non-tailoring enzyme to function properly. How can I submit the latter to MITE?</td>
+                        <td>MITE only describes tailoring enzymes, and therefore, the latter enzyme is out of scope and does not receive an entry on its own (e.g. a CoA-ligase that activates the substrate by loading it on coenzyme A). Instead, such enzymes can be added as "Auxiliary Enzymes" to the enzyme that does the actual tailoring.</td>
+                    </tr>
+                    <tr>
+                        <td>My reaction affects a long peptide. Do I need to draw the complete peptide?</td>
+                        <td>Yes, the full peptide must be provided, but we offer a <a class="custom-link" href="{{ url_for('peptidesmiles') }}">convenient tool</a> to generate a SMILES string from an amino acid sequence.</td>
+                    </tr>
+                    <tr>
+                        <td>I am drawing a reaction where the substrate/product contains a substructure which can be drawn in different resonance forms. Which structure should I describe?</td>
+                        <td>Describing the delocalization of electrons in a chemical structure (e.g. an 1,3-diketone) is challenging. While such resonance forms can be described by specifying multiple possible reaction SMARTS (or SMILES), they should be covered only if they are the reaction center and essential for the reaction to take place.</td>
+                    </tr>
+                    <tr>
+                        <td>How is my contribution credited? How can I become a co-author on the next MITE publication?</td>
+                        <td>During data submission, it is possible to specify an ORCID, which is then displayed associated to the entry on the MITE website. For details on authorship criteria, please see the document on project <a class="custom-link" href="https://github.com/mite-standard/.github/blob/main/GOVERNANCE.md" target="_blank" aria-label="MITE-Standard Governance">Governance</a>.</td>
+                    </tr>
+                    <tr>
+                        <td>Does MITE accept intramolecular reactions?</td>
+                        <td>Yes, MITE also accepts intramolecular reactions, with some conditions: They must be i) intramolecular on both the substrate and the product side [e.g. '(a.b)>>(a.b)']; ii) 'normal' and intramolecular reactions are not allowed to be mixed.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
