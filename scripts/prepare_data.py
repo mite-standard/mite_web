@@ -88,7 +88,7 @@ class RecordManager(BaseModel):
 
         time.sleep(5)
 
-        rsps_data = requests.get(files_url, timeout=36.1)
+        rsps_data = requests.get(files_url, timeout=60.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_data' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"
@@ -122,7 +122,7 @@ class RecordManager(BaseModel):
 
         time.sleep(5)
 
-        rsps_data = requests.get(files_url, timeout=36.1)
+        rsps_data = requests.get(files_url, timeout=60.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_web_extras' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"
