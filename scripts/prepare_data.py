@@ -27,15 +27,24 @@ import os
 import shutil
 import sys
 import time
+from importlib import metadata
 from pathlib import Path
+from typing import Any
 
 import requests
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 logger.setLevel("DEBUG")
 console_handler = logging.StreamHandler(sys.stdout)
 logger.addHandler(console_handler)
+
+
+def get_version() -> str:
+    try:
+        return metadata.version("mite_web")
+    except metadata.PackageNotFoundError:
+        return "0+unknown"
 
 
 class RecordManager(BaseModel):
@@ -45,11 +54,22 @@ class RecordManager(BaseModel):
         r_data: Record for mite_data zenodo
         r_extras: Record for mite_web_extras zenodo
         loc: data location
+        session: a Request Session to keep code DRY
     """
 
     r_data: str
     r_extras: str
-    loc: Path = Path(__file__).parent.parent.joinpath("data")
+    loc: Path = Field(
+        default_factory=lambda: Path(__file__).parent.parent.joinpath("data")
+    )
+    session: Any = Field(default_factory=requests.Session)
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.session.headers.setdefault(
+            "User-Agent",
+            f"mite_web/{get_version()} (https://github.com/mite-standard/mite_web)",
+        )
 
     def run(self) -> None:
         """Call methods for downloading and moving data"""
@@ -75,7 +95,7 @@ class RecordManager(BaseModel):
         """
         logger.info("RecordManager: Start mite_data download")
 
-        rsps_meta = requests.get(
+        rsps_meta = self.session.get(
             f"https://zenodo.org/api/records/{self.r_data}", timeout=12.1
         )
         if rsps_meta.status_code != 200:
@@ -86,9 +106,9 @@ class RecordManager(BaseModel):
         version = record_metadata["metadata"]["version"]
         files_url = record_metadata["files"][0]["links"]["self"]
 
-        time.sleep(5)
+        time.sleep(1)
 
-        rsps_data = requests.get(files_url, timeout=60.1)
+        rsps_data = self.session.get(files_url, timeout=60.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_data' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"
@@ -110,7 +130,7 @@ class RecordManager(BaseModel):
         """
         logger.info("RecordManager: Start mite_web_extras download")
 
-        rsps_meta = requests.get(
+        rsps_meta = self.session.get(
             f"https://zenodo.org/api/records/{self.r_extras}", timeout=12.1
         )
         if rsps_meta.status_code != 200:
@@ -120,9 +140,9 @@ class RecordManager(BaseModel):
         record_metadata = rsps_meta.json()
         files_url = record_metadata["files"][0]["links"]["self"]
 
-        time.sleep(5)
+        time.sleep(1)
 
-        rsps_data = requests.get(files_url, timeout=60.1)
+        rsps_data = self.session.get(files_url, timeout=60.1)
         if rsps_data.status_code != 200:
             raise RuntimeError(
                 f"Error downloading 'mite_web_extras' record: {rsps_data.status_code}. Reason: {rsps_data.reason}"

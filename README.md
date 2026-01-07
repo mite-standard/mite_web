@@ -21,7 +21,7 @@ Bakes specified versions of `mite_data` and `mite_web_extras` in the container.
 
 ## Development build
 
-TL;DR: Hot reloading/watch, data injection, reads from .env
+TL;DR: Hot reloading/watch, data injection, reads variables from .env
 
 **Nota bene: assumes that `uv` is installed.**
 
