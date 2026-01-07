@@ -46,8 +46,10 @@ async def contact(request: Request):
     return templates.TemplateResponse(request=request, name="contact.html")
 
 
-@router.get("/entry/{mite_id}", include_in_schema=False, response_class=HTMLResponse)
-async def entry(mite_id: str, request: Request):
+@router.get(
+    "/repository/{mite_id}", include_in_schema=False, response_class=HTMLResponse
+)
+async def repository(mite_id: str, request: Request):
     """Render the static entry pages"""
     try:
         model = MiteModel(mite_id=mite_id)

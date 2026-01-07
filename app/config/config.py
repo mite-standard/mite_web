@@ -1,12 +1,7 @@
-import re
 from pathlib import Path
-from re import Pattern
-from typing import ClassVar
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
-
-MITE_RE = re.compile(r"^MITE(\d{7})$")
 
 
 class Settings(BaseSettings):

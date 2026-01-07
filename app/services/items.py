@@ -1,9 +1,10 @@
+import re
 from pathlib import Path
 from typing import ClassVar
 
 from pydantic import BaseModel, computed_field, field_validator, model_validator
 
-from app.config.config import MITE_RE
+MITE_RE = re.compile(r"^MITE(\d{7})$")
 
 
 class MiteModel(BaseModel):
@@ -11,13 +12,13 @@ class MiteModel(BaseModel):
 
     Attributes:
         mite_id: mite accession number (=id)
-        data_dir: path to data json files
-        data_dir: path to html json files
+        _data_dir: path to data json files
+        _data_dir: path to html json files
     """
 
     mite_id: str
-    data_dir: ClassVar[Path] = Path("/app/data/data")
-    html_dir: ClassVar[Path] = Path("/app/data/html")
+    _data_dir: ClassVar[Path] = Path("/app/data/data")
+    _html_dir: ClassVar[Path] = Path("/app/data/html")
 
     @field_validator("mite_id")
     @classmethod
@@ -28,8 +29,8 @@ class MiteModel(BaseModel):
 
     @model_validator(mode="after")
     def check_exists(self):
-        if not self.data_dir.joinpath(f"{self.mite_id}.json").exists():
-            raise FileNotFoundError("MITE accession does not exist.")
+        if not self._data_dir.joinpath(f"{self.mite_id}.json").exists():
+            raise FileNotFoundError(f"MITE accession does not exist.")
         return self
 
     @property
@@ -50,7 +51,7 @@ class MiteModel(BaseModel):
         return f"MITE{self.mite_number + 1:07d}"
 
     def previous_exists(self) -> bool:
-        return self.data_dir.joinpath(f"{self.previous_id}.json").exists()
+        return self._data_dir.joinpath(f"{self.previous_id}.json").exists()
 
     def next_exists(self) -> bool:
-        return self.data_dir.joinpath(f"{self.next_id}.json").exists()
+        return self._data_dir.joinpath(f"{self.next_id}.json").exists()

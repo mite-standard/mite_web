@@ -31,6 +31,7 @@ dependencies = [
     "sqlalchemy~=2.0",
     "uvicorn~=0.40.0",
     "pydantic-settings~=2.12",
+    "pytest>=9.0.2",
 ]
 
 [project.urls]
@@ -79,4 +80,15 @@ ignore = [
     "SIM108",
     # Unnecessary `set` comprehension
     "C416"
+]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+pythonpath = [
+    "."
 ]
