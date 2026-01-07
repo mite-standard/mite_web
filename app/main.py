@@ -1,19 +1,15 @@
-import os
-from pathlib import Path
-
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
 from app.api.v1.pages import router_v1
+from app.config.config import settings
 from app.config.templates import configure_templates
 from app.web.pages import pages
 from app.web.views import views
 
-DATA_DIR = Path(os.environ.get("DATA_DIR", "/app/data"))
+app = FastAPI(title=settings.app_name)
 
-app = FastAPI()
-
-app.mount("/data", StaticFiles(directory=DATA_DIR), name="data")
+app.mount("/data", StaticFiles(directory=settings.data_dir), name="data")
 app.mount("/static", StaticFiles(directory="/app/app/static"), name="static")
 
 configure_templates(app)

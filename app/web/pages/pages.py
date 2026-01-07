@@ -1,7 +1,11 @@
+import os
+from pathlib import Path
+
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from app.config.templates import templates
+from app.utils.file_handling import load_json
 
 router = APIRouter(tags=["pages"])
 
@@ -39,3 +43,9 @@ async def about(request: Request):
 @router.get("/contact", include_in_schema=False, response_class=HTMLResponse)
 async def contact(request: Request):
     return templates.TemplateResponse(request=request, name="contact.html")
+
+
+@router.get("/entry/{mite_acc}", include_in_schema=False, response_class=HTMLResponse)
+async def entry(item: str, request: Request):
+    """Render the static entry pages"""
+    # TODO: implement loading after env settings have been set up properly
