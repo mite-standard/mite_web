@@ -15,13 +15,11 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="{{ url_for('routes.submission_data', var=submission_id, role='reviewer') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form id="form-reviewer-modify" method="post" enctype="multipart/form-data" action="url_for('index') }}">
                 <button id="reviewer-modify" name="reviewer-modify" value="reviewer-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
     </div>
-    {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="row justify-content-center">
         <div class="col-6">
@@ -45,9 +43,7 @@
         </div>
     </div>
     {% endif %}
-    {% endwith %}
     <form id="form-reviewer-submit" method="post" enctype="multipart/form-data" action="">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="row flex justify-content-center">
             <div class="col-6">
                 <div class="card card-body mb-2">
@@ -87,17 +83,15 @@
     </div>
     <div class="row mb-2 justify-content-center">
         <div class="col-auto">
-            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="{{ url_for('routes.submission_data', var=submission_id, role='contributor') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form id="form-contr-modify" method="post" enctype="multipart/form-data" action="{{ url_for('index') }}">
                 <button id="contr-modify" name="contr-modify" value="contr-modify" type="submit" class="btn btn-secondary btn-sm"><i class="bi bi-pen"></i> Edit data</button>
             </form>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier=submission_id) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
+            <a href="{{ url_for('index') }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
         </div>
     </div>
     <form id="form-contr-submit" method="post" enctype="multipart/form-data" action="">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="text" name="email_confirm" style="display: none" tabindex="-1" autocomplete="off">
         <div class="row flex justify-content-center">
             <div class="col-6">
@@ -118,7 +112,7 @@
                         <div class="col">
                             <div class="form-check">
                               <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
-                              <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('routes.termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
+                              <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('termsofuse') }}">Terms of Use</a>. If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
                             </div>
                         </div>
                     </div>
@@ -137,13 +131,13 @@
     </form>
     {% else %}
     <div class="row mb-2 text-center align-items-center ">
-        {% if previous_exists %}
+        {% if prev_exists %}
         <div class="col-auto text-start">
-            {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+            {{ macro.render_return(prev, url_for('entry', mite_id=prev)) }}
         </div>
         {% else %}
         <div class="col-auto text-start invisible">
-            {{ macro.render_return(ret_acc, url_for('routes.repository', mite_acc=ret_acc)) }}
+            {{ macro.render_return(prev, url_for('entry', mite_id=prev)) }}
         </div>
         {% endif %}
         <div class="col">
@@ -151,23 +145,22 @@
         </div>
         {% if next_exists %}
         <div class="col-auto text-end">
-            {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+            {{ macro.render_forward(next, url_for('entry', mite_id=next)) }}
         </div>
         {% else %}
         <div class="col-auto text-end invisible">
-            {{ macro.render_forward(fwd_acc, url_for('routes.repository', mite_acc=fwd_acc)) }}
+            {{ macro.render_forward(next, url_for('entry', mite_id=next)) }}
         </div>
         {% endif %}
     </div>
     <div class="row d-flex justify-content-center">
         <div class="col-auto">
-            <form id="Edit" method="post" action="{{ url_for('routes.submission_data', var=data.accession, role='contributor') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <form id="Edit" method="post" action="{{ url_for('index') }}">
                 <button class="btn btn-secondary btn-sm" type="submit"><i class="bi bi-pen"></i> Modify entry</button>
             </form>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('routes.download_identifier', identifier=data.accession) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
+            <a href="{{ url_for('index') }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i> Download entry</button></a>
         </div>
     </div>
     {% endif %}
@@ -177,9 +170,9 @@
     {% include 'active.html' %}
 {% endif %}
 </div>
-<script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/arrow_navigation.js') }}" defer></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/copy_clipboard.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/submission.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/arrow_navigation.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/copy_clipboard.js') }}" defer></script>
 {% if mode == "review" %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {

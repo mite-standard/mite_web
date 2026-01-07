@@ -5,7 +5,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
 from app.config.templates import templates
-from app.utils.file_handling import load_json
+from app.services.file_handling import load_json
+from app.services.items import MiteModel
 
 router = APIRouter(tags=["pages"])
 
@@ -45,7 +46,25 @@ async def contact(request: Request):
     return templates.TemplateResponse(request=request, name="contact.html")
 
 
-@router.get("/entry/{mite_acc}", include_in_schema=False, response_class=HTMLResponse)
-async def entry(item: str, request: Request):
+@router.get("/entry/{mite_id}", include_in_schema=False, response_class=HTMLResponse)
+async def entry(mite_id: str, request: Request):
     """Render the static entry pages"""
-    # TODO: implement loading after env settings have been set up properly
+    try:
+        model = MiteModel(mite_id=mite_id)
+        return templates.TemplateResponse(
+            request=request,
+            name="entry.html",
+            context={
+                "data": load_json(model.html_dir.joinpath(f"{model.mite_id}.json")),
+                "next": model.next_id,
+                "next_exists": model.next_exists(),
+                "prev": model.previous_id,
+                "prev_exists": model.previous_exists(),
+            },
+        )
+    except (FileNotFoundError, ValueError):
+        return templates.TemplateResponse(
+            request=request, name="entry_not_found.html", context={"mite_id": mite_id}
+        )
+
+    # TODO: implement testing

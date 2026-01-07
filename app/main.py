@@ -10,7 +10,7 @@ from app.web.views import views
 app = FastAPI(title=settings.app_name)
 
 app.mount("/data", StaticFiles(directory=settings.data_dir), name="data")
-app.mount("/static", StaticFiles(directory="/app/app/static"), name="static")
+app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
 
 configure_templates(app)
 
