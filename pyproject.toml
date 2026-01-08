@@ -79,9 +79,7 @@ ignore = [
     # if-else block
     "SIM108",
     # Unnecessary `set` comprehension
-    "C416",
-    # Error
-    "B904"
+    "C416"
 ]
 
 

@@ -7,6 +7,12 @@ from pydantic import BaseModel, computed_field, field_validator, model_validator
 MITE_RE = re.compile(r"^MITE(\d{7})$")
 
 
+class MiteListRequest(BaseModel):
+    """Models a list of MITE entries"""
+
+    ids: list[str]
+
+
 class MiteModel(BaseModel):
     """Model to interact with MITE entries of current release
 
