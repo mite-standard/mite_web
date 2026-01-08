@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request, staticfiles
 from fastapi_csrf_protect import CsrfProtect
 
@@ -5,13 +7,22 @@ from app.api.v1.pages import router_v1
 from app.core.config import settings
 from app.core.csrf import CsrfSettings
 from app.core.templates import configure_templates
-from app.database import Base, SessionLocal, engine
-from app.models.entries import Entries
+from app.db.database import Base, SessionLocal, engine
+from app.db.models import Entries
 from app.services.file_handling import load_json
 from app.web.pages import pages
 from app.web.views import overview, views
 
-app = FastAPI(title=settings.app_name)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("App starting up - DB ready")
+    yield
+    engine.dispose()
+    print("App shutting down - DB disposed")
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.mount("/data", staticfiles.StaticFiles(directory=settings.data_dir), name="data")
 app.mount(
@@ -33,8 +44,6 @@ app.include_router(overview.router)
 
 @app.on_event("startup")
 def on_startup():
-    Base.metadata.create_all(bind=engine)
-
     # TODO: replace with proper seeding
     db = SessionLocal()
     src = settings.data_dir.joinpath("data/MITE0000001.json")

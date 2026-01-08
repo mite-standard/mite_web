@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from app.core.templates import templates
-from app.crud.entries import get_entires
-from app.database import get_db
+from app.db.crud import get_entires
+from app.db.database import get_db
 
 router = APIRouter(tags=["views"])
 

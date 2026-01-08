@@ -36,7 +36,12 @@ uv run python scripts/prepare_data.py <mite_data record ID> <mite_web_extras rec
 ```
 This data is considered dummy data for dev purposes only and will override data baked in during prod builds.
 
-3. Run docker compose
+3. Run script to build database
+```commandline
+uv run python -m scripts.create_db
+```
+
+4Run docker compose
 ```commandline
 docker compose -f dev-compose.yml build
 docker compose -f dev-compose.yml up --watch

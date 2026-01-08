@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models.entries import Entries
+from app.db.models import Entries
 
 
 def get_entires(db: Session):

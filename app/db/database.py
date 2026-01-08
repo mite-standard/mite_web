@@ -5,15 +5,11 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.core.config import settings
 
 engine = create_engine(
-    f"sqlite:///{settings.data_dir.resolve()}app.db",
-    connect_args={"check_same_thread": False},
+    f"sqlite:///{settings.data_dir.resolve()}/app.db?mode=ro",
+    connect_args={"check_same_thread": False, "uri": True},
 )
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 def get_db():
@@ -22,3 +18,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+class Base(DeclarativeBase):
+    pass
