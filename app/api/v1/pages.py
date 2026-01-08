@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Path, status
+from fastapi import APIRouter, HTTPException, Path
 
 from app.services.file_handling import load_json
 from app.services.items import MiteListRequest, MiteModel
@@ -18,9 +18,18 @@ async def get_mite_entries(req: MiteListRequest):
         try:
             model = MiteModel(mite_id=mite_id)
             data.append(load_json(model.data_dir.joinpath(f"{model.mite_id}.json")))
+        except ValueError:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "Unprocessable Entity",
+                    "message": "MITE accession wrongly formatted.",
+                    "requested_path": f"{mite_id}",
+                },
+            ) from ValueError
         except FileNotFoundError:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=404,
                 detail={
                     "error": "File not found",
                     "message": "MITE accession number could not be found.",
