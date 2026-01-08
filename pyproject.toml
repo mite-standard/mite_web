@@ -78,7 +78,9 @@ ignore = [
     # if-else block
     "SIM108",
     # Unnecessary `set` comprehension
-    "C416"
+    "C416",
+    # Incompatible (?) with FastAPI
+    "B008"
 ]
 
 

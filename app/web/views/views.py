@@ -6,12 +6,6 @@ from app.core.templates import templates
 router = APIRouter(tags=["views"])
 
 
-@router.get("/overview", include_in_schema=False, response_class=HTMLResponse)
-async def overview(request: Request):
-    # TODO: Complete implementation
-    return templates.TemplateResponse(request=request, name="overview.html")
-
-
 @router.get("/overview_retired", include_in_schema=False, response_class=HTMLResponse)
 async def overview_retired(request: Request):
     # TODO: Complete implementation
