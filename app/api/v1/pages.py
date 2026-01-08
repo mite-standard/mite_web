@@ -48,7 +48,7 @@ async def get_mite_entry(
     mite_acc: str = Path(
         ...,
         pattern=r"^MITE\d{7}$",
-        example="MITE0000001",
+        examples="MITE0000001",
     ),
 ):
     """Return MITE entry as JSON"""

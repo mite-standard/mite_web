@@ -32,6 +32,7 @@ dependencies = [
     "uvicorn~=0.40.0",
     "pydantic-settings~=2.12",
     "pytest>=9.0.2",
+    "fastapi-csrf-protect>=1.0.7",
 ]
 
 [project.urls]
