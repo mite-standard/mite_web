@@ -133,11 +133,11 @@
     <div class="row mb-2 text-center align-items-center ">
         {% if prev_exists %}
         <div class="col-auto text-start">
-            {{ macro.render_return(prev, url_for('entry', mite_id=prev)) }}
+            {{ macro.render_return(prev, url_for('repository', mite_id=prev)) }}
         </div>
         {% else %}
         <div class="col-auto text-start invisible">
-            {{ macro.render_return(prev, url_for('entry', mite_id=prev)) }}
+            {{ macro.render_return(prev, url_for('repository', mite_id=prev)) }}
         </div>
         {% endif %}
         <div class="col">
@@ -145,11 +145,11 @@
         </div>
         {% if next_exists %}
         <div class="col-auto text-end">
-            {{ macro.render_forward(next, url_for('entry', mite_id=next)) }}
+            {{ macro.render_forward(next, url_for('repository', mite_id=next)) }}
         </div>
         {% else %}
         <div class="col-auto text-end invisible">
-            {{ macro.render_forward(next, url_for('entry', mite_id=next)) }}
+            {{ macro.render_forward(next, url_for('repository', mite_id=next)) }}
         </div>
         {% endif %}
     </div>

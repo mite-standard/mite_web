@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 
-from app.config.templates import templates
+from app.core.templates import templates
+from app.schemas.items import MiteModel
 from app.services.file_handling import load_json
-from app.services.items import MiteModel
 
 router = APIRouter(tags=["pages"])
 

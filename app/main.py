@@ -2,8 +2,9 @@ from fastapi import FastAPI, Request, staticfiles
 from fastapi_csrf_protect import CsrfProtect
 
 from app.api.v1.pages import router_v1
-from app.config.config import CsrfSettings, settings
-from app.config.templates import configure_templates
+from app.core.config import settings
+from app.core.csrf import CsrfSettings
+from app.core.templates import configure_templates
 from app.web.pages import pages
 from app.web.views import views
 

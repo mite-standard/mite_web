@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from app.services.items import MiteModel
+from app.schemas.items import MiteModel
 
 
 @pytest.fixture
