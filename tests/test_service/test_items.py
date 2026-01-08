@@ -7,7 +7,7 @@ from app.services.items import MiteModel
 
 @pytest.fixture
 def mite_model(monkeypatch) -> MiteModel:
-    monkeypatch.setattr(MiteModel, "_data_dir", Path("tests/dummydata"))
+    monkeypatch.setattr(MiteModel, "data_dir", Path("tests/dummydata"))
     return MiteModel(mite_id="MITE0000001")
 
 
@@ -37,6 +37,6 @@ def test_model_invalid_id():
 
 
 def test_model_invalid_file(monkeypatch):
-    monkeypatch.setattr(MiteModel, "_data_dir", Path("tests/dummydata"))
+    monkeypatch.setattr(MiteModel, "data_dir", Path("tests/dummydata"))
     with pytest.raises(FileNotFoundError):
         MiteModel(mite_id="MITE0000002")

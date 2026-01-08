@@ -8,17 +8,17 @@ MITE_RE = re.compile(r"^MITE(\d{7})$")
 
 
 class MiteModel(BaseModel):
-    """Interact with MITE
+    """Model to interact with MITE entries of current release
 
     Attributes:
         mite_id: mite accession number (=id)
-        _data_dir: path to data json files
-        _data_dir: path to html json files
+        data_dir: path to data json files
+        data_dir: path to html json files
     """
 
     mite_id: str
-    _data_dir: ClassVar[Path] = Path("/app/data/data")
-    _html_dir: ClassVar[Path] = Path("/app/data/html")
+    data_dir: ClassVar[Path] = Path("/app/data/data")
+    html_dir: ClassVar[Path] = Path("/app/data/html")
 
     @field_validator("mite_id")
     @classmethod
@@ -29,7 +29,7 @@ class MiteModel(BaseModel):
 
     @model_validator(mode="after")
     def check_exists(self):
-        if not self._data_dir.joinpath(f"{self.mite_id}.json").exists():
+        if not self.data_dir.joinpath(f"{self.mite_id}.json").exists():
             raise FileNotFoundError(f"MITE accession does not exist.")
         return self
 
@@ -51,7 +51,7 @@ class MiteModel(BaseModel):
         return f"MITE{self.mite_number + 1:07d}"
 
     def previous_exists(self) -> bool:
-        return self._data_dir.joinpath(f"{self.previous_id}.json").exists()
+        return self.data_dir.joinpath(f"{self.previous_id}.json").exists()
 
     def next_exists(self) -> bool:
-        return self._data_dir.joinpath(f"{self.next_id}.json").exists()
+        return self.data_dir.joinpath(f"{self.next_id}.json").exists()
