@@ -1,6 +1,6 @@
-from http.client import responses
+import json
 
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from sqlalchemy.orm import Session
 
@@ -14,6 +14,7 @@ router = APIRouter(tags=["views"])
 # TODO: complete rework of overview
 # TODO: complete rework of overview_retired (needs retired entries dict)
 
+
 @router.get("/overview", include_in_schema=False, response_class=HTMLResponse)
 async def overview(request: Request):
     response = templates.TemplateResponse(
@@ -24,72 +25,74 @@ async def overview(request: Request):
             "headers": request.app.state.table_headers,
             "form_vals": request.app.state.form_vals,
             "filtered": False,
-        }
+        },
     )
     return response
 
-@router.post("/overview/query", include_in_schema=False, response_class=JSONResponse)
-async def overview_query(request: Request):
-    response: JSONResponse = JSONResponse(status_code=200, content={"detail": "OK"})
-    return response
+
+@router.post("/overview/query", include_in_schema=False, response_class=HTMLResponse)
+async def overview_query(request: Request, db: Session = Depends(get_db)):
+    msg = []
+    try:
+        manager = QueryManager(
+            items={k for k in request.app.state.actives},
+            headers=request.app.state.table_headers,
+        )
+        forms = dict(await request.form())
+        manager.get_entries(forms=forms, db=db)
+
+        # TODO: implement remaining filters
+
+        response = templates.TemplateResponse(
+            request=request,
+            name="overview.html",
+            context={
+                "entries": [
+                    v
+                    for k, v in request.app.state.actives.items()
+                    if k in manager.items
+                ],
+                "headers": manager.headers,
+                "form_vals": request.app.state.form_vals,
+                "filtered": True,
+                "csv_params": forms,
+            },
+        )
+        return response
+    except Exception as e:
+        msg.append(f"An error occurred during search:\n" f"{e!s}")
+        response = templates.TemplateResponse(
+            request=request,
+            name="overview.html",
+            context={
+                "entries": [v for v in request.app.state.actives.values()],
+                "headers": request.app.state.table_headers,
+                "form_vals": request.app.state.form_vals,
+                "filtered": False,
+                "messages": msg,
+            },
+        )
+        return response
 
 
+@router.post("/overview/download", include_in_schema=False, response_class=HTMLResponse)
+async def overview_download(request: Request, db: Session = Depends(get_db)):
+    manager = QueryManager(
+        items={k for k in request.app.state.actives},
+        headers=request.app.state.table_headers,
+    )
 
+    form = dict(await request.form())
+    forms = json.loads(form["csv_params"])
 
-# @router.post("/overview/query", include_in_schema=False, response_class=HTMLResponse)
-# async def overview_query(
-#         request: Request, db: Session = Depends(get_db), form: str = Form(...), csrf_protect: CsrfProtect = Depends()
-# ):
-    # msg = []
-    # try:
-    #     await csrf_protect.validate_csrf(request)
-    #     csrf_token, signed_token = csrf_protect.generate_csrf_tokens()
-    #     manager = QueryManager(items={k for k in request.app.state.actives})
-    #     # TODO: implement filters
-    #
-    #     response = templates.TemplateResponse(
-    #         request=request,
-    #         name="overview.html",
-    #         context={
-    #             "entries": [v for k, v in request.app.state.actives.items() if k in manager.items],
-    #             "headers": request.app.state.table_headers,
-    #             "form_vals": request.app.state.form_vals,
-    #             "filtered": True,
-    #             "form": form
-    #         },
-    #         csrf_token=csrf_token
-    #     )
-    #     csrf_protect.set_csrf_cookie(signed_token, response)
-    #     return response
-    # except Exception as e:
-    #     msg.append(
-    #         f"An error occurred during search:\n"
-    #         f"{e!s}"
-    #     )
-    #     csrf_token, signed_token = csrf_protect.generate_csrf_tokens()
-    #     response = templates.TemplateResponse(
-    #         request=request,
-    #         name="overview.html",
-    #         context={
-    #             "entries": [v for v in request.app.state.actives.values()],
-    #             "headers": request.app.state.table_headers,
-    #             "form_vals": request.app.state.form_vals,
-    #             "filtered": False,
-    #             "messages": msg
-    #         },
-    #         csrf_token=csrf_token
-    #     )
-    #     csrf_protect.set_csrf_cookie(signed_token, response)
-    #     return response
+    manager.get_entries(forms=forms, db=db)
+
+    print([v for k, v in request.app.state.actives.items() if k in manager.items])
+
+    # TODO: continue here by implementing streaming
 
 
 # perform query, which keeps track of which entries are removed from set
 # once all filters have been performed, the list of actives is returned and used to cut the entries
 
 # TODO: separate route that does the same but streams the result as csv instead.
-
-
-
-
-# @router.post("/overview", include_in_schema=False, response_class=HTMLResponse)
-# async def overview(request: Request, db: Session = Depends(get_db), summary: dict = Depends(life)):

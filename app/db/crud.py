@@ -1,20 +1,25 @@
-from typing import ClassVar, Any
+import json
+from typing import Any, ClassVar
 
 from pydantic import BaseModel
-from sqlalchemy import and_, inspect, or_, ColumnElement
+from sqlalchemy import ColumnElement, and_, inspect, or_
 from sqlalchemy.orm import Session
 
 from app.db.models import Entry
+
 
 class QueryManager(BaseModel):
     """Organize functions for database querying
 
     Attributes:
         items: MITE accession for filtering
+        headers: overview table headers
         operators: translates querybuilder operators to SQLAlchemy col, val pairs
         field_map: safeguard against illegal fields
     """
+
     items: set
+    headers: list
     operators: ClassVar[dict[str]] = {
         "equal": lambda col, val: col == val,
         "not_equal": lambda col, val: col != val,
@@ -23,10 +28,8 @@ class QueryManager(BaseModel):
         "is_null": lambda col, _: col.is_(None),
         "is_not_null": lambda col, _: col.is_not(None),
     }
-
     field_map: ClassVar[set[str]] = {
-        "orcids"
-        "references",
+        "orcids" "references",
         "evidences",
         "tailoring",
         "enzyme.name",
@@ -53,19 +56,24 @@ class QueryManager(BaseModel):
         "reactions.example_reactions.products.smiles_product",
     }
 
-    def get_entries(self, rules: dict, db: Session) -> set:
+    def get_entries(self, forms: dict, db: Session):
         """Queries the DB
 
         Args:
-            rules: the raw query from QueryBuilder JSON rules
+            forms: the raw form from QueryBuilder JSON rules
             db: the database session
 
         Returns:
             A set of MITE accession IDs for filtering
         """
+        rules = json.loads(forms["rules"])
+        if not rules or len(rules["rules"]) == 0:
+            return
+
         filters = self.parse_rules_to_filters(rules, Entry)
         query = db.query(Entry).filter(filters)
-        return {e.accession for e in query}
+        self.items.intersection_update({e.accession for e in query})
+        return
 
     def parse_rules_to_filters(self, rules: dict, base_model: Any) -> ColumnElement:
         """Convert QueryBuilder JSON rules into a SQLAlchemy-compatible expression
@@ -83,7 +91,7 @@ class QueryManager(BaseModel):
                 model=base_model,
                 path_parts=field_path.split("."),
                 operator=rule["operator"],
-                value=rule.get("value")
+                value=rule.get("value"),
             )
             expressions.append(filter_expr)
 

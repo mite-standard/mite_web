@@ -14,7 +14,6 @@ class Settings(BaseSettings):
         github_token: personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo'
         github_name: account name
         github_mail: email associated to account
-        secret_key: to sign tokens
     """
 
     app_name: str = "Mite Web"
@@ -23,7 +22,6 @@ class Settings(BaseSettings):
     github_token: str | None = None
     github_name: str | None = None
     github_mail: str | None = None
-    secret_key: str = Field(..., description="Secret key to sign CSRF tokens")
 
 
 settings = Settings()
