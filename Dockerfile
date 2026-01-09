@@ -31,6 +31,7 @@ RUN set -eux; \
     elif [ -n "$DATA" ] && [ -n "$EXTRAS" ]; then \
         echo "Downloading data from Zenodo records $DATA and $EXTRAS"; \
         uv run python scripts/prepare_data.py "$DATA" "$EXTRAS" ; \
+        uv run python -m scripts.create_db ; \
     else \
         echo "No data directory found and no $DATA and $EXTRAS provided"; \
         echo "   Either populate ./data or pass --build-arg $DATA=..." "$EXTRAS"; \
