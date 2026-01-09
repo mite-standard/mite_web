@@ -18,8 +18,6 @@ handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)
 if not logger.handlers:
     logger.addHandler(handler)
 
-# TODO: Add the full seeding; also add the full models
-
 
 class DBSeeder(BaseModel):
     """Prepares database seeding"""
