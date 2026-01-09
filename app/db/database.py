@@ -13,6 +13,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
 def get_db():
+    """Connects to DB via session, injected with Depends"""
     db = SessionLocal()
     try:
         yield db

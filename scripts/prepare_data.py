@@ -12,9 +12,11 @@ import requests
 from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
-logger.setLevel("DEBUG")
-console_handler = logging.StreamHandler(sys.stdout)
-logger.addHandler(console_handler)
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+if not logger.handlers:
+    logger.addHandler(handler)
 
 
 def get_version() -> str:
@@ -61,6 +63,7 @@ class RecordManager(BaseModel):
         self.organize_mite_web_extras()
 
         self.generate_summary()
+        self.diff_active_retired()
 
         logger.info("RecordManager: Completed")
 
@@ -280,6 +283,7 @@ class RecordManager(BaseModel):
 
     def generate_summary(self) -> None:
         """Creates summary file from metadata_general.json"""
+        logger.info("RecordManager: Starting creation of summary")
         summary = {"entries": {}}
 
         with open(self.loc.joinpath("metadata_general.json")) as infile:
@@ -310,6 +314,28 @@ class RecordManager(BaseModel):
 
         with open(self.loc.joinpath("summary.json"), "w") as f:
             f.write(json.dumps(summary))
+        logger.info("RecordManager: Completed creation of summary")
+
+    def diff_active_retired(self) -> None:
+        """Populate separate lists for active and retired entries"""
+        logger.info("RecordManager: Starting creation of active/retired")
+        with open(self.loc.joinpath("summary.json")) as infile:
+            summary = json.load(infile)
+            active = {
+                key: val
+                for key, val in summary["entries"].items()
+                if val.get("status_plain") == "active"
+            }
+            retired = {
+                key: val
+                for key, val in summary["entries"].items()
+                if val.get("status_plain") == "retired"
+            }
+            with open(self.loc.joinpath("active.json"), "w") as f:
+                f.write(json.dumps(active))
+            with open(self.loc.joinpath("retired.json"), "w") as f:
+                f.write(json.dumps(retired))
+        logger.info("RecordManager: Completed creation of active/retired")
 
 
 def main(data: str, extras: str):
