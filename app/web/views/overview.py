@@ -10,9 +10,20 @@ from app.db.database import get_db
 
 router = APIRouter(tags=["views"])
 
-# TODO: have a POST route for overview to query the database, consider the streamed csv results
 # TODO: complete rework of overview
-# TODO: complete rework of overview_retired (needs retired entries dict)
+
+
+@router.get("/retired", include_in_schema=False, response_class=HTMLResponse)
+async def retired(request: Request):
+    response = templates.TemplateResponse(
+        "overview_retired.html",
+        {
+            "request": request,
+            "entries": [v for v in request.app.state.retired.values()],
+            "headers": request.app.state.table_headers,
+        },
+    )
+    return response
 
 
 @router.get("/overview", include_in_schema=False, response_class=HTMLResponse)

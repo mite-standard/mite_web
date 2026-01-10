@@ -5,6 +5,7 @@ from mite_schema import SchemaManager
 from app.core.config import settings
 from app.services.file_handling import load_json
 
+
 def load_table_head():
     """Load headers for overview table"""
     return [
@@ -18,11 +19,16 @@ def load_table_head():
         ("reaction_description", "Reaction Description"),
     ]
 
+
 def load_active():
     """Load active (=non-retired) entries"""
-    return load_json(
-        settings.data_dir.joinpath("active.json")
-    )
+    return load_json(settings.data_dir.joinpath("active.json"))
+
+
+def load_retired():
+    """Load inactive (=retired) entries"""
+    return load_json(settings.data_dir.joinpath("retired.json"))
+
 
 def load_form_vals():
     """Load schema definitions"""

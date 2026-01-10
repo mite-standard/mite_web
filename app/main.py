@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.pages import router_v1
 from app.core.config import settings
 from app.core.logging import setup_logger
-from app.core.shared import load_active, load_form_vals, load_table_head
+from app.core.shared import load_active, load_form_vals, load_retired, load_table_head
 from app.core.templates import configure_templates
 from app.db.database import engine
 from app.web.pages import pages
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("App starting up - DB ready")
     app.state.actives = load_active()
+    app.state.retired = load_retired()
     app.state.table_headers = load_table_head()
     app.state.form_vals = load_form_vals()
     yield
