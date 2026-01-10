@@ -1,7 +1,7 @@
 import json
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.core.templates import templates
@@ -35,11 +35,12 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
     msg = []
     try:
         manager = QueryManager(
-            items={k for k in request.app.state.actives},
+            accessions={k for k in request.app.state.actives},
+            entries=request.app.state.actives,
             headers=request.app.state.table_headers,
         )
         forms = dict(await request.form())
-        manager.get_entries(forms=forms, db=db)
+        manager.query_db(forms=forms, db=db)
 
         # TODO: implement remaining filters
 
@@ -47,11 +48,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
             request=request,
             name="overview.html",
             context={
-                "entries": [
-                    v
-                    for k, v in request.app.state.actives.items()
-                    if k in manager.items
-                ],
+                "entries": manager.get_entries(),
                 "headers": manager.headers,
                 "form_vals": request.app.state.form_vals,
                 "filtered": True,
@@ -75,24 +72,23 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
         return response
 
 
-@router.post("/overview/download", include_in_schema=False, response_class=HTMLResponse)
-async def overview_download(request: Request, db: Session = Depends(get_db)):
+@router.post("/overview/csv", include_in_schema=False, response_class=StreamingResponse)
+async def overview_csv(request: Request, db: Session = Depends(get_db)):
     manager = QueryManager(
-        items={k for k in request.app.state.actives},
+        accessions={k for k in request.app.state.actives},
+        entries=request.app.state.actives,
         headers=request.app.state.table_headers,
     )
-
     form = dict(await request.form())
     forms = json.loads(form["csv_params"])
 
-    manager.get_entries(forms=forms, db=db)
+    manager.query_db(forms=forms, db=db)
 
-    print([v for k, v in request.app.state.actives.items() if k in manager.items])
+    return StreamingResponse(
+        manager.stream_csv(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=query_results.csv"},
+    )
 
-    # TODO: continue here by implementing streaming
 
-
-# perform query, which keeps track of which entries are removed from set
-# once all filters have been performed, the list of actives is returned and used to cut the entries
-
-# TODO: separate route that does the same but streams the result as csv instead.
+# TODO: once all filters have been performed, the list of actives is returned and used to cut the entries

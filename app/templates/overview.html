@@ -121,7 +121,7 @@
             <div class="lead">Number of entries matching filters: {{ entries | length }}</div>
         </div>
         <div class="col-auto">
-            <form id="queryCsv" method="post" action="{{ url_for('overview_download') }}">
+            <form id="queryCsv" method="post" action="{{ url_for('overview_csv') }}">
                 <input type="hidden" name="csv_params" id="csv-params" value='{{ csv_params | tojson | safe }}'>
                 <button class="btn btn-secondary" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
                 <i class="bi bi-download"></i>

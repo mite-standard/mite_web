@@ -1,4 +1,7 @@
+import csv
+import io
 import json
+from turtle import Tbuffer
 from typing import Any, ClassVar
 
 from pydantic import BaseModel
@@ -12,13 +15,15 @@ class QueryManager(BaseModel):
     """Organize functions for database querying
 
     Attributes:
-        items: MITE accession for filtering
+        accessions: MITE accession for filtering
+        entries: MITE entries
         headers: overview table headers
         operators: translates querybuilder operators to SQLAlchemy col, val pairs
         field_map: safeguard against illegal fields
     """
 
-    items: set
+    accessions: set
+    entries: dict
     headers: list
     operators: ClassVar[dict[str]] = {
         "equal": lambda col, val: col == val,
@@ -56,7 +61,28 @@ class QueryManager(BaseModel):
         "reactions.example_reactions.products.smiles_product",
     }
 
-    def get_entries(self, forms: dict, db: Session):
+    def stream_csv(self):
+        """Convert and stream the (filtered) list of entries"""
+        if not self.entries:
+            return
+
+        rows = self.get_entries()
+
+        buffer = io.StringIO()
+        writer = csv.DictWriter(buffer, fieldnames=rows[0].keys())
+        writer.writeheader()
+
+        for row in rows:
+            buffer.seek(0)
+            buffer.truncate(0)
+            writer.writerow(row)
+            yield buffer.getvalue()
+
+    def get_entries(self) -> list[dict[str]]:
+        """Return (filtered) list of entries"""
+        return [v for k, v in self.entries.items() if k in self.accessions]
+
+    def query_db(self, forms: dict, db: Session):
         """Queries the DB
 
         Args:
@@ -72,7 +98,7 @@ class QueryManager(BaseModel):
 
         filters = self.parse_rules_to_filters(rules, Entry)
         query = db.query(Entry).filter(filters)
-        self.items.intersection_update({e.accession for e in query})
+        self.accessions.intersection_update({e.accession for e in query})
         return
 
     def parse_rules_to_filters(self, rules: dict, base_model: Any) -> ColumnElement:
