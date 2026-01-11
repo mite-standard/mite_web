@@ -52,6 +52,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
         )
         forms = dict(await request.form())
         manager.query_db(forms=forms, db=db)
+        manager.query_sequence(forms=forms)
 
         # TODO: implement remaining filters
 
