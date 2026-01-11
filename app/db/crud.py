@@ -43,7 +43,7 @@ field_map = {
 }
 
 
-def query_db(rules: dict, db: Session) -> set[str]:
+def search_db(rules: dict, db: Session) -> set[str]:
     """Queries the DB
 
     Args:

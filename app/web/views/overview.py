@@ -54,8 +54,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
         manager.query_db(forms=forms, db=db)
         manager.query_sequence(forms=forms)
         manager.query_structure(forms=forms)
-
-        # TODO: implement remaining filters
+        manager.query_reaction(forms=forms)
 
         response = templates.TemplateResponse(
             request=request,
@@ -98,14 +97,9 @@ async def overview_csv(request: Request, db: Session = Depends(get_db)):
     manager.query_db(forms=forms, db=db)
     manager.query_sequence(forms=forms)
     manager.query_structure(forms=forms)
-
-    # TODO: implement rest of filters as above
-
+    manager.query_reaction(forms=forms)
     return StreamingResponse(
         manager.stream_csv(),
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=query_results.csv"},
     )
-
-
-# TODO: once all filters have been performed, the list of actives is returned and used to cut the entries

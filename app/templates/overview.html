@@ -76,12 +76,12 @@
                     </div>
                     <div class="col-auto">
                         <div class="form-check">
-                            <input class="form-check-input" value="nongreedy" type="radio" name="reaction_smarts_radio" id="nongreedy" checked>
-                            <label class="form-check-label" for="nongreedy">Differential FP <i class="bi bi-question-circle" title="Fingerprint of the transformation pattern - reactants subtracted from products ('What structural features were gained or lost during the reaction?'). Uses RDKit's 'CreateDifferenceFingerprintForReaction'"></i></label>
+                            <input class="form-check-input" value="rd_difference" type="radio" name="reaction_smarts_radio" id="rd_difference" checked>
+                            <label class="form-check-label" for="rd_difference">Differential FP <i class="bi bi-question-circle" title="Fingerprint of the transformation pattern - reactants subtracted from products ('What structural features were gained or lost during the reaction?'). Uses RDKit's 'CreateDifferenceFingerprintForReaction'"></i></label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" value="greedy" type="radio" name="reaction_smarts_radio" id="greedy">
-                            <label class="form-check-label" for="greedy">Structural FP <i class="bi bi-question-circle" title="Fingerprint of the union of all reactants, agents, and products of the reaction SMARTS ('What chemical groups and substructures appear anywhere in the reaction?'). Uses RDKit's 'CreateStructuralFingerprintForReaction'."></i></label>
+                            <input class="form-check-input" value="rd_structural" type="radio" name="reaction_smarts_radio" id="rd_structural">
+                            <label class="form-check-label" for="rd_structural">Structural FP <i class="bi bi-question-circle" title="Fingerprint of the union of all reactants, agents, and products of the reaction SMARTS ('What chemical groups and substructures appear anywhere in the reaction?'). Uses RDKit's 'CreateStructuralFingerprintForReaction'."></i></label>
                         </div>
                     </div>
                 </div>
@@ -93,13 +93,13 @@
                 <div class="col-8">
                     <div class="form-floating">
                         <input id="sequence" name="sequence" class="form-control form-control-sm" type="text" placeholder="n/a" title="Match a protein sequence against MITE entries using BLASTp.">
-                        <label for="reaction_query" class="form-label">Insert protein sequence <i class="bi bi-question-circle"></i></label>
+                        <label for="sequence" class="form-label">Insert protein sequence <i class="bi bi-question-circle"></i></label>
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-floating">
                         <input id="e_val" name="e_val" class="form-control form-control-sm" type="number" value="10" min="1" step="1" placeholder="n/a" title="Specify a E-value as match cutoff.">
-                        <label for="reaction_query" class="form-label">E-value <i class="bi bi-question-circle"></i></label>
+                        <label for="e_val" class="form-label">E-value <i class="bi bi-question-circle"></i></label>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,9 @@ import json
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.db.crud import query_db
+from app.db.crud import search_db
 from app.schemas.blast import BlastSearch
+from app.schemas.reaction import ReactionSearch
 from app.schemas.structure import StructureSearch
 
 
@@ -50,18 +51,18 @@ class FilterManager(BaseModel):
         if not rules or len(rules["rules"]) == 0:
             return
 
-        self.accessions.intersection_update(query_db(rules=rules, db=db))
+        self.accessions.intersection_update(search_db(rules=rules, db=db))
 
     def query_sequence(self, forms: dict) -> None:
         """Query a sequence against MITE protein sequences"""
         if not forms.get("sequence") or not forms.get("e_val"):
             return
 
-        mgr = BlastSearch(
+        search = BlastSearch(
             sequence=forms.get("sequence"),
             e_val=forms.get("e_val"),
         )
-        results = mgr.run_blastp()
+        results = search.run_blastp()
         self.accessions.intersection_update({k for k in results})
         for k, v in results.items():
             self.entries[k].update(v)
@@ -77,15 +78,15 @@ class FilterManager(BaseModel):
         return
 
     def query_structure(self, forms: dict) -> None:
-        """Query a (sub(structure as smiles/smarts against MITE substrate/product smiles"""
+        """Query a (sub)structure as smiles/smarts against MITE substrate/product smiles"""
         if not forms.get("substructure_query") or not forms.get("substructure_type"):
             return
 
-        mgr = StructureSearch(
+        search = StructureSearch(
             structure=forms.get("substructure_query"),
             s_type=forms.get("substructure_type"),
         )
-        results = mgr.search_structure()
+        results = search.search_structure()
         self.accessions.intersection_update({k for k in results})
         for k, v in results.items():
             self.entries[k].update(v)
@@ -94,6 +95,33 @@ class FilterManager(BaseModel):
             [
                 ("reaction", "Reaction"),
                 ("example", "Example Reaction"),
+            ]
+        )
+        return
+
+    def query_reaction(self, forms: dict) -> None:
+        """Query a reaction smarts against MITE reaction smarts"""
+        if (
+            not forms.get("reaction_query")
+            or not forms.get("similarity")
+            or not forms.get("reaction_smarts_radio")
+        ):
+            return
+
+        search = ReactionSearch(
+            reaction=forms.get("reaction_query"),
+            sim_score=forms.get("similarity"),
+            mode=forms.get("reaction_smarts_radio"),
+        )
+        results = search.search_reaction()
+        self.accessions.intersection_update({k for k in results})
+        for k, v in results.items():
+            self.entries[k].update(v)
+
+        self.headers.extend(
+            [
+                ("reaction", "Reaction"),
+                ("sim_score", "Similarity Score"),
             ]
         )
         return
