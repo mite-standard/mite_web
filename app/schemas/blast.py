@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, field_validator
 from app.core.config import settings
 
 
-class BlastManager(BaseModel):
+class BlastSearch(BaseModel):
     """Organizes querying for a protein sequence"""
 
     sequence: str = Field(..., description="Protein sequence")

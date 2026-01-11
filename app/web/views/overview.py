@@ -5,8 +5,8 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.core.templates import templates
-from app.db.crud import QueryManager
 from app.db.database import get_db
+from app.services.filtering import FilterManager
 
 router = APIRouter(tags=["views"])
 
@@ -45,7 +45,7 @@ async def overview(request: Request):
 async def overview_query(request: Request, db: Session = Depends(get_db)):
     msg = []
     try:
-        manager = QueryManager(
+        manager = FilterManager(
             accessions={k for k in request.app.state.actives},
             entries=request.app.state.actives,
             headers=request.app.state.table_headers,
@@ -53,6 +53,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
         forms = dict(await request.form())
         manager.query_db(forms=forms, db=db)
         manager.query_sequence(forms=forms)
+        manager.query_structure(forms=forms)
 
         # TODO: implement remaining filters
 
@@ -86,7 +87,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/overview/csv", include_in_schema=False, response_class=StreamingResponse)
 async def overview_csv(request: Request, db: Session = Depends(get_db)):
-    manager = QueryManager(
+    manager = FilterManager(
         accessions={k for k in request.app.state.actives},
         entries=request.app.state.actives,
         headers=request.app.state.table_headers,
@@ -95,6 +96,10 @@ async def overview_csv(request: Request, db: Session = Depends(get_db)):
     forms = json.loads(form["csv_params"])
 
     manager.query_db(forms=forms, db=db)
+    manager.query_sequence(forms=forms)
+    manager.query_structure(forms=forms)
+
+    # TODO: implement rest of filters as above
 
     return StreamingResponse(
         manager.stream_csv(),

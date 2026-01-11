@@ -6,7 +6,8 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.db.crud import query_db
-from app.schemas.blast import BlastManager
+from app.schemas.blast import BlastSearch
+from app.schemas.structure import StructureSearch
 
 
 class FilterManager(BaseModel):
@@ -44,15 +45,7 @@ class FilterManager(BaseModel):
         return [v for k, v in self.entries.items() if k in self.accessions]
 
     def query_db(self, forms: dict, db: Session) -> None:
-        """Queries the DB
-
-        Args:
-            forms: the raw form from QueryBuilder JSON rules
-            db: the database session
-
-        Returns:
-            A set of MITE accession IDs for filtering
-        """
+        """Query the DB using QueryBuilder query"""
         rules = json.loads(forms["rules"])
         if not rules or len(rules["rules"]) == 0:
             return
@@ -60,10 +53,11 @@ class FilterManager(BaseModel):
         self.accessions.intersection_update(query_db(rules=rules, db=db))
 
     def query_sequence(self, forms: dict) -> None:
+        """Query a sequence against MITE protein sequences"""
         if not forms.get("sequence") or not forms.get("e_val"):
             return
 
-        mgr = BlastManager(
+        mgr = BlastSearch(
             sequence=forms.get("sequence"),
             e_val=forms.get("e_val"),
         )
@@ -78,6 +72,28 @@ class FilterManager(BaseModel):
                 ("sequence_similarity", "Sequence Sim. (%)"),
                 ("alignment_score", "Alignment Score"),
                 ("bit_score", "Bit-Score"),
+            ]
+        )
+        return
+
+    def query_structure(self, forms: dict) -> None:
+        """Query a (sub(structure as smiles/smarts against MITE substrate/product smiles"""
+        if not forms.get("substructure_query") or not forms.get("substructure_type"):
+            return
+
+        mgr = StructureSearch(
+            structure=forms.get("substructure_query"),
+            s_type=forms.get("substructure_type"),
+        )
+        results = mgr.search_structure()
+        self.accessions.intersection_update({k for k in results})
+        for k, v in results.items():
+            self.entries[k].update(v)
+
+        self.headers.extend(
+            [
+                ("reaction", "Reaction"),
+                ("example", "Example Reaction"),
             ]
         )
         return
