@@ -1,24 +1,10 @@
-import io
 import pickle
-import re
-import subprocess
-import tempfile
 from pathlib import Path
 from typing import Literal
 
 import pandas as pd
-from Bio import Blast
-from pydantic import BaseModel, Field, field_validator
-from rdkit.Chem import (
-    DataStructs,
-    MolFromSmarts,
-    MolFromSmiles,
-    MolToSmiles,
-    PandasTools,
-    rdChemReactions,
-)
-from rdkit.Chem.Draw import rdMolDraw2D
-from rdkit.DataStructs import FingerprintSimilarity
+from pydantic import BaseModel, Field
+from rdkit.Chem import MolFromSmarts, MolFromSmiles, PandasTools
 
 from app.core.config import settings
 
