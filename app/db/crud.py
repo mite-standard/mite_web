@@ -15,7 +15,8 @@ operators = {
 }
 
 field_map = {
-    "orcids" "references",
+    "orcids",
+    "references",
     "evidences",
     "tailoring",
     "enzyme.name",

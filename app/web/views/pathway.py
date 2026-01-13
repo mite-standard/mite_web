@@ -34,7 +34,7 @@ async def pathway_query(request: Request, params: Annotated[PathwayParams, Form(
             },
         )
     except Exception as e:
-        msg.append(f"An error occurred during pathway generation:\n" f"{e!s}")
+        msg.append(f"An error occurred during pathway generation:\n{e!s}")
         return templates.TemplateResponse(
             request=request, name="pathway.html", context={"messages": msg}
         )

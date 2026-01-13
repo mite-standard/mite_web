@@ -69,7 +69,7 @@ async def overview_query(request: Request, db: Session = Depends(get_db)):
         )
         return response
     except Exception as e:
-        msg.append(f"An error occurred during search:\n" f"{e!s}")
+        msg.append(f"An error occurred during search:\n{e!s}")
         response = templates.TemplateResponse(
             request=request,
             name="overview.html",

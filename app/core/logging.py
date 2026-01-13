@@ -1,6 +1,7 @@
 import logging
 import sys
 
+
 def setup_logger():
     logging.basicConfig(
         level=logging.INFO,
