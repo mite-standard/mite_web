@@ -26,21 +26,23 @@
         </div>
         {% endif %}
     </div>
-    <form method="post">
+    <form method="post" action="{{ url_for('peptide_query') }}">
         <div class="row my-2">
             <div class="col">
                 <div class="form-floating">
-                    <input id="peptide_string" name="peptide_string" class="form-control" minlength="2" aria-describedby="PeptideHelp" type="text" value="{{ data.get('peptide_string', '') }}"  required>
-                    <label for="peptide_string" class="form-label">Peptide Sequence</label>
+                    <input id="sequence" name="sequence" class="form-control" minlength="1" aria-describedby="PeptideHelp" type="text" required>
+                    <label for="sequence" class="form-label">Peptide Sequence</label>
                     <div id="PeptideHelp" class="form-text">A peptide sequence in single-letter-code, e.g. 'MGATYAFWRGT'. Only proteinogenic amino acids are allowed.</div>
                 </div>
             </div>
         </div>
-        {% if data.get('smiles') %}
+        {% if sequence %}
         <div class="row mb-2">
             <div class="col">
+                <h4 class="fw-semibold lh-2">Peptide Sequence</h4>
+                <p><b>{{ sequence }}</b></p>
                 <h4 class="fw-semibold lh-2">SMILES String for Peptide Sequence</h4>
-                <p><b>{{ data.get('smiles') | trim }}</b></p>
+                <p><b>{{ smiles | trim }}</b></p>
             </div>
         </div>
         {% endif %}

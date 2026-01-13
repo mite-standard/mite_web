@@ -17,11 +17,6 @@ from rdkit.Chem import Draw, MolFromSmiles, MolToSmiles, rdChemReactions
 from app.core.config import settings
 from app.services.file_handling import load_json
 
-# data class reading and validating lists of mite entries and reaction numbers
-# class calling the data class , with image creation
-# try except in route, with message capture
-# add csv route
-
 MITE_RE = re.compile(r"^MITE(\d{7})$")
 
 

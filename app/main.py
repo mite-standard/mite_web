@@ -11,7 +11,7 @@ from app.core.shared import load_active, load_form_vals, load_retired, load_tabl
 from app.core.templates import configure_templates
 from app.db.database import engine
 from app.web.pages import pages
-from app.web.views import overview, pathway, views
+from app.web.views import overview, pathway, structures, views
 
 setup_logger()
 logger = logging.getLogger(__name__)
@@ -42,6 +42,7 @@ app.include_router(pages.router)
 app.include_router(views.router)
 app.include_router(overview.router)
 app.include_router(pathway.router)
+app.include_router(structures.router)
 
 
 # TODO: implement, github authentication
