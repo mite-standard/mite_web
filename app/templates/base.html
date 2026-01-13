@@ -36,7 +36,7 @@
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repository</a>
                     <ul class="dropdown-menu">
                       <li><a class="dropdown-item" href="{{ url_for('overview') }}">Overview - Active Entries</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('overview_retired') }}">Overview - Retired Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('retired') }}">Overview - Retired Entries</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('submission') }}">Submit an Entry</a></li>
                     </ul>
                 </li>
@@ -57,7 +57,7 @@
                       <li><a class="dropdown-item" href="{{ url_for('downloads') }}">Downloads</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('pathway') }}">In Silico Pathway Simulation</a></li>
                       <li><a class="dropdown-item" href="{{ url_for('peptide') }}">Peptide SMILES Converter</a></li>
-                      <li><a class="dropdown-item" href="{{ url_for('canonsmiles') }}">Canonicalize SMILES</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('canonicalize') }}">Canonicalize SMILES</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

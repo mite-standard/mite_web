@@ -23,21 +23,23 @@
         </div>
         {% endif %}
     </div>
-    <form method="post">
+    <form method="post" action="{{ url_for('canonicalize_query') }}">
         <div class="row my-2">
             <div class="col">
                 <div class="form-floating">
-                    <input id="smiles_in" name="smiles_in" class="form-control" minlength="2" aria-describedby="SmilesHelp" type="text" value="{{ data.get('smiles_in', '') }}"  required>
-                    <label for="smiles_in" class="form-label">SMILES string</label>
+                    <input id="smiles" name="smiles" class="form-control" minlength="1" aria-describedby="SmilesHelp" type="text" value=""  required>
+                    <label for="smiles" class="form-label">SMILES string</label>
                     <div id="SmilesHelp" class="form-text">A SMILES string to be canonicalized by RDKit.</div>
                 </div>
             </div>
         </div>
-        {% if data.get('smiles_out') %}
+        {% if smiles_in %}
         <div class="row mb-2">
             <div class="col">
+                <h4 class="fw-semibold lh-2">Input SMILES string</h4>
+                <p><b>{{ smiles_in | trim }}</b></p>
                 <h4 class="fw-semibold lh-2">Canonical SMILES string</h4>
-                <p><b>{{ data.get('smiles_out') | trim }}</b></p>
+                <p><b>{{ smiles_out | trim }}</b></p>
             </div>
         </div>
         {% endif %}
