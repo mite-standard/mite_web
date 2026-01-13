@@ -65,5 +65,3 @@ async def repository(mite_id: str, request: Request):
         return templates.TemplateResponse(
             request=request, name="entry_not_found.html", context={"mite_id": mite_id}
         )
-
-    # TODO: implement testing

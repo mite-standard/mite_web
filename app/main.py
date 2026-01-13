@@ -10,7 +10,7 @@ from app.core.logging import setup_logger
 from app.core.shared import load_active, load_form_vals, load_retired, load_table_head
 from app.core.templates import configure_templates
 from app.db.database import engine
-from app.web.pages import download, pages
+from app.web.pages import download, pages, robots
 from app.web.views import overview, pathway, structures, views
 
 setup_logger()
@@ -44,6 +44,7 @@ app.include_router(overview.router)
 app.include_router(pathway.router)
 app.include_router(structures.router)
 app.include_router(download.router)
+app.include_router(robots.router)
 
 
 # TODO: implement, github authentication
