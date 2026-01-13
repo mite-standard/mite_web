@@ -46,3 +46,9 @@ class GetStructure(BaseModel):
     def get_canonical(self, p: SmilesParams):
         """Canonicalize a smiles sequence"""
         self.smiles = Chem.MolToSmiles(Chem.MolFromSmiles(p.smiles))
+
+    def strip_chirality(self, p: SmilesParams):
+        """Strip stereochemical information from SMILES string"""
+        mol = Chem.MolFromSmiles(p.smiles)
+        Chem.RemoveStereochemistry(mol)
+        self.smiles = Chem.MolToSmiles(mol)

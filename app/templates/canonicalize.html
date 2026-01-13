@@ -9,6 +9,36 @@
             <p class="lead mb-2">Therefore, we offer a simple tool that can canonicalize any SMILES string by running it through the RDKit engine. The resulting SMILES can be then used to build the reaction SMARTS in e.g. Ketcher.</p>
         </div>
     </div>
+    <div class="row my-4">
+        <div class="col">
+            <h3 class="fw-semibold lh-2">Examples</h3>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col-auto">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', path='images/canon_smiles/4-pyrone-ketcher.svg') }}" style="max-width: auto; height: auto;" class="card-img-top mx-auto" alt="4-Pyrone by Ketcher">
+                <div class="card-body">
+                    <h5 class="card-title">4-Pyron-derivative by Ketcher</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">SMILES: CC1=C(CC/C(/C)=C/C(/C)=C/c2ccccc2)OC(O)=C(C)C1=O</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="card" style="width: 18rem;">
+                <img src="{{ url_for('static', path='images/canon_smiles/4-pyrone-rdkit.svg') }}" style="max-width: auto; height: auto;" class="card-img-top mx-auto" alt="4-Pyrone by RDKit">
+                <div class="card-body">
+                    <h5 class="card-title">4-Pyron-derivative by RDKit</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">SMILES: CC(=C\c1ccccc1)/C=C(\C)CCc1oc(O)c(C)c(=O)c1C</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col">
+            <h3 class="fw-semibold lh-2">Canonicalize SMILES</h3>
+        </div>
+    </div>
     <div class="row">
         {% if messages %}
         <div class="card card-body">
@@ -49,31 +79,6 @@
             </div>
         </div>
     </form>
-    <div class="row my-4">
-        <div class="col">
-            <h3 class="fw-semibold lh-2">Examples</h3>
-        </div>
-    </div>
-    <div class="row my-4">
-        <div class="col-auto">
-            <div class="card" style="width: 18rem;">
-                <img src="{{ url_for('static', path='images/canon_smiles/4-pyrone-ketcher.svg') }}" style="max-width: auto; height: auto;" class="card-img-top mx-auto" alt="4-Pyrone by Ketcher">
-                <div class="card-body">
-                    <h5 class="card-title">4-Pyron-derivative by Ketcher</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">SMILES: CC1=C(CC/C(/C)=C/C(/C)=C/c2ccccc2)OC(O)=C(C)C1=O</h6>
-                </div>
-            </div>
-        </div>
-        <div class="col-auto">
-            <div class="card" style="width: 18rem;">
-                <img src="{{ url_for('static', path='images/canon_smiles/4-pyrone-rdkit.svg') }}" style="max-width: auto; height: auto;" class="card-img-top mx-auto" alt="4-Pyrone by RDKit">
-                <div class="card-body">
-                    <h5 class="card-title">4-Pyron-derivative by RDKit</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">SMILES: CC(=C\c1ccccc1)/C=C(\C)CCc1oc(O)c(C)c(=O)c1C</h6>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 {% endblock %}
