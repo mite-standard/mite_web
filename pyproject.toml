@@ -30,6 +30,7 @@ dependencies = [
     "uvicorn~=0.40.0",
     "pydantic-settings~=2.12",
     "pytest>=9.0.2",
+    "python-multipart>=0.0.21",
 ]
 
 [project.urls]

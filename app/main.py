@@ -11,7 +11,7 @@ from app.core.shared import load_active, load_form_vals, load_retired, load_tabl
 from app.core.templates import configure_templates
 from app.db.database import engine
 from app.web.pages import pages
-from app.web.views import overview, views
+from app.web.views import overview, pathway, views
 
 setup_logger()
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 
-app.mount("/data", StaticFiles(directory=settings.data_dir), name="data")
+app.mount("/img", StaticFiles(directory=settings.img_dir), name="img")
 app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
 configure_templates(app)
 
@@ -41,6 +41,7 @@ app.include_router(router_v1)
 app.include_router(pages.router)
 app.include_router(views.router)
 app.include_router(overview.router)
+app.include_router(pathway.router)
 
 
 # TODO: implement, github authentication

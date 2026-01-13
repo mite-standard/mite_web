@@ -31,7 +31,7 @@
     {% endif %}
     <div class="row">
         <div class="col-6">
-            <form id="queryForm" method="post">
+            <form id="queryForm" method="post" action="{{ url_for('pathway_query') }}">
                 <div class="row my-2">
                     <div class="col">
                         <h6 class="fw-semibold lh-2">Reaction builder</h6>
@@ -52,14 +52,14 @@
                     <div class="row g-2 mb-2 align-items-center reaction-field">
                         <div class="col">
                             <div class="form-floating">
-                                <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="accession_id" name="accession_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
-                                <label for="accession_id" class="form-label">MITE accession <i class="bi bi-question-circle"></i></label>
+                                <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="mite_id" name="mite_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
+                                <label for="mite_id" class="form-label">MITE accession <i class="bi bi-question-circle"></i></label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-floating">
-                                <input type="number" class="form-control" id="reaction_number" name="reaction_number" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
-                                <label for="reaction_number" class="form-label">Reaction # <i class="bi bi-question-circle"></i></label>
+                                <input type="number" class="form-control" id="reaction_nr" name="reaction_nr" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
+                                <label for="reaction_nr" class="form-label">Reaction # <i class="bi bi-question-circle"></i></label>
                             </div>
                         </div>
                         <div class="col-auto">
@@ -83,14 +83,19 @@
     {% if svgs %}
     <div class="row align-items-center justify-content-end my-3">
         <div class="col">
-            <h3 class="mb-0">In silico biosynthesis</h3>
+            <h3 class="mb-0">Generated <i>in silico</i> pathway</h3>
         </div>
         <div class="col-auto">
-            <a href="{{ url_for('index', identifier=job_id ~ '.csv') }}">
-                <button class="btn btn-secondary" type="button" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download report as .csv-file.">
-                <i class="bi bi-filetype-csv"></i>
+            <form id="queryCsv" method="post" action="{{ url_for('pathway_csv') }}">
+                {% for name, values in csv_params.items() %}
+                    {% for value in values %}
+                    <input type="hidden" name="{{ name }}" value="{{ value }}">
+                    {% endfor %}
+                {% endfor %}
+                <button class="btn btn-secondary" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
+                <i class="bi bi-download"></i>
                 </button>
-            </a>
+            </form>
         </div>
     </div>
     <div class="card g-2 m-2">
@@ -141,14 +146,14 @@ function addField() {
   fieldGroup.innerHTML = `
     <div class="col">
         <div class="form-floating">
-            <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="accession_id" name="accession_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
-            <label for="accession_id" class="form-label">MITE accession<i class="bi bi-question-circle"></i></label>
+            <input type="text" pattern="^MITE[0-9]{7}$" class="form-control" id="mite_id" name="mite_id" placeholder="n/a" required title="Insert the MITE accession number containing the desired reaction (e.g. 'MITE0000001')'">
+            <label for="mite_id" class="form-label">MITE accession<i class="bi bi-question-circle"></i></label>
         </div>
     </div>
     <div class="col">
         <div class="form-floating">
-            <input type="number" class="form-control" id="reaction_number" name="reaction_number" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
-            <label for="reaction_number" class="form-label">Reaction #<i class="bi bi-question-circle"></i></label>
+            <input type="number" class="form-control" id="reaction_nr" name="reaction_nr" value="1" min="1" step="1" placeholder="n/a" required title="Specify the reaction number of the MITE entry (e.g. the default first)">
+            <label for="reaction_nr" class="form-label">Reaction #<i class="bi bi-question-circle"></i></label>
         </div>
     </div>
     <div class="col-auto">

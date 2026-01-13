@@ -24,7 +24,7 @@ class FilterManager(BaseModel):
     entries: dict
     headers: list
 
-    def stream_csv(self):
+    def stream_csv(self) -> io.StringIO:
         """Convert and stream the (filtered) list of entries"""
         if not self.entries:
             return
