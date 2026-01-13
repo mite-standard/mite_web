@@ -10,9 +10,3 @@ router = APIRouter(tags=["views"])
 async def submission(request: Request):
     # TODO: Complete implementation
     return templates.TemplateResponse(request=request, name="submission.html")
-
-
-@router.get("/downloads", include_in_schema=False, response_class=HTMLResponse)
-async def downloads(request: Request):
-    # TODO: Complete implementation
-    return templates.TemplateResponse(request=request, name="downloads.html")
