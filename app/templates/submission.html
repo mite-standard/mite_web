@@ -24,6 +24,7 @@
       </p>
     </div>
   </div>
+  {% if kanban %}
   <div class="kanban">
     {% for column, prs in kanban.items() %}
       <div class="kanban-column">
@@ -42,5 +43,8 @@
       </div>
     {% endfor %}
   </div>
+  {% else %}
+    <h3>Kanban board not supported in development mode.</h3>
+  {% endif %}
 </div>
 {% endblock %}

@@ -32,6 +32,7 @@ dependencies = [
     "pytest>=9.0.2",
     "python-multipart>=0.0.21",
     "pygithub>=2.8.1",
+    "async-lru>=2.0.5",
 ]
 
 [project.urls]

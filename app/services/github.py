@@ -1,6 +1,8 @@
 import logging
 
+from async_lru import alru_cache
 from fastapi import Request
+from fastapi.concurrency import run_in_threadpool
 from github import Auth, Github, PullRequest
 
 from app.core.config import settings
@@ -23,13 +25,14 @@ def get_github(request: Request) -> Github | None:
         return request.app.state.gh
 
 
-def fake_pull() -> dict:
-    # TODO: only for testing - remove later
-    return {
-        "Draft": [{"title": "Dummy", "url": "dummy", "created_at": "date"}],
-        "In Review": [],
-        "Reviewed": [],
-    }
+@alru_cache(ttl=60)
+async def get_kanban_cached(gh: Github):
+    def fetch():
+        repo = gh.get_repo(settings.repo_name)
+        pulls = repo.get_pulls(state="open")
+        return process_pulls(pulls)
+
+    return await run_in_threadpool(fetch)
 
 
 def process_pulls(pulls: list[PullRequest]) -> dict:
