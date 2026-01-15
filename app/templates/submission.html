@@ -12,18 +12,64 @@
             <h3 class="fw-semibold lh-2">Submit a new entry</h3>
         </div>
     </div>
-  <div class="row mb-3 d-flex align-items-center">
-    <div class="col-auto text-center">
-      <button class="btn btn-lg btn-primary fw-semibold">Create new submission form</button>
+  <div class="row">
+    {% if messages %}
+    <div class="card card-body">
+        <div class="col text-center mx-auto">
+            <h4 class="fw-semibold lh-2">Error during creation of new submission!</h4>
+            <ul class="lh-base list-unstyled">
+            {% for message in messages %}
+                <li><p class="lead mb-1">{{ message }}</p></li>
+            {% endfor %}
+            </ul>
+        </div>
     </div>
-    <div class="col-6">
-      <h6 class="fw-semibold lh-2">Don't know where to start?</h6>
-      <p class="mb-0">
-        For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('tutorial') }}"><b>Tutorial page</b></a>.
-        How about creating a new entry from one of the publications in the <a target="_blank" class="custom-link" href="https://docs.google.com/spreadsheets/d/1LlBKYoCEwuXa2GE-jD5aYYLyEKL9FUBMU4mExyq8Ve4/edit?usp=sharing"><b>MITE paper collection?</b></a>
-      </p>
-    </div>
+    {% endif %}
   </div>
+  <form id="new-submission" method="post" action="{{ url_for('submission_new') }}">
+    <div class="row flex align-items-center">
+        <div class="col-8">
+            <div class="card card-body mb-2">
+                <div class="row mb-2">
+                  <div class="col">
+                        <div class="form-floating">
+                            <input id="name" name="name" class="form-control" placeholder="n/a" maxlength="10" type="text" required title="The commonly used enzyme name (e.g. 'NisB' for nisin deydratase).">
+                            <label for="name" class="form-label">Enzyme name<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <input id="submitter" minlength="19" maxlength="19" name="submitter" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID or leave empty for an anonymous submission. Your ORCID allows us to credit the effort you invested in data curation, as described in our Terms of Use.">
+                            <label for="submitter" class="form-label">ORCID <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
+                          <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('termsofuse') }}">Terms of Use</a>.</label>
+                        </div>
+                    </div>
+                </div>
+              <div class="row d-flex align-items-center my-2">
+                <div class="col">
+                  <button class="btn btn-lg btn-primary fw-semibold" type="submit">Start submission</button>
+                </div>
+              </div>
+              <div class="row d-flex align-items-center">
+                <div class="col">
+                  <p class="fw-semibold mb-0">Don't know where to start?</p>
+                  <p class="mb-0">
+                    For help on how to create MITE entries, check out the <a rel="MITE video tutorial on YouTube" href="https://www.youtube.com/watch?v=xw8Xig8uq90" class="custom-link" target="_blank"><b>video tutorial</b></a> or the <a class="custom-link" href="{{ url_for('tutorial') }}"><b>Tutorial page</b></a>.
+                  </p>
+                  <p class="mb-0">
+                    How about creating a new entry from one of the publications in the <a target="_blank" class="custom-link" href="https://docs.google.com/spreadsheets/d/1LlBKYoCEwuXa2GE-jD5aYYLyEKL9FUBMU4mExyq8Ve4/edit?usp=sharing"><b>MITE paper collection?</b></a>
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </form>
   {% if kanban %}
   <div class="kanban">
     {% for column, prs in kanban.items() %}
@@ -44,7 +90,7 @@
     {% endfor %}
   </div>
   {% else %}
-    <h3>Kanban board not supported in development mode.</h3>
+    <h3 class="my-3">Kanban board not supported in development mode.</h3>
   {% endif %}
 </div>
 {% endblock %}

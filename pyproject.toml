@@ -82,7 +82,9 @@ ignore = [
     # Unnecessary `set` comprehension
     "C416",
     # Incompatible (?) with FastAPI
-    "B008"
+    "B008",
+    # C408 Unnecessary `dict` call (rewrite as a literal)
+    "C408"
 ]
 
 

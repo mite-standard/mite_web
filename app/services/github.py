@@ -54,3 +54,13 @@ def process_pulls(pulls: list[PullRequest]) -> dict:
         )
 
     return board
+
+
+def create_pr(gh: Github, uuid: str):
+    # TODO: complete implementation
+    pass
+
+
+def push_data(gh: Github, uuid: str, data: dict, name: str):
+    # TODO: complete implementation
+    pass

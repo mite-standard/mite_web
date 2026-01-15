@@ -4,16 +4,15 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-auto text-center mx-auto">
-            {% if data.get("accession") and data.get("accession") != "MITE9999999" %}
+            {% if data.accession != "MITE9999999" %}
             <h1 class="fw-semibold lh-2">Modify {{ data.accession }}</h1>
             {% else %}
             <h1 class="fw-semibold lh-2">Create New Entry</h1>
             {% endif %}
-            <h5>Submission ID: {{ var }}</h5>
+            <h5>Submission ID: {{ u_id }}</h5>
             <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
         </div>
     </div>
-    {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="mx-4 my-2">
       <div class="alert alert-light" role="alert">
@@ -34,14 +33,13 @@
           </div>
           <div class="row">
           <div class="text-center mx-auto">
-            <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}">canonicalize your substrate/product SMILES</a>.</h6>
-            <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('routes.troubleshooting') }}">troubleshooting page</a>.</h6>
+            <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}">canonicalize your substrate/product SMILES</a>.</h6>
+            <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('troubleshooting') }}">troubleshooting page</a>.</h6>
           </div>
           </div>
       </div>
     </div>
     {% endif %}
-    {% endwith %}
     <div class="border start_box">
         <div class="m-3">
             <div class="row d-flex align-items-center justify-content-end">
@@ -70,12 +68,11 @@
     </div>
     <div class="row my-4">
         <div class="col text-center mx-auto">
-            <h6>See also our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('routes.peptidesmiles') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a> and <a class="custom-link" target="_blank" href="{{ url_for('routes.canonsmiles') }}"><b>SMILES canonicalizer</b></a> tool.</h6>
+            <h6>See also our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('peptide') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a> and <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}"><b>SMILES canonicalizer</b></a> tool.</h6>
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
-    <form id="miteForm" method="post" action="{{ url_for('routes.submission_process', var=var, role=role) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <form id="miteForm" method="post" action="{{ url_for('index') }}">
         <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
         <div class="row my-2" id="row-enzyme">
             <div class="col-md-6" id="col-enzyme">
@@ -171,9 +168,7 @@
         </div>
     </form>
 </div>
-<!--TODO(MMZ 24.7.): Investigate if url_submission needed by anything legacy or can be removed-->
-<script>const url_submission = {{ url_for('routes.submission') }}</script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/submission.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/submission.js') }}" defer></script>
 <script>
     const formVals = {{ form_vals | tojson | safe }};
     document.getElementById('add-reaction-btn').addEventListener('click', () => {
