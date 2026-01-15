@@ -84,7 +84,9 @@ ignore = [
     # Incompatible (?) with FastAPI
     "B008",
     # C408 Unnecessary `dict` call (rewrite as a literal)
-    "C408"
+    "C408",
+    # upper-case vars
+    "N806"
 ]
 
 
