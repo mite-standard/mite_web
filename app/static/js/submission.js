@@ -22,19 +22,6 @@ function testFirefoxMobile() {
     };
 }
 
-// prevents repeated POST requests
-function disableButton(form, button) {
-  form.addEventListener('submit', function (event) {
-      if (!form.checkValidity()) {
-          return;
-      }
-      setTimeout(() => {
-            button.disabled = true;
-            button.innerText = 'Submitting...';
-        }, 0);
-  });
-}
-
 
 // Removes a Div of a specified class closest to the button; used by all elements that can be added/removed by user-input
 function removeField(button, class_ref) {

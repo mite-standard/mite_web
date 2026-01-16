@@ -19,7 +19,6 @@ async def pathway(request: Request):
 
 @router.post("/pathway/query", include_in_schema=False, response_class=HTMLResponse)
 async def pathway_query(request: Request, params: Annotated[PathwayParams, Form()]):
-    msg = []
     try:
         runner = RunPathway()
         runner.get_pathway(p=params)
@@ -34,13 +33,16 @@ async def pathway_query(request: Request, params: Annotated[PathwayParams, Form(
             },
         )
     except Exception as e:
-        msg.append(f"An error occurred during pathway generation:\n{e!s}")
         return templates.TemplateResponse(
-            request=request, name="pathway.html", context={"messages": msg}
+            request=request,
+            name="pathway.html",
+            context={
+                "messages": f"An error occurred during pathway generation:\n{e!s}"
+            },
         )
 
 
-@router.post("/pathway/csv", include_in_schema=False, response_class=HTMLResponse)
+@router.post("/pathway/csv", include_in_schema=False, response_class=StreamingResponse)
 async def pathway_csv(request: Request, params: Annotated[PathwayParams, Form()]):
     runner = RunPathway()
     runner.get_pathway(p=params)

@@ -169,6 +169,7 @@
     </form>
 </div>
 <script type="text/javascript" src="{{ url_for('static', path='js/submission.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
 <script>
     const formVals = {{ form_vals | tojson | safe }};
     document.getElementById('add-reaction-btn').addEventListener('click', () => {

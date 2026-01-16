@@ -52,7 +52,7 @@
                 </div>
               <div class="row d-flex align-items-center my-2">
                 <div class="col">
-                  <button class="btn btn-lg btn-primary fw-semibold" type="submit">Start submission</button>
+                  <button id="new-submission-submit" class="btn btn-lg btn-primary fw-semibold" type="submit">Start submission</button>
                 </div>
               </div>
               <div class="row d-flex align-items-center">
@@ -93,4 +93,10 @@
     <h3 class="my-3">Kanban board not supported in development mode.</h3>
   {% endif %}
 </div>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('new-submission'), document.getElementById('new-submission-submit'))
+    });
+</script>
 {% endblock %}

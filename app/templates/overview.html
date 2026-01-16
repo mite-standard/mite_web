@@ -106,7 +106,7 @@
         </div>
         <div class="row my-3">
             <div class="col text-center mx-auto">
-                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Submit search</button>
+                <button id="queryForm-submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Submit search</button>
             </div>
         </div>
     </form>
@@ -123,7 +123,7 @@
         <div class="col-auto">
             <form id="queryCsv" method="post" action="{{ url_for('overview_csv') }}">
                 <input type="hidden" name="csv_params" id="csv-params" value='{{ csv_params | tojson | safe }}'>
-                <button class="btn btn-secondary" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
+                <button class="btn btn-secondary" id="queryCsv-submit" type="submit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download results as .csv-file.">
                 <i class="bi bi-download"></i>
                 </button>
             </form>
@@ -160,10 +160,13 @@
     </table>
 </div>
 <script type="text/javascript" src="{{ url_for('static', path='js/querybuilder.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const formVals = {{ form_vals | tojson | safe }};
     initCustomQueryBuilder(formVals);
+    disableButton(document.getElementById('queryForm'), document.getElementById('queryForm-submit'))
+    disableButton(document.getElementById('new-submission'), document.getElementById('queryCsv-submit'))
 });
 </script>
 {% endblock %}
