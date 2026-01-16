@@ -10,7 +10,6 @@ from app.core.logging import setup_logger
 from app.core.shared import load_active, load_form_vals, load_retired, load_table_head
 from app.core.templates import configure_templates
 from app.db.database import engine
-from app.middleware.csrf_middleware import CSRFMiddleware
 from app.services.github import authenticate_pat
 from app.web.pages import download, pages, repository, robots
 from app.web.views import overview, pathway, structures, submission
@@ -44,7 +43,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
-app.add_middleware(CSRFMiddleware)
 
 app.mount("/img", StaticFiles(directory=settings.img_dir), name="img")
 app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")

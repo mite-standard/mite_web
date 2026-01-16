@@ -27,7 +27,6 @@
     {% endif %}
   </div>
   <form id="new-submission" method="post" action="{{ url_for('submission_new') }}">
-    <input type="hidden" name="csrftoken" value="{{ csrftoken }}" />
     <div class="row flex align-items-center">
         <div class="col-8">
             <div class="card card-body mb-2">

@@ -24,7 +24,7 @@ async def submission(request: Request, gh: Github | None = Depends(get_github)):
     return templates.TemplateResponse(
         request=request,
         name="submission.html",
-        context={"kanban": kanban, "csrftoken": request.state.csrftoken},
+        context={"kanban": kanban},
     )
 
 
