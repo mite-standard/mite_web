@@ -1,7 +1,8 @@
 import json
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.core.templates import templates
@@ -9,8 +10,6 @@ from app.db.database import get_db
 from app.services.filtering import FilterManager
 
 router = APIRouter(tags=["views"])
-
-# TODO: complete rework of overview
 
 
 @router.get("/retired", include_in_schema=False, response_class=HTMLResponse)
@@ -27,61 +26,56 @@ async def retired(request: Request):
 
 
 @router.get("/overview", include_in_schema=False, response_class=HTMLResponse)
-async def overview(request: Request):
-    response = templates.TemplateResponse(
-        "overview.html",
-        {
-            "request": request,
-            "entries": [v for v in request.app.state.actives.values()],
-            "headers": request.app.state.table_headers,
+async def overview(request: Request, db: Session = Depends(get_db)):
+    params = dict(request.query_params)
+
+    filtered = bool(params)
+    entries = [v for v in request.app.state.actives.values()]
+    headers = request.app.state.table_headers
+    messages = []
+
+    if filtered:
+        try:
+            manager = FilterManager(
+                accessions={k for k in request.app.state.actives},
+                entries=request.app.state.actives,
+                headers=headers,
+            )
+
+            manager.query_db(forms=params, db=db)
+            manager.query_sequence(forms=params)
+            manager.query_structure(forms=params)
+            manager.query_reaction(forms=params)
+
+            entries = manager.get_entries()
+            headers = manager.headers
+        except Exception as e:
+            messages.append(f"An error occurred during search:\n{e!s}")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="overview.html",
+        context={
+            "entries": entries,
+            "headers": headers,
             "form_vals": request.app.state.form_vals,
-            "filtered": False,
+            "filtered": filtered,
+            "csv_params": params,
+            "messages": messages,
         },
     )
-    return response
 
 
-@router.post("/overview/query", include_in_schema=False, response_class=HTMLResponse)
-async def overview_query(request: Request, db: Session = Depends(get_db)):
-    msg = []
-    try:
-        manager = FilterManager(
-            accessions={k for k in request.app.state.actives},
-            entries=request.app.state.actives,
-            headers=request.app.state.table_headers,
-        )
-        forms = dict(await request.form())
-        manager.query_db(forms=forms, db=db)
-        manager.query_sequence(forms=forms)
-        manager.query_structure(forms=forms)
-        manager.query_reaction(forms=forms)
+@router.post(
+    "/overview/query", include_in_schema=False, response_class=RedirectResponse
+)
+async def overview_query(request: Request):
+    forms = dict(await request.form())
 
-        response = templates.TemplateResponse(
-            request=request,
-            name="overview.html",
-            context={
-                "entries": manager.get_entries(),
-                "headers": manager.headers,
-                "form_vals": request.app.state.form_vals,
-                "filtered": True,
-                "csv_params": forms,
-            },
-        )
-        return response
-    except Exception as e:
-        msg.append(f"An error occurred during search:\n{e!s}")
-        response = templates.TemplateResponse(
-            request=request,
-            name="overview.html",
-            context={
-                "entries": [v for v in request.app.state.actives.values()],
-                "headers": request.app.state.table_headers,
-                "form_vals": request.app.state.form_vals,
-                "filtered": False,
-                "messages": msg,
-            },
-        )
-        return response
+    return RedirectResponse(
+        url=f"/overview?{urlencode(forms)}",
+        status_code=303,
+    )
 
 
 @router.post("/overview/csv", include_in_schema=False, response_class=StreamingResponse)
