@@ -14,7 +14,7 @@
         {% endif %}
         <div class="col text-center">
             <span class="fs-2 fw-bold align-middle">{{ data.accession }} </span>
-            <span class="align-middle"><a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i></a></span>
+            <span class="align-middle"><a href="{{ url_for('download_entry', accession=data.accession ) }}" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i></a></span>
         </div>
         {% if next_exists %}
         <div class="col-auto text-end">

@@ -1,4 +1,7 @@
-from fastapi import APIRouter, Request
+import re
+from typing import Annotated
+
+from fastapi import APIRouter, Path, Request
 from fastapi.responses import FileResponse, HTMLResponse
 
 from app.core.config import settings
@@ -46,3 +49,18 @@ async def download_fasta(request: Request):
         filename="mite_concat.fasta",
         media_type="application/octet-stream",
     )
+
+
+@router.get("/entry/{accession}", include_in_schema=False, response_class=FileResponse)
+async def download_entry(
+    request: Request, accession: Annotated[str, Path(regex="^MITE(\d{7})$")]
+):
+    path = settings.data_dir.joinpath(f"data/{accession}.json")
+    if path.exists():
+        return FileResponse(
+            path=path,
+            filename=f"{accession}.json",
+            media_type="application/octet-stream",
+        )
+
+    #

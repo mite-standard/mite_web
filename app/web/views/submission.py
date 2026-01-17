@@ -139,17 +139,4 @@ async def submission_preview(request: Request):
         raise RuntimeError("TBA")
 
 
-# submission existing
-
-
-# preview
-
-
-# get input values
-# check if setting given
-# if yes, send to function to deposit to github via API
-# redirect to form page with pre-filled values
-# check for empty dummy field to prevent bos submissions
-
-
 # TODO: post route for data validation and rending of final page, or return loop to a submission_existing with the correct name
