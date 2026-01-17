@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from pydantic import BaseModel, computed_field, field_validator, model_validator
 
-MITE_RE = re.compile(r"^MITE(\d{7})$")
+from app.services import validation
 
 
 class MiteListRequest(BaseModel):
@@ -29,14 +29,12 @@ class MiteModel(BaseModel):
     @field_validator("mite_id")
     @classmethod
     def validate_id(cls, v: str) -> str:
-        if not MITE_RE.fullmatch(v):
-            raise ValueError("Invalid MITE ID format")
+        validation.check_mite_id(v)
         return v
 
     @model_validator(mode="after")
-    def check_exists(self):
-        if not self.data_dir.joinpath(f"{self.mite_id}.json").exists():
-            raise FileNotFoundError(f"MITE accession does not exist.")
+    def val_exist(self):
+        validation.check_exists(self.data_dir.joinpath(f"{self.mite_id}.json"))
         return self
 
     @property

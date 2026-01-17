@@ -27,16 +27,35 @@
     {% endif %}
   </div>
   <form id="new-submission" method="post" action="{{ url_for('submission_new') }}">
+    <input type="hidden" name="token" value="{{ token }}">
     <div class="row flex align-items-center">
         <div class="col-8">
             <div class="card card-body mb-2">
-                <div class="row mb-2">
+                <div class="row mb-2 align-items-center">
                   <div class="col">
                         <div class="form-floating">
                             <input id="name" name="name" class="form-control" placeholder="n/a" maxlength="10" type="text" required title="The commonly used enzyme name (e.g. 'NisB' for nisin deydratase).">
                             <label for="name" class="form-label">Enzyme name<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
                         </div>
                     </div>
+                  <div class="col">
+                        <div class="form-floating">
+                            <input id="accession" name="accession" class="form-control form-control-sm" type="text" placeholder="n/a" required title="Insert UniProtKB/UniParc ID or NCBI GenPept Accession number identifying the tailoring enzyme.">
+                            <label for="accession" class="form-label">Protein Accession<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="form-check">
+                            <input class="form-check-input" value="uniprot" type="radio" name="db" id="uniprot" checked>
+                            <label class="form-check-label" for="uniprot">UniProtKB/UniParc</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" value="genpept" type="radio" name="db" id="genpept">
+                            <label class="form-check-label" for="genpept">NCBI GenPept</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
                     <div class="col">
                         <div class="form-floating">
                             <input id="submitter" minlength="19" maxlength="19" name="submitter" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID or leave empty for an anonymous submission. Your ORCID allows us to credit the effort you invested in data curation, as described in our Terms of Use.">
@@ -46,7 +65,7 @@
                     <div class="col">
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
-                          <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('termsofuse') }}">Terms of Use</a>.</label>
+                          <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('termsofuse') }}">Terms of Use</a>.  If I have provided an ORCID, I explicitly agree that it is displayed in association with the submitted data.</label>
                         </div>
                     </div>
                 </div>

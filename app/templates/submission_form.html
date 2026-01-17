@@ -9,7 +9,6 @@
             {% else %}
             <h1 class="fw-semibold lh-2">Create New Entry</h1>
             {% endif %}
-            <h5>Submission ID: {{ u_id }}</h5>
             <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
         </div>
     </div>
@@ -73,7 +72,7 @@
         </div>
     </div>
     <form id="miteForm" method="post" action="{{ url_for('index') }}">
-        <input type="hidden" name="mite_accession" value="{{ data.get('accession', '') }}">
+        <input type="hidden" name="token" value="{{ token }}">
         <div class="row my-2" id="row-enzyme">
             <div class="col-md-6" id="col-enzyme">
                 <div class="row">
