@@ -9,7 +9,13 @@ from fastapi.responses import HTMLResponse
 from github import Github
 
 from app.core.templates import templates
-from app.schemas.submission import NewDraftForm, NewDraftService, SubmissionState
+from app.schemas.submission import (
+    ExistDraftForm,
+    ExistDraftService,
+    NewDraftForm,
+    NewDraftService,
+    SubmissionState,
+)
 from app.services.github import create_pr, get_github, get_kanban_cached, push_data
 from app.services.submission import sign_state, verify_state
 
@@ -79,7 +85,31 @@ async def submission_existing(
     if state.step != "draft":
         raise HTTPException(400)
 
-    print(state.u_id)  # TODO: remove print
+    data_model = ExistDraftService().parse(form=form)
+
+    if gh:
+        create_pr(gh=gh, uuid=state.u_id)
+        push_data(
+            gh=gh,
+            uuid=state.u_id,
+            name=state.data["enzyme"]["name"],
+            data=data_model.data,
+        )
+        # TODO: implement sending to github via API, use UUID for branch name
+
+    state.step = "preview"
+    state.issued = time.time()
+    token = sign_state(state)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="submission_form.html",
+        context={
+            "data": data_model.data,
+            "form_vals": request.app.state.form_vals,
+            "token": token,
+        },
+    )
 
 
 @router.post("/preview", include_in_schema=False, response_class=HTMLResponse)
