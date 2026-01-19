@@ -53,7 +53,7 @@ async def download_fasta(request: Request):
 
 @router.get("/entry/{accession}", include_in_schema=False, response_class=FileResponse)
 async def download_entry(
-    request: Request, accession: Annotated[str, Path(regex="^MITE(\d{7})$")]
+    request: Request, accession: Annotated[str, Path(pattern="^MITE([0-9]{7})$")]
 ):
     path = settings.data_dir.joinpath(f"data/{accession}.json")
     if path.exists():

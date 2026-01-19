@@ -1,17 +1,21 @@
 import logging
 import time
 import uuid
+from collections import defaultdict
 from http.client import HTTPException
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse
 from github import Github
+from mite_extras import MiteParser
+from mite_schema import SchemaManager
 
 from app.core.templates import templates
 from app.schemas.submission import (
     ExistDraftForm,
     ExistDraftService,
+    MiteService,
     NewDraftForm,
     NewDraftService,
     SubmissionState,
@@ -114,22 +118,48 @@ async def submission_existing(
 
 @router.post("/preview", include_in_schema=False, response_class=HTMLResponse)
 async def submission_preview(request: Request):
-    form = dict(await request.form())
+    form = await request.form()
+    data = defaultdict(list)
+    for key, value in form.multi_items():
+        data[key].append(value)
+    data = dict(data)
 
     state = verify_state(form["token"])
     if state.step != "preview":
         raise HTTPException(400)
 
-    print(state.u_id)  # TODO: remove
+    data_mite = MiteService().parse(data=data)
+    print(data_mite)
+    return HTTPException(404)  # TODO: remove error
+
+    try:
+        parser = MiteParser().parse_mite_json(data=data_mite)
+        SchemaManager().validate_mite(parser.to_json())
+    except Exception as e:
+        return templates.TemplateResponse(
+            request=request,
+            name="submission_form.html",
+            context={
+                "data": data_mite,
+                "form_vals": request.app.state.form_vals,
+                "token": sign_state(state),
+                "messages": [f"During data validation, an error has occurred: {e!s}"],
+            },
+        )
+
+    return HTTPException(status_code=404)  # TODO: remove error
 
     # TODO: form data processing
     # TODO: build a schema for the input data? Or start with form first and see what needs to be refactored
+    # TODO: try/except on mite extras validation errors; redirect to form
 
     # different routes for role
 
     state.step = "final"
     state.issued = time.time()
     token = sign_state(state)
+
+    # TODO: create a separate preview template
 
     if state.role == "submitter":
         # return submitter preview template

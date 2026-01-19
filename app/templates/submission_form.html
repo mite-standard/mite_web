@@ -71,8 +71,11 @@
             <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
         </div>
     </div>
-    <form id="miteForm" method="post" action="{{ url_for('index') }}">
+    <form id="miteForm" method="post" action="{{ url_for('submission_preview') }}">
         <input type="hidden" name="token" value="{{ token }}">
+        <input type="hidden" name="changelog" value='{{ data.changelog | tojson }}'>
+        <input type="hidden" name="accession" value="{{ data.accession }}">
+        <input type="hidden" name="status" value="{{ data.status }}">
         <div class="row my-2" id="row-enzyme">
             <div class="col-md-6" id="col-enzyme">
                 <div class="row">
@@ -160,9 +163,17 @@
                 </div>
             </div>
         </div>
-        <div class="row my-3">
-            <div class="col text-center mx-auto">
-                <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Preview entry</button>
+        <div class="row justify-content-center mb-2">
+            <div class="col-auto d-flex justify-content-center align-items-center">
+                <div class="form-floating">
+                    <input id="changelog-comment" name="changelog-comment" class="form-control" placeholder="n/a" value='{{ data.changelog[-1].comment }}' type="text" required title="Briefly describe your changes. If you submit a new entry, simply state 'New entry'">
+                    <label for="changelog-comment" class="form-label">Describe your changes<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                </div>
+            </div>
+            <div class="col-auto d-flex justify-content-center align-items-center p-0">
+                <div class="col">
+                    <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Preview entry</button>
+                </div>
             </div>
         </div>
     </form>

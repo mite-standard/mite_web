@@ -1,7 +1,9 @@
+import json
 import re
+from collections import defaultdict
 from datetime import date
 from pathlib import Path
-from typing import ClassVar, Literal
+from typing import Any, ClassVar, Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -157,3 +159,135 @@ class ExistDraftService:
             }
         )
         return ExistDraftData(data=data)
+
+
+class MiteService:
+    """Data convertion and enrichment"""
+
+    def parse(self, data: dict) -> dict:
+        """Convert form data to format compatible with MiteParser"""
+
+        data = {
+            "accession": data["accession"][0],
+            "status": data["status"][0],
+            "comment": data["comment"][0],
+            "changelog": self.changelog(data),
+            "enzyme": self.enzyme(data),
+            "reactions": self.reactions(data),
+        }
+
+        return {k: v for k, v in data.items() if v != ""}
+
+    @staticmethod
+    def changelog(data: dict) -> list:
+        changelog = json.loads(data["changelog"][0])
+        changelog[-1]["comment"] = data["changelog-comment"][0]
+        return changelog
+
+    def enzyme(self, data: dict) -> dict:
+        """Parse out enzyme information"""
+
+        enzyme = {
+            "name": data.get("enzyme_name", [""])[0],
+            "description": data.get("enzyme_description", [""])[0],
+            "references": data.get("enzyme_ref[]", []),
+            "databaseIds": {
+                "uniprot": self.first_or_none(data, "enzyme_uniprot"),
+                "genpept": self.first_or_none(data, "enzyme_genpept"),
+                "mibig": self.first_or_none(data, "enzyme_mibig"),
+                "wikidata": self.first_or_none(data, "enzyme_wikidata"),
+            },
+            "cofactors": {
+                "organic": data.get(f"enzyme-cofactors-organic-check[]", []),
+                "inorganic": data.get(f"enzyme-cofactors-inorganic-check[]", []),
+            },
+        }
+
+        nr_auxenz = self.get_nr_instances(
+            data=data, pattern=re.compile(r"auxenzyme\[(\d+)\]")
+        )
+        if nr_auxenz:
+            enzyme["auxiliaryEnzymes"] = []
+            for index in nr_auxenz:
+                enzyme["auxiliaryEnzymes"].append(
+                    {
+                        "name": data.get(f"auxenzyme[{index}]name", [""])[0],
+                        "description": data.get(f"auxenzyme[{index}]description", [""])[
+                            0
+                        ],
+                        "databaseIds": {
+                            "uniprot": data.get(f"auxenzyme[{index}]uniprot", [""])[0],
+                            "genpept": data.get(f"auxenzyme[{index}]genpept", [""])[0],
+                            "wikidata": data.get(f"auxenzyme[{index}]wikidata", [""])[
+                                0
+                            ],
+                        },
+                    }
+                )
+
+        return enzyme
+
+    def reactions(self, data: dict) -> list:
+        """Parse out reaction information"""
+        reactions = {
+            i: self.get_nr_instances(
+                data=data,
+                pattern=re.compile(rf"reaction\[({i})\]knownreaction\[(\d+)\]"),
+            )
+            for i in self.get_nr_instances(
+                data=data, pattern=re.compile(r"reaction\[(\d+)\]")
+            )
+        }
+        data_mite = []
+        for key, value in reactions.items():
+            data_mite.append(
+                {
+                    "tailoring": data.get(f"reaction[{key}]tailoring[]", [""]),
+                    "description": data.get(f"reaction[{key}]description", [""])[0],
+                    "reactionSMARTS": data.get(f"reaction[{key}]smarts", [""])[0],
+                    "databaseIds": {
+                        "rhea": data.get(f"reaction[{key}]rhea", [""])[0],
+                        "ec": data.get(f"reaction[{key}]ec", [""])[0],
+                    },
+                    "evidence": {
+                        "evidenceCode": data.get(
+                            f"reaction[{key}]evidencecode[]", [""]
+                        ),
+                        "references": data.get(f"reaction[{key}]ref[]", [""]),
+                    },
+                    "reactions": [],
+                }
+            )
+            for index in value:
+                data_mite[int(key)]["reactions"].append(
+                    {
+                        "substrate": data.get(
+                            f"reaction[{key}]knownreaction[{index}]substrate", [""]
+                        )[0],
+                        "products": data.get(
+                            f"reaction[{key}]knownreaction[{index}]products[]", [""]
+                        ),
+                        "forbidden_products": data.get(
+                            f"reaction[{key}]knownreaction[{index}]forbiddenproducts[]"
+                        ),
+                        "isIntermediate": data.get(
+                            f"reaction[{key}]knownreaction[{index}]intermediate", [""]
+                        )[0],
+                        "description": data.get(
+                            f"reaction[{key}]knownreaction[{index}]description", [""]
+                        )[0],
+                    }
+                )
+            return data_mite
+
+    @staticmethod
+    def get_nr_instances(data: dict, pattern: Any) -> list:
+        """Find number of patterns to inform parsing"""
+        return sorted(
+            {match.group(1) for key in data if (match := pattern.search(key))}
+        )
+
+    @staticmethod
+    def first_or_none(data: dict, key: str) -> str | None:
+        val = data.get(key, [""])[0]
+        return val if val != "" else None
