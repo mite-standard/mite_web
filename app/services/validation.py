@@ -74,3 +74,9 @@ def is_uniprot(acc: str, timeout: float = 3.0) -> bool | None:
         return r.status_code == 200
     except requests.RequestException:
         return None
+
+
+def validate_nr_items(container: list, msg: str):
+    """Raises ValueError if n=0 or invalid"""
+    if len(container) == 0 or all(i == "" for i in container):
+        raise ValueError(msg)

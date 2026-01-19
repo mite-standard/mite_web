@@ -5,6 +5,8 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar, Literal
 
+from mite_extras import MiteParser
+from mite_schema import SchemaManager
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from app.services import validation
@@ -151,7 +153,7 @@ class ExistDraftService:
         data["status"] = "pending"
         data["changelog"].append(
             {
-                "version": len(data["changelog"]) + 1,
+                "version": str(len(data["changelog"]) + 1),
                 "date": date.today().strftime("%Y-%m-%d"),
                 "contributors": [form.submitter],
                 "reviewers": ["BBBBBBBBBBBBBBBBBBBBBBBB"],
@@ -161,11 +163,53 @@ class ExistDraftService:
         return ExistDraftData(data=data)
 
 
+class MiteData(BaseModel):
+    """Validated data following mite schema"""
+
+    raw_data: dict
+    data: MiteParser
+
+    @model_validator(mode="before")
+    @classmethod
+    def parse_and_validate(cls, values: dict):
+        """Derives MiteParser from values dict and attaches it to the model before creation"""
+        parser = MiteParser()
+        parser.parse_mite_json(data=values["raw_data"])
+        schema_manager = SchemaManager()
+        schema_manager.validate_mite(instance=parser.to_json())
+        values["data"] = parser
+        return values
+
+    @model_validator(mode="after")
+    def validate_nr_items(self):
+        data = self.data.to_json()
+        validation.validate_nr_items(
+            container=data["enzyme"]["references"],
+            msg="Enzyme: at least one reference DOI needed.",
+        )
+
+        for idx, r in enumerate(data["reactions"]):
+            validation.validate_nr_items(
+                container=r["tailoring"],
+                msg="At least one of the checkboxes in 'Tailoring Reaction Controlled Vocabulary' must be checked.",
+            )
+            validation.validate_nr_items(
+                container=r["evidence"]["evidenceCode"],
+                msg=f"Reaction {idx +1}: At least one of the checkboxes in 'Experimental Evidence Qualifiers' must be checked.",
+            )
+            validation.validate_nr_items(
+                container=r["evidence"]["references"],
+                msg=f"Reaction {idx +1}: At least one reference DOI needed.",
+            )
+
+        return self
+
+
 class MiteService:
     """Data convertion and enrichment"""
 
     def parse(self, data: dict) -> dict:
-        """Convert form data to format compatible with MiteParser"""
+        """Convert form data to format compatible with MiteData"""
 
         data = {
             "accession": data["accession"][0],

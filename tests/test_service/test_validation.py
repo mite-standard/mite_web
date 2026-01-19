@@ -62,3 +62,26 @@ def test_uniprot_valid():
 
 def test_uniprot_timeout():
     assert validation.is_uniprot(acc="Q93KW1", timeout=0.000000001) is None
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(container=["1", "2"], msg="message"),
+        dict(container=["1"], msg="message"),
+    ],
+)
+def test_nr_items_valid(kwargs):
+    assert validation.validate_nr_items(**kwargs) is None
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        dict(container=[], msg="message"),
+        dict(container=["", ""], msg="message"),
+    ],
+)
+def test_nr_items_invalid(kwargs):
+    with pytest.raises(ValueError):
+        validation.validate_nr_items(**kwargs)

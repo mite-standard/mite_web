@@ -6,7 +6,7 @@ from http.client import HTTPException
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from github import Github
 from mite_extras import MiteParser
 from mite_schema import SchemaManager
@@ -15,6 +15,7 @@ from app.core.templates import templates
 from app.schemas.submission import (
     ExistDraftForm,
     ExistDraftService,
+    MiteData,
     MiteService,
     NewDraftForm,
     NewDraftService,
@@ -129,12 +130,8 @@ async def submission_preview(request: Request):
         raise HTTPException(400)
 
     data_mite = MiteService().parse(data=data)
-    print(data_mite)
-    return HTTPException(404)  # TODO: remove error
-
     try:
-        parser = MiteParser().parse_mite_json(data=data_mite)
-        SchemaManager().validate_mite(parser.to_json())
+        model = MiteData(raw_data=data_mite)
     except Exception as e:
         return templates.TemplateResponse(
             request=request,
@@ -147,19 +144,11 @@ async def submission_preview(request: Request):
             },
         )
 
-    return HTTPException(status_code=404)  # TODO: remove error
-
-    # TODO: form data processing
-    # TODO: build a schema for the input data? Or start with form first and see what needs to be refactored
-    # TODO: try/except on mite extras validation errors; redirect to form
-
-    # different routes for role
-
     state.step = "final"
     state.issued = time.time()
     token = sign_state(state)
 
-    # TODO: create a separate preview template
+    print(model.data.to_json())
 
     if state.role == "submitter":
         # return submitter preview template
