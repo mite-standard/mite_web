@@ -22,7 +22,13 @@ from app.schemas.submission import (
     NewDraftService,
     SubmissionState,
 )
-from app.services.github import create_pr, get_github, get_kanban_cached, push_data
+from app.services.github import (
+    create_pr,
+    draft_to_full,
+    get_github,
+    get_kanban_cached,
+    push_data,
+)
 from app.services.submission import sign_state, verify_state
 
 logger = logging.getLogger(__name__)
@@ -63,7 +69,7 @@ async def submission_new(
 
     if gh:
         create_pr(gh=gh, uuid=state.u_id)
-        push_data(gh=gh, uuid=state.u_id, name=state.u_id, data=data_model.data)
+        push_data(gh=gh, uuid=state.u_id, data=data_model.data)
         # TODO: implement sending to github via API, use UUID for branch name
 
     state.step = "preview"
@@ -98,7 +104,6 @@ async def submission_existing(
         push_data(
             gh=gh,
             uuid=state.u_id,
-            name=state.data["enzyme"]["name"],
             data=data_model.data,
         )
         # TODO: implement sending to github via API, use UUID for branch name
@@ -189,7 +194,32 @@ async def submission_modified(request: Request):
     )
 
 
-# post route for final submission
+@router.post("/submit", include_in_schema=False, response_class=HTMLResponse)
+async def submission_submit(request: Request, gh: Github | None = Depends(get_github)):
+    form = dict(await request.form())
+
+    state = verify_state(form["token"])
+    if state.step != "final":
+        raise HTTPException(400)
+
+    raw_data = json.loads(form["data_form"])
+
+    if gh:
+        draft_to_full(gh=gh, uuid=state.u_id)
+        push_data(
+            gh=gh,
+            uuid=state.u_id,
+            data=raw_data,
+        )
+        # TODO: implement sending to github via API, use UUID for branch name
+
+    return templates.TemplateResponse(
+        request=request,
+        name="submission_success.html",
+        context={
+            "sub_id": state.u_id if gh else None,
+        },
+    )
 
 
 @router.post("/download", include_in_schema=False, response_class=StreamingResponse)
