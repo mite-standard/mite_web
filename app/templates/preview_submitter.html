@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid mt-2">
+    <div class="row mb-2 text-center align-items-center">
+        <form method="post" action="{{ url_for('submission_download') }}">
+          <input type="hidden" name="download-data" value='{{ data_form | tojson }}'>
+          <div class="col text-center">
+            <span class="fs-2 fw-bold align-middle">{{ data.accession }}</span>
+            <span class="align-middle"><button class="btn btn-secondary btn-sm" type="submit"><i class="bi bi-download"></i></button></span>
+          </div>
+        </form>
+    </div>
+     <div class="row flex justify-content-center">
+        <div class="col-auto">
+            <form id="modify" method="post" action="{{ url_for('submission_modified') }}">
+                <input type="hidden" name="data_form" value='{{ data_form | tojson }}'>
+                <input type="hidden" name="token" value="{{ token }}">
+                <button id="modify-submit" type="submit" class="btn btn-secondary btn-sm">Modify further</button>
+            </form>
+        </div>
+         <div class="col-auto">
+            <form id="submit" method="post" action="{{ url_for('index') }}">
+                <input type="hidden" name="data_form" value='{{ data_form | tojson }}'>
+                <input type="hidden" name="token" value="{{ token }}">
+                <button type="submit" id="submit-submit" class="btn btn-primary btn-sm">Submit for review</button>
+            </form>
+        </div>
+    </div>
+{% if data.status == "retired" %}
+    {% include 'retired.html' %}
+{% else %}
+    {% include 'active.html' %}
+{% endif %}
+</div>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/copy_clipboard.js') }}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('modify'), document.getElementById('modify-submit'))
+        disableButton(document.getElementById('submit'), document.getElementById('submit-submit'))
+    });
+</script>
+{% endblock %}

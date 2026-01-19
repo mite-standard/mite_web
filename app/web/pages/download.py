@@ -62,5 +62,3 @@ async def download_entry(
             filename=f"{accession}.json",
             media_type="application/octet-stream",
         )
-
-    #

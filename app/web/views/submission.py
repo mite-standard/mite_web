@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 import uuid
@@ -6,7 +7,7 @@ from http.client import HTTPException
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from github import Github
 from mite_extras import MiteParser
 from mite_schema import SchemaManager
@@ -129,15 +130,15 @@ async def submission_preview(request: Request):
     if state.step != "preview":
         raise HTTPException(400)
 
-    data_mite = MiteService().parse(data=data)
+    raw_data = MiteService().parse(data=data)
     try:
-        model = MiteData(raw_data=data_mite)
+        model = MiteData(raw_data=raw_data)
     except Exception as e:
         return templates.TemplateResponse(
             request=request,
             name="submission_form.html",
             context={
-                "data": data_mite,
+                "data": raw_data,
                 "form_vals": request.app.state.form_vals,
                 "token": sign_state(state),
                 "messages": [f"During data validation, an error has occurred: {e!s}"],
@@ -148,14 +149,59 @@ async def submission_preview(request: Request):
     state.issued = time.time()
     token = sign_state(state)
 
-    print(model.data.to_json())
-
     if state.role == "submitter":
-        # return submitter preview template
-        raise RuntimeError("TBA")
-    if state.role == "reviewer":
-        # return reviewer preview template
+        return templates.TemplateResponse(
+            request=request,
+            name="preview_submitter.html",
+            context={
+                "data": model.data.to_html(),
+                "data_form": model.data.to_json(),
+                "token": token,
+            },
+        )
+    else:
+        # return reviewer preview template that leads to password-protected confirmation route
         raise RuntimeError("TBA")
 
 
-# TODO: post route for data validation and rending of final page, or return loop to a submission_existing with the correct name
+@router.post("/modified", include_in_schema=False, response_class=HTMLResponse)
+async def submission_modified(request: Request):
+    form = dict(await request.form())
+
+    state = verify_state(form["token"])
+    if state.step != "final":
+        raise HTTPException(400)
+
+    raw_data = json.loads(form["data_form"])
+
+    state.step = "preview"
+    state.issued = time.time()
+    token = sign_state(state)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="submission_form.html",
+        context={
+            "data": raw_data,
+            "form_vals": request.app.state.form_vals,
+            "token": token,
+        },
+    )
+
+
+# post route for final submission
+
+
+@router.post("/download", include_in_schema=False, response_class=StreamingResponse)
+async def submission_download(request: Request):
+    def json_stream(d_in):
+        yield json.dumps(d_in, indent=4)
+
+    form = dict(await request.form())
+    data = json.loads(form["download-data"])
+
+    return StreamingResponse(
+        json_stream(data),
+        media_type="application/json",
+        headers={"Content-Disposition": 'attachment; filename="mite_entry.json"'},
+    )
