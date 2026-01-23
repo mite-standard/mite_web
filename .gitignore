@@ -13,6 +13,7 @@ mite_web/mite_web/open_prs/
 mite_web/.venv
 data/
 .venv
+users.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

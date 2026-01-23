@@ -12,6 +12,7 @@ from github import Github
 from mite_extras import MiteParser
 from mite_schema import SchemaManager
 
+from app.auth.basic import get_current_user
 from app.core.templates import templates
 from app.schemas.submission import (
     ExistDraftForm,
@@ -25,6 +26,7 @@ from app.schemas.submission import (
 from app.services.github import (
     create_pr,
     draft_to_full,
+    get_data,
     get_github,
     get_kanban_cached,
     push_data,
@@ -126,14 +128,15 @@ async def submission_existing(
 @router.post("/preview", include_in_schema=False, response_class=HTMLResponse)
 async def submission_preview(request: Request):
     form = await request.form()
-    data = defaultdict(list)
-    for key, value in form.multi_items():
-        data[key].append(value)
-    data = dict(data)
 
     state = verify_state(form["token"])
     if state.step != "preview":
         raise HTTPException(400)
+
+    data = defaultdict(list)
+    for key, value in form.multi_items():
+        data[key].append(value)
+    data = dict(data)
 
     raw_data = MiteService().parse(data=data)
     try:
@@ -162,6 +165,7 @@ async def submission_preview(request: Request):
                 "data": model.data.to_html(),
                 "data_form": model.data.to_json(),
                 "token": token,
+                "preview": True,
             },
         )
     else:
@@ -235,3 +239,30 @@ async def submission_download(request: Request):
         media_type="application/json",
         headers={"Content-Disposition": 'attachment; filename="mite_entry.json"'},
     )
+
+
+@router.get("/review/{u_id}", include_in_schema=False)  # TODO: add HTMLResponse
+async def submission_review(
+    request: Request,
+    u_id: str,
+    gh: Github | None = Depends(get_github),
+    current_user: str = Depends(get_current_user),
+):
+    token = sign_state(
+        SubmissionState(u_id=u_id, step="final", issued=time.time(), role="reviewer")
+    )
+
+    return {"username": current_user}
+
+
+# get for landing on reviewer page, uuid is already delivered
+# new submission state is coined
+# data is downloaded from github or user is alerted that review is only possible in production
+# data is sent to the preview_reviewer.html route, with Httponly authentication
+# store the httponly authentication in .env; hashed keys
+
+
+# post for submitter_final,
+# data is parsed from preview form
+# state is checked
+# reviewed tag is sent

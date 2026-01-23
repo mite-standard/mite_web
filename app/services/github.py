@@ -69,3 +69,13 @@ def draft_to_full(gh: Github, uuid: str):
 def push_data(gh: Github, uuid: str, data: dict):
     # TODO: complete implementation
     pass
+
+
+def get_data(gh: Github, uuid: str) -> dict:
+    # TODO: complete implementation
+    pass
+
+
+def approve_pr(gh: Github, uuid: str):
+    # TODO: complete implementation
+    pass

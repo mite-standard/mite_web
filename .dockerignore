@@ -8,3 +8,4 @@ tests/
 .pytest_cache/
 .ruff_cache/
 .venv/
+users.csv
