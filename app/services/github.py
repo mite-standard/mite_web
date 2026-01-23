@@ -1,11 +1,12 @@
 import base64
 import json
 import logging
+from typing import Union
 
 from async_lru import alru_cache
 from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from github import Auth, Github, GithubException, PullRequest
+from github import Auth, Github, GithubException, PullRequest, Repository
 
 from app.core.config import settings
 
@@ -22,15 +23,14 @@ def authenticate_pat() -> Github | None:
     return Github(auth=auth)
 
 
-def get_github(request: Request) -> Github | None:
-    if request.app.state.gh:
-        return request.app.state.gh
+def get_github(request: Request) -> Repository | None:
+    if request.app.state.repo:
+        return request.app.state.repo
 
 
 @alru_cache(ttl=60)
-async def get_kanban_cached(gh: Github):
+async def get_kanban_cached(repo: Repository):
     def fetch():
-        repo = gh.get_repo(settings.repo_name)
         pulls = repo.get_pulls(state="open")
         return process_pulls(pulls)
 
@@ -58,25 +58,24 @@ def process_pulls(pulls: list[PullRequest]) -> dict:
     return board
 
 
-def create_pr(gh: Github, uuid: str):
+def create_pr(repo: Repository, uuid: str):
     # TODO: complete implementation
     pass
 
 
-def draft_to_full(gh: Github, uuid: str):
+def draft_to_full(repo: Repository, uuid: str):
     # TODO: complete implementation
     pass
 
 
-def push_data(gh: Github, uuid: str, data: dict):
+def push_data(repo: Repository, uuid: str, data: dict):
     # TODO: complete implementation
     pass
 
 
-async def get_data(gh: Github, uuid: str) -> dict:
+async def get_data(repo: Repository, uuid: str) -> dict:
     def _fetch():
         try:
-            repo = gh.get_repo(settings.repo_name)
             contents = repo.get_contents(ref=uuid, path=f"mite_data/data/{uuid}.json")
         except GithubException as e:
             HTTPException(404, detail=f"{e!s}")
@@ -87,6 +86,6 @@ async def get_data(gh: Github, uuid: str) -> dict:
     return await run_in_threadpool(_fetch)
 
 
-def approve_pr(gh: Github, uuid: str):
+def approve_pr(repo: Repository, uuid: str):
     # TODO: complete implementation
     pass

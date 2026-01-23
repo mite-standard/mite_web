@@ -22,15 +22,24 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("App starting up - DB ready")
 
-    app.state.gh = authenticate_pat()
+    gh = authenticate_pat()
+    app.state.gh = gh
+
+    if gh:
+        user = gh.get_user().login
+        logger.info(f"Authenticated to GitHub as {user}")
+        app.state.repo = gh.get_repo(settings.repo_name)
+        logger.info(f"Loaded repo {settings.repo_name}")
+    else:
+        app.state.repo = None
+        logger.error("GitHub authentication failed")
+
+    # TODO: continue with changing github get_github(), routes with github should get repo instead
+
     app.state.actives = load_active()
     app.state.retired = load_retired()
     app.state.table_headers = load_table_head()
     app.state.form_vals = load_form_vals()
-
-    if app.state.gh:
-        user = app.state.gh.get_user().login
-        logger.info(f"Authenticated to GitHub as {user}")
 
     yield
 

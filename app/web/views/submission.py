@@ -4,11 +4,11 @@ import time
 import uuid
 from collections import defaultdict
 from http.client import HTTPException
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
-from github import Github
+from github import Github, Repository
 from mite_extras import MiteParser
 from mite_schema import SchemaManager
 
@@ -40,7 +40,7 @@ router = APIRouter(prefix="/submission", tags=["views"])
 
 
 @router.get("/", include_in_schema=False, response_class=HTMLResponse)
-async def submission(request: Request, gh: Github | None = Depends(get_github)):
+async def submission(request: Request, repo: Repository | None = Depends(get_github)):
     token = sign_state(
         SubmissionState(
             u_id=str(uuid.uuid1()), step="draft", issued=time.time(), role="submitter"
@@ -48,8 +48,8 @@ async def submission(request: Request, gh: Github | None = Depends(get_github)):
     )
     kanban = None
 
-    if gh:
-        kanban = await get_kanban_cached(gh)
+    if repo:
+        kanban = await get_kanban_cached(repo)
 
     return templates.TemplateResponse(
         request=request,
@@ -62,7 +62,7 @@ async def submission(request: Request, gh: Github | None = Depends(get_github)):
 async def submission_new(
     request: Request,
     form: Annotated[NewDraftForm, Form()],
-    gh: Github | None = Depends(get_github),
+    repo: Repository | None = Depends(get_github),
 ):
     state = verify_state(form.token)
     if state.step != "draft":
@@ -70,9 +70,9 @@ async def submission_new(
 
     data_model = NewDraftService().parse(form=form)
 
-    if gh:
-        create_pr(gh=gh, uuid=state.u_id)
-        push_data(gh=gh, uuid=state.u_id, data=data_model.data)
+    if repo:
+        create_pr(repo=repo, uuid=state.u_id)
+        push_data(repo=repo, uuid=state.u_id, data=data_model.data)
         # TODO: implement sending to github via API, use UUID for branch name
 
     state.step = "preview"
@@ -94,7 +94,7 @@ async def submission_new(
 async def submission_existing(
     request: Request,
     form: Annotated[ExistDraftForm, Form()],
-    gh: Github | None = Depends(get_github),
+    repo: Repository | None = Depends(get_github),
 ):
     state = verify_state(form.token)
     if state.step != "draft":
@@ -102,10 +102,10 @@ async def submission_existing(
 
     data_model = ExistDraftService().parse(form=form)
 
-    if gh:
-        create_pr(gh=gh, uuid=state.u_id)
+    if repo:
+        create_pr(repo=repo, uuid=state.u_id)
         push_data(
-            gh=gh,
+            repo=repo,
             uuid=state.u_id,
             data=data_model.data,
         )
@@ -208,7 +208,9 @@ async def submission_modified(request: Request):
 
 
 @router.post("/submit", include_in_schema=False, response_class=HTMLResponse)
-async def submission_submit(request: Request, gh: Github | None = Depends(get_github)):
+async def submission_submit(
+    request: Request, repo: Repository | None = Depends(get_github)
+):
     form = dict(await request.form())
 
     state = verify_state(form["token"])
@@ -217,10 +219,10 @@ async def submission_submit(request: Request, gh: Github | None = Depends(get_gi
 
     raw_data = json.loads(form["data_form"])
 
-    if gh:
-        draft_to_full(gh=gh, uuid=state.u_id)
+    if repo:
+        draft_to_full(repo=repo, uuid=state.u_id)
         push_data(
-            gh=gh,
+            repo=repo,
             uuid=state.u_id,
             data=raw_data,
         )
@@ -230,7 +232,7 @@ async def submission_submit(request: Request, gh: Github | None = Depends(get_gi
         request=request,
         name="submission_success.html",
         context={
-            "sub_id": state.u_id if gh else None,
+            "sub_id": state.u_id if repo else None,
         },
     )
 
@@ -254,10 +256,10 @@ async def submission_download(request: Request):
 async def submission_review(
     request: Request,
     u_id: str,
-    gh: Github | None = Depends(get_github),
+    repo: Repository | None = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
-    if not gh:
+    if not repo:
         HTTPException(400)
 
     token = sign_state(
@@ -270,7 +272,7 @@ async def submission_review(
         )
     )
 
-    raw_data = await get_data(gh=gh, uuid=u_id)
+    raw_data = await get_data(repo=repo, uuid=u_id)
     model = MiteData(raw_data=raw_data)
 
     return templates.TemplateResponse(
@@ -288,10 +290,10 @@ async def submission_review(
 @router.post("/review/submit", include_in_schema=False, response_class=HTMLResponse)
 async def review_submit(
     request: Request,
-    gh: Github | None = Depends(get_github),
+    repo: Repository | None = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
-    if not gh:
+    if not repo:
         HTTPException(400)
 
     form = dict(await request.form())
@@ -305,23 +307,19 @@ async def review_submit(
     model = MiteData(raw_data=raw_data)
 
     push_data(
-        gh=gh,
+        repo=repo,
         uuid=state.u_id,
         data=model.data.to_json(),
     )
-    approve_pr(gh=gh, uuid=state.u_id)
+    approve_pr(repo=repo, uuid=state.u_id)
 
     return templates.TemplateResponse(
         request=request,
         name="review_success.html",
         context={
-            "sub_id": state.u_id,
+            "sub_id": state.u_id if repo else None,
         },
     )
-
-    # read out token, check if final, check if current user fits
-    #  read data into model
-    # commit to github and add reviewed tag
 
 
 # get for landing on reviewer page, uuid is already delivered
