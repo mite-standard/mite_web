@@ -10,7 +10,10 @@ security = HTTPBasic()
 
 
 def get_current_user(credentials: HTTPBasicCredentials = Depends(security)) -> str:
-    """Authenticate reviewer"""
+    """Authenticate reviewer
+
+    Checks for non-existing user to prevent timing attacks
+    """
     exception = HTTPException(
         401,
         detail="Invalid credentials",

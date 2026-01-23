@@ -24,6 +24,7 @@ from app.schemas.submission import (
     SubmissionState,
 )
 from app.services.github import (
+    approve_pr,
     create_pr,
     draft_to_full,
     get_data,
@@ -169,8 +170,16 @@ async def submission_preview(request: Request):
             },
         )
     else:
-        # return reviewer preview template that leads to password-protected confirmation route
-        raise RuntimeError("TBA")
+        return templates.TemplateResponse(
+            request=request,
+            name="preview_reviewer.html",
+            context={
+                "data": model.data.to_html(),
+                "data_form": model.data.to_json(),
+                "token": token,
+                "preview": True,
+            },
+        )
 
 
 @router.post("/modified", include_in_schema=False, response_class=HTMLResponse)
@@ -241,18 +250,78 @@ async def submission_download(request: Request):
     )
 
 
-@router.get("/review/{u_id}", include_in_schema=False)  # TODO: add HTMLResponse
+@router.get("/review/{u_id}", include_in_schema=False, response_class=HTMLResponse)
 async def submission_review(
     request: Request,
     u_id: str,
     gh: Github | None = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
+    if not gh:
+        HTTPException(400)
+
     token = sign_state(
-        SubmissionState(u_id=u_id, step="final", issued=time.time(), role="reviewer")
+        SubmissionState(
+            u_id=u_id,
+            step="final",
+            issued=time.time(),
+            role="reviewer",
+            reviewer=current_user,
+        )
     )
 
-    return {"username": current_user}
+    raw_data = await get_data(gh=gh, uuid=u_id)
+    model = MiteData(raw_data=raw_data)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="preview_reviewer.html",
+        context={
+            "data": model.data.to_html(),
+            "data_form": model.data.to_json(),
+            "token": token,
+            "preview": True,
+        },
+    )
+
+
+@router.post("/review/submit", include_in_schema=False, response_class=HTMLResponse)
+async def review_submit(
+    request: Request,
+    gh: Github | None = Depends(get_github),
+    current_user: str = Depends(get_current_user),
+):
+    if not gh:
+        HTTPException(400)
+
+    form = dict(await request.form())
+
+    state = verify_state(form["token"])
+    if state.step != "final" or state.reviewer != current_user:
+        raise HTTPException(400)
+
+    raw_data = json.loads(form["data_form"])
+    raw_data["changelog"][-1]["reviewer"][0] = state.reviewer
+    model = MiteData(raw_data=raw_data)
+
+    push_data(
+        gh=gh,
+        uuid=state.u_id,
+        data=model.data.to_json(),
+    )
+    approve_pr(gh=gh, uuid=state.u_id)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="review_success.html",
+        context={
+            "sub_id": state.u_id,
+        },
+    )
+
+    # read out token, check if final, check if current user fits
+    #  read data into model
+    # commit to github and add reviewed tag
 
 
 # get for landing on reviewer page, uuid is already delivered

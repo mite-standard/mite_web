@@ -19,12 +19,14 @@ class SubmissionState(BaseModel):
     u_id: A UUID
     step: Step in submission process
     issued: time in seconds to check for timeout
+    reviewer: authenticated reviewer username
     role: submitter/reviewer role
     """
 
     u_id: str
     step: Literal["draft", "preview", "final"]
     issued: float
+    reviewer: str | None = None
     role: Literal["submitter", "reviewer"]
 
 

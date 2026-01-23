@@ -1,9 +1,11 @@
+import base64
+import json
 import logging
 
 from async_lru import alru_cache
-from fastapi import Request
+from fastapi import HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from github import Auth, Github, PullRequest
+from github import Auth, Github, GithubException, PullRequest
 
 from app.core.config import settings
 
@@ -71,9 +73,18 @@ def push_data(gh: Github, uuid: str, data: dict):
     pass
 
 
-def get_data(gh: Github, uuid: str) -> dict:
-    # TODO: complete implementation
-    pass
+async def get_data(gh: Github, uuid: str) -> dict:
+    def _fetch():
+        try:
+            repo = gh.get_repo(settings.repo_name)
+            contents = repo.get_contents(ref=uuid, path=f"mite_data/data/{uuid}.json")
+        except GithubException as e:
+            HTTPException(404, detail=f"{e!s}")
+
+        decoded = base64.b64decode(contents.content).decode("utf-8")
+        return json.loads(decoded)
+
+    return await run_in_threadpool(_fetch)
 
 
 def approve_pr(gh: Github, uuid: str):

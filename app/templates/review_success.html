@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 bd-gutter">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">Review completed!</h1>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <p class="lead lh-2">
+                Thank you for completing the review for the entry <a class="custom-link" target="_blank" href="https://github.com/mite-standard/mite_data/pulls">{{ sub_id }}</a>.
+                The entry has been automatically marked as reviewed and will be added to the next release of MITE.
+        </div>
+    </div>
+</div>
+{% endblock %}
