@@ -69,5 +69,9 @@ class Settings(BaseSettings):
     def max_age(self) -> int:
         return 60 * 60 * 24 * 7  # 7 days
 
+    @property
+    def reviewer_gh_tags(self) -> tuple:
+        return ("@mmzdouc",)
+
 
 settings = Settings()

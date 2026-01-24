@@ -3,10 +3,9 @@ import logging
 import time
 import uuid
 from collections import defaultdict
-from http.client import HTTPException
 from typing import Annotated, Union
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from github import Github, Repository
 from mite_extras import MiteParser
@@ -24,13 +23,14 @@ from app.schemas.submission import (
     SubmissionState,
 )
 from app.services.github import (
-    approve_pr,
+    add_pr_label,
     create_pr,
+    delete_file,
     draft_to_full,
     get_data,
     get_github,
     get_kanban_cached,
-    push_data,
+    upsert_json_file,
 )
 from app.services.submission import sign_state, verify_state
 
@@ -41,6 +41,7 @@ router = APIRouter(prefix="/submission", tags=["views"])
 
 @router.get("/", include_in_schema=False, response_class=HTMLResponse)
 async def submission(request: Request, repo: Repository | None = Depends(get_github)):
+    """Get submission page with optional Kanban board"""
     token = sign_state(
         SubmissionState(
             u_id=str(uuid.uuid1()), step="draft", issued=time.time(), role="submitter"
@@ -64,6 +65,7 @@ async def submission_new(
     form: Annotated[NewDraftForm, Form()],
     repo: Repository | None = Depends(get_github),
 ):
+    """Create (pull request draft for) new submission"""
     state = verify_state(form.token)
     if state.step != "draft":
         raise HTTPException(400)
@@ -71,9 +73,7 @@ async def submission_new(
     data_model = NewDraftService().parse(form=form)
 
     if repo:
-        create_pr(repo=repo, uuid=state.u_id)
-        push_data(repo=repo, uuid=state.u_id, data=data_model.data)
-        # TODO: implement sending to github via API, use UUID for branch name
+        await create_pr(repo=repo, branch=state.u_id, data=data_model.data)
 
     state.step = "preview"
     state.issued = time.time()
@@ -96,6 +96,7 @@ async def submission_existing(
     form: Annotated[ExistDraftForm, Form()],
     repo: Repository | None = Depends(get_github),
 ):
+    """Create (pull request draft for) existing entry"""
     state = verify_state(form.token)
     if state.step != "draft":
         raise HTTPException(400)
@@ -103,13 +104,7 @@ async def submission_existing(
     data_model = ExistDraftService().parse(form=form)
 
     if repo:
-        create_pr(repo=repo, uuid=state.u_id)
-        push_data(
-            repo=repo,
-            uuid=state.u_id,
-            data=data_model.data,
-        )
-        # TODO: implement sending to github via API, use UUID for branch name
+        await create_pr(repo=repo, branch=state.u_id, data=data_model.data)
 
     state.step = "preview"
     state.issued = time.time()
@@ -128,6 +123,7 @@ async def submission_existing(
 
 @router.post("/preview", include_in_schema=False, response_class=HTMLResponse)
 async def submission_preview(request: Request):
+    """Validate form data and redirect to preview based on role"""
     form = await request.form()
 
     state = verify_state(form["token"])
@@ -184,6 +180,7 @@ async def submission_preview(request: Request):
 
 @router.post("/modified", include_in_schema=False, response_class=HTMLResponse)
 async def submission_modified(request: Request):
+    """Arrive from preview to do another round of modification"""
     form = dict(await request.form())
 
     state = verify_state(form["token"])
@@ -211,6 +208,7 @@ async def submission_modified(request: Request):
 async def submission_submit(
     request: Request, repo: Repository | None = Depends(get_github)
 ):
+    """Submit a submission as a contributor"""
     form = dict(await request.form())
 
     state = verify_state(form["token"])
@@ -220,13 +218,10 @@ async def submission_submit(
     raw_data = json.loads(form["data_form"])
 
     if repo:
-        draft_to_full(repo=repo, uuid=state.u_id)
-        push_data(
-            repo=repo,
-            uuid=state.u_id,
-            data=raw_data,
+        await draft_to_full(repo=repo, branch=state.u_id)
+        await upsert_json_file(
+            repo=repo, branch=state.u_id, data=raw_data, name=state.u_id
         )
-        # TODO: implement sending to github via API, use UUID for branch name
 
     return templates.TemplateResponse(
         request=request,
@@ -239,6 +234,8 @@ async def submission_submit(
 
 @router.post("/download", include_in_schema=False, response_class=StreamingResponse)
 async def submission_download(request: Request):
+    """Download an entry as JSON"""
+
     def json_stream(d_in):
         yield json.dumps(d_in, indent=4)
 
@@ -259,6 +256,7 @@ async def submission_review(
     repo: Repository | None = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
+    """Retrieve data from GitHub API and start review"""
     if not repo:
         HTTPException(400)
 
@@ -272,8 +270,13 @@ async def submission_review(
         )
     )
 
-    raw_data = await get_data(repo=repo, uuid=u_id)
+    raw_data = await get_data(repo=repo, branch=u_id)
     model = MiteData(raw_data=raw_data)
+
+    if current_user in raw_data["changelog"][-1]["contributors"]:
+        raise HTTPException(
+            status_code=400, detail="You can't review your own entries!"
+        )
 
     return templates.TemplateResponse(
         request=request,
@@ -293,6 +296,7 @@ async def review_submit(
     repo: Repository | None = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
+    """Create review and submit to GitHub API"""
     if not repo:
         HTTPException(400)
 
@@ -303,15 +307,19 @@ async def review_submit(
         raise HTTPException(400)
 
     raw_data = json.loads(form["data_form"])
-    raw_data["changelog"][-1]["reviewer"][0] = state.reviewer
+    raw_data["changelog"][-1]["reviewers"][0] = state.reviewer
     model = MiteData(raw_data=raw_data)
 
-    push_data(
+    if raw_data["accession"] != "MITE9999999":
+        await delete_file(repo=repo, branch=state.u_id)
+
+    await upsert_json_file(
         repo=repo,
-        uuid=state.u_id,
+        branch=state.u_id,
         data=model.data.to_json(),
+        name=raw_data["accession"],
     )
-    approve_pr(repo=repo, uuid=state.u_id)
+    await add_pr_label(repo=repo, branch=state.u_id, label="reviewed")
 
     return templates.TemplateResponse(
         request=request,
@@ -320,16 +328,3 @@ async def review_submit(
             "sub_id": state.u_id if repo else None,
         },
     )
-
-
-# get for landing on reviewer page, uuid is already delivered
-# new submission state is coined
-# data is downloaded from github or user is alerted that review is only possible in production
-# data is sent to the preview_reviewer.html route, with Httponly authentication
-# store the httponly authentication in .env; hashed keys
-
-
-# post for submitter_final,
-# data is parsed from preview form
-# state is checked
-# reviewed tag is sent
