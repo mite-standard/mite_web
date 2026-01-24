@@ -40,7 +40,7 @@ router = APIRouter(prefix="/submission", tags=["views"])
 
 
 @router.get("/", include_in_schema=False, response_class=HTMLResponse)
-async def submission(request: Request, repo: Repository | None = Depends(get_github)):
+async def submission(request: Request, repo: Union[Repository, None] = Depends(get_github)):
     """Get submission page with optional Kanban board"""
     token = sign_state(
         SubmissionState(
@@ -63,7 +63,7 @@ async def submission(request: Request, repo: Repository | None = Depends(get_git
 async def submission_new(
     request: Request,
     form: Annotated[NewDraftForm, Form()],
-    repo: Repository | None = Depends(get_github),
+    repo: Union[Repository, None] = Depends(get_github),
 ):
     """Create (pull request draft for) new submission"""
     state = verify_state(form.token)
@@ -94,7 +94,7 @@ async def submission_new(
 async def submission_existing(
     request: Request,
     form: Annotated[ExistDraftForm, Form()],
-    repo: Repository | None = Depends(get_github),
+    repo: Union[Repository, None] = Depends(get_github),
 ):
     """Create (pull request draft for) existing entry"""
     state = verify_state(form.token)
@@ -206,7 +206,7 @@ async def submission_modified(request: Request):
 
 @router.post("/submit", include_in_schema=False, response_class=HTMLResponse)
 async def submission_submit(
-    request: Request, repo: Repository | None = Depends(get_github)
+    request: Request, repo: Union[Repository, None] = Depends(get_github)
 ):
     """Submit a submission as a contributor"""
     form = dict(await request.form())
@@ -253,7 +253,7 @@ async def submission_download(request: Request):
 async def submission_review(
     request: Request,
     u_id: str,
-    repo: Repository | None = Depends(get_github),
+    repo: Union[Repository, None] = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
     """Retrieve data from GitHub API and start review"""
@@ -293,7 +293,7 @@ async def submission_review(
 @router.post("/review/submit", include_in_schema=False, response_class=HTMLResponse)
 async def review_submit(
     request: Request,
-    repo: Repository | None = Depends(get_github),
+    repo: Union[Repository, None] = Depends(get_github),
     current_user: str = Depends(get_current_user),
 ):
     """Create review and submit to GitHub API"""

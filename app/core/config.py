@@ -71,7 +71,14 @@ class Settings(BaseSettings):
 
     @property
     def reviewer_gh_tags(self) -> tuple:
-        return ("@mmzdouc",)
+        return (
+            "@mmzdouc",
+            # "@marnixmedema",
+            # "@BT287",
+            # "@cbeemelm",
+            # "@corkdagga",
+            # "@iaco-vtt",
+        )
 
 
 settings = Settings()

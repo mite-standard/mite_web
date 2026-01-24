@@ -23,7 +23,7 @@ def authenticate_pat() -> Github | None:
     return Github(auth=auth)
 
 
-def get_github(request: Request) -> Repository | None:
+def get_github(request: Request) -> Union[Repository, None]:
     if request.app.state.repo:
         return request.app.state.repo
 
