@@ -7,9 +7,7 @@ from typing import Annotated, Union
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
-from github import Github, Repository
-from mite_extras import MiteParser
-from mite_schema import SchemaManager
+from github import Repository
 
 from app.auth.basic import get_current_user
 from app.core.templates import templates
@@ -40,7 +38,9 @@ router = APIRouter(prefix="/submission", tags=["views"])
 
 
 @router.get("/", include_in_schema=False, response_class=HTMLResponse)
-async def submission(request: Request, repo: Union[Repository, None] = Depends(get_github)):
+async def submission(
+    request: Request, repo: Union[Repository, None] = Depends(get_github)
+):
     """Get submission page with optional Kanban board"""
     token = sign_state(
         SubmissionState(
