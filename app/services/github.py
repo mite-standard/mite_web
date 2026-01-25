@@ -109,7 +109,7 @@ Submission ID: {branch}
 
 ## TODO Reviewers
 
-- Review the entry [HERE](https://mite.bioinformatics.nl/submission/review/{branch}) (this link will only work for the current MITE release)
+- Review the entry [HERE](https://mite.bioinformatics.nl/submission/review/{branch})
 
 *This action was performed by `mite-bot`*
 """
@@ -182,6 +182,8 @@ async def get_data(repo: Repository, branch: str) -> dict:
 
     def _fetch():
         try:
+            # TODO: also check if branch exists, if not, should raise error
+
             contents = repo.get_contents(
                 ref=branch, path=f"mite_data/data/{branch}.json"
             )
@@ -235,7 +237,7 @@ async def add_pr_label(repo: Repository, branch: str, label: str):
             pr.add_to_labels(label)
 
             if pr.draft:
-                pr.edit(draft=False)
+                pr.mark_ready_for_review()
 
         except GithubException as e:
             raise HTTPException(

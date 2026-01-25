@@ -72,12 +72,7 @@ class Settings(BaseSettings):
     @property
     def reviewer_gh_tags(self) -> tuple:
         return (
-            "@mmzdouc",
-            # "@marnixmedema",
-            # "@BT287",
-            # "@cbeemelm",
-            # "@corkdagga",
-            # "@iaco-vtt",
+            "@mmzdouc",  # TODO: put this as .env file config instead of hardcoding.
         )
 
 

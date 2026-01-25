@@ -34,8 +34,6 @@ async def lifespan(app: FastAPI):
         app.state.repo = None
         logger.error("GitHub authentication failed")
 
-    # TODO: continue with changing github get_github(), routes with github should get repo instead
-
     app.state.actives = load_active()
     app.state.retired = load_retired()
     app.state.table_headers = load_table_head()

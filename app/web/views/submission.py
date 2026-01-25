@@ -258,7 +258,9 @@ async def submission_review(
 ):
     """Retrieve data from GitHub API and start review"""
     if not repo:
-        HTTPException(400)
+        raise HTTPException(
+            400, detail="Review functionality only available in production."
+        )
 
     token = sign_state(
         SubmissionState(
@@ -271,12 +273,16 @@ async def submission_review(
     )
 
     raw_data = await get_data(repo=repo, branch=u_id)
-    model = MiteData(raw_data=raw_data)
 
+    # TODO: implement check if entry has already been reviewed -> report error (if status is already active)
+
+    # TODO: put check in a separate function
     if current_user in raw_data["changelog"][-1]["contributors"]:
         raise HTTPException(
-            status_code=400, detail="You can't review your own entries!"
+            status_code=400, detail="You must not review your own entries!"
         )
+
+    model = MiteData(raw_data=raw_data)
 
     return templates.TemplateResponse(
         request=request,
@@ -298,7 +304,7 @@ async def review_submit(
 ):
     """Create review and submit to GitHub API"""
     if not repo:
-        HTTPException(400)
+        raise HTTPException(400)
 
     form = dict(await request.form())
 
@@ -306,6 +312,8 @@ async def review_submit(
     if state.step != "final" or state.reviewer != current_user:
         raise HTTPException(400)
 
+    # TODO: put this into helper function, do not overwrite but append; only remove the BBBBBB reviewer
+    # TODO: implement changing pending to active
     raw_data = json.loads(form["data_form"])
     raw_data["changelog"][-1]["reviewers"][0] = state.reviewer
     model = MiteData(raw_data=raw_data)

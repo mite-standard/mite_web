@@ -15,7 +15,7 @@
             <form id="submit" method="post" action="{{ url_for('review_submit') }}">
                 <input type="hidden" name="data_form" value='{{ data_form | tojson }}'>
                 <input type="hidden" name="token" value="{{ token }}">
-                <button type="submit" id="submit-submit" class="btn btn-primary btn-sm">Submit for review</button>
+                <button type="submit" id="submit-submit" class="btn btn-primary btn-sm">Approve</button>
             </form>
         </div>
     </div>
