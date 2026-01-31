@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy import ColumnElement, and_, inspect, or_
 from sqlalchemy.orm import Session
 
-from app.db.models import Entry
+from app.db.models import Entry, Enzyme
 
 operators = {
     "equal": lambda col, val: col == val,
@@ -42,6 +42,18 @@ field_map = {
     "reactions.example_reactions.is_intermediate",
     "reactions.example_reactions.products.smiles_product",
 }
+
+
+def enzyme_exists(accession: str, db: Session) -> str | None:
+    """Query genpept/uniprot fields for accession, return MITE accession"""
+    match = (
+        db.query(Entry)
+        .join(Entry.enzyme)
+        .filter(or_(Enzyme.uniprot_id == accession, Enzyme.genpept_id == accession))
+        .first()
+    )
+    if match:
+        return match.accession
 
 
 def search_db(rules: dict, db: Session) -> set[str]:

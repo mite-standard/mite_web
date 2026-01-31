@@ -8,9 +8,12 @@ from typing import Annotated, Union
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from github import Repository
+from sqlalchemy.orm import Session
 
 from app.auth.basic import get_current_user
 from app.core.templates import templates
+from app.db.crud import enzyme_exists
+from app.db.database import get_db
 from app.schemas.submission import (
     ExistDraftForm,
     ExistDraftService,
@@ -64,6 +67,7 @@ async def submission_new(
     request: Request,
     form: Annotated[NewDraftForm, Form()],
     repo: Union[Repository, None] = Depends(get_github),
+    db: Session = Depends(get_db),
 ):
     """Create (pull request draft for) new submission"""
     state = verify_state(form.token)
@@ -71,6 +75,10 @@ async def submission_new(
         raise HTTPException(400)
 
     data_model = NewDraftService().parse(form=form)
+    if accession := enzyme_exists(db=db, accession=form.accession):
+        raise HTTPException(
+            500, detail=f"Accession already referenced in MITE entry {accession}"
+        )
 
     if repo:
         await create_pr(repo=repo, branch=state.u_id, data=data_model.data)
