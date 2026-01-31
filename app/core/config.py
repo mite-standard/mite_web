@@ -15,7 +15,7 @@ class Settings(BaseSettings):
         data_dir: location of data directory
         img_dir: location of protein images
         env: development or production
-        reviewers: usernames + pw hashes of reviewers
+        reviewers: dict of reviewer credentials
         secret: secret key to sign HMAC
         gh_token: GitHub personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo'
         gh_name: GitHub account name
@@ -70,10 +70,11 @@ class Settings(BaseSettings):
         return 60 * 60 * 24 * 7  # 7 days
 
     @property
-    def reviewer_gh_tags(self) -> tuple:
-        return (
-            "@mmzdouc",  # TODO: put this as .env file config instead of hardcoding.
-        )
+    def reviewer_gh_tags(self) -> list:
+        gh_tags = []
+        if self.reviewers:
+            gh_tags = [v["gh_tag"] for v in self.reviewers.values()]
+        return gh_tags
 
 
 settings = Settings()

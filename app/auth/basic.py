@@ -13,6 +13,10 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)) -> s
     """Authenticate reviewer
 
     Checks for non-existing user to prevent timing attacks
+
+    Returns:
+        The username of the authenticated reviewer
+
     """
     exception = HTTPException(
         401,
@@ -23,7 +27,7 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)) -> s
     username = credentials.username
     password = credentials.password
 
-    stored_hash = settings.reviewers.get(username)
+    stored_hash = settings.reviewers.get(username, {}).get("pw_hashed")
 
     if not stored_hash:
         verify_pw(

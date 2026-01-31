@@ -28,7 +28,10 @@ def main(csv: str):
             row["password"].encode("utf-8"), bcrypt.gensalt(rounds=12)
         )
 
-        hashed[row["orcid"]] = pw_hash.decode("utf-8")
+        hashed[row["orcid"]] = {
+            "pw_hashed": pw_hash.decode("utf-8"),
+            "gh_tag": row["gh_tag"],
+        }
 
     s = json.dumps(hashed)
     print(base64.b64encode(s.encode("utf-8")).decode("ascii"))

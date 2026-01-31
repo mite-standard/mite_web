@@ -7,7 +7,7 @@ mite_web
 
 ## Production build
 
-TL;DR: Intended for PAAS. Supports automated building with baked-in date
+TL;DR: Intended for PAAS. Supports automated building with baked-in data(base).
 
 0. Remove `data/` directory, if present
 
@@ -17,6 +17,10 @@ docker build --build-arg DATA=<mite_data record> --build-arg EXTRAS=<mite_web_ex
 docker run -p 8000:8000 web-<version>-data-<version>-extras-<version>
 ```
 Bakes specified versions of `mite_data` and `mite_web_extras` in the container. 
+
+2. Prepare environment variables (see `.env.example`)
+To create reviewer passwords, a `.csv` file with `orcid,password` is required. 
+To create base64-encoded hashed information, run `uv run python scripts/hash_pw.py <input.csv>`
 
 
 ## Development build
@@ -41,7 +45,7 @@ This data is considered dummy data for dev purposes only and will override data 
 uv run python -m scripts.create_db
 ```
 
-4Run docker compose
+4.Run docker compose
 ```commandline
 docker compose -f dev-compose.yml build
 docker compose -f dev-compose.yml up --watch
