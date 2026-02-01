@@ -9,7 +9,7 @@ from app.core.config import settings
 security = HTTPBasic()
 
 
-def get_current_user(credentials: HTTPBasicCredentials = Depends(security)) -> str:
+def auth_reviewer(credentials: HTTPBasicCredentials = Depends(security)) -> str:
     """Authenticate reviewer
 
     Checks for non-existing user to prevent timing attacks

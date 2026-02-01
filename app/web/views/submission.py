@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 from github import Repository
 from sqlalchemy.orm import Session
 
-from app.auth.basic import get_current_user
+from app.auth.basic import auth_reviewer
 from app.core.templates import templates
 from app.db.crud import enzyme_exists
 from app.db.database import get_db
@@ -33,7 +33,15 @@ from app.services.github import (
     get_kanban_cached,
     upsert_json_file,
 )
-from app.services.submission import sign_state, verify_state
+from app.services.submission import (
+    add_reviewer,
+    check_own_entry,
+    check_schema,
+    pop_dummy_reviewer,
+    set_active,
+    sign_state,
+    verify_state,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -262,7 +270,7 @@ async def submission_review(
     request: Request,
     u_id: str,
     repo: Union[Repository, None] = Depends(get_github),
-    current_user: str = Depends(get_current_user),
+    reviewer: str = Depends(auth_reviewer),
 ):
     """Retrieve data from GitHub API and start review"""
     if not repo:
@@ -276,22 +284,18 @@ async def submission_review(
             step="final",
             issued=time.time(),
             role="reviewer",
-            reviewer=current_user,
+            reviewer=reviewer,
         )
     )
 
     raw_data = await get_data(repo=repo, branch=u_id)
-
-    # TODO: implement check if entry has already been reviewed -> report error (if status is already active)
-
-    # TODO: put check in a separate function
-    if current_user in raw_data["changelog"][-1]["contributors"]:
-        raise HTTPException(
-            status_code=400, detail="You must not review your own entries!"
-        )
+    check_schema(data=raw_data)
+    check_own_entry(user=reviewer, data=raw_data)
+    raw_data = pop_dummy_reviewer(raw_data)
+    raw_data = add_reviewer(data=raw_data, reviewer=reviewer)
+    raw_data = set_active(raw_data)
 
     model = MiteData(raw_data=raw_data)
-
     return templates.TemplateResponse(
         request=request,
         name="preview_reviewer.html",
@@ -308,26 +312,23 @@ async def submission_review(
 async def review_submit(
     request: Request,
     repo: Union[Repository, None] = Depends(get_github),
-    current_user: str = Depends(get_current_user),
+    reviewer: str = Depends(auth_reviewer),
 ):
     """Create review and submit to GitHub API"""
     if not repo:
-        raise HTTPException(400)
-
+        raise HTTPException(
+            400, detail="Review submission not available in development mode."
+        )
     form = dict(await request.form())
 
     state = verify_state(form["token"])
-    if state.step != "final" or state.reviewer != current_user:
-        raise HTTPException(400)
+    if state.step != "final" or state.reviewer != reviewer:
+        raise HTTPException(400, "Integrity of HMAC token compromised")
 
-    # TODO: put this into helper function, do not overwrite but append; only remove the BBBBBB reviewer
-    # TODO: implement changing pending to active
     raw_data = json.loads(form["data_form"])
-    raw_data["changelog"][-1]["reviewers"][0] = state.reviewer
     model = MiteData(raw_data=raw_data)
 
-    if raw_data["accession"] != "MITE9999999":
-        await delete_file(repo=repo, branch=state.u_id)
+    await delete_file(repo=repo, branch=state.u_id)
 
     await upsert_json_file(
         repo=repo,

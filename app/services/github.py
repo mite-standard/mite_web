@@ -182,13 +182,13 @@ async def get_data(repo: Repository, branch: str) -> dict:
 
     def _fetch():
         try:
-            # TODO: also check if branch exists, if not, should raise error
-
             contents = repo.get_contents(
                 ref=branch, path=f"mite_data/data/{branch}.json"
             )
         except GithubException as e:
-            raise HTTPException(404, detail=f"File does not exist: {e!s}") from e
+            raise HTTPException(
+                404, detail=f"Entry does not exist. Has it already been reviewed? {e!s}"
+            ) from e
 
         decoded = base64.b64decode(contents.content).decode("utf-8")
         return json.loads(decoded)
