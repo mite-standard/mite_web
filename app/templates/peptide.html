@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">SMILES Generation for Peptides</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="lead mb-2">This page offers functionality to generate a SMILES string from a peptide sequence.</p>
+        </div>
+    </div>
+    <div class="row">
+        {% if messages %}
+        <div class="card card-body">
+            <div class="col text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during peptide SMILES generation!</h4>
+                <ul class="lh-base list-unstyled">
+                {% for message in messages %}
+                    <li><p class="lead mb-1">{{ message }}</p></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('peptide_query') }}">
+        <div class="row my-2">
+            <div class="col">
+                <div class="form-floating">
+                    <input id="sequence" name="sequence" class="form-control" minlength="1" aria-describedby="PeptideHelp" type="text" required>
+                    <label for="sequence" class="form-label">Peptide Sequence</label>
+                    <div id="PeptideHelp" class="form-text">A peptide sequence in single-letter-code, e.g. 'MGATYAFWRGT'. Only proteinogenic amino acids are allowed.</div>
+                </div>
+            </div>
+        </div>
+        {% if sequence %}
+        <div class="row mb-2">
+            <div class="col">
+                <h4 class="fw-semibold lh-2">Peptide Sequence</h4>
+                <p><b>{{ sequence }}</b></p>
+                <h4 class="fw-semibold lh-2">SMILES String for Peptide Sequence</h4>
+                <p><b>{{ smiles | trim }}</b></p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row mb-2">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Generate SMILES string</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

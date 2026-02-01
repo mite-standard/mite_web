@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-auto text-center mx-auto">
+            <h1 class="fw-semibold lh-2">Create/Modify Entry</h1>
+            <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
+        </div>
+    </div>
+    {% if messages %}
+    <div class="mx-4 my-2">
+      <div class="alert alert-light" role="alert">
+        <div class="row">
+          <div class="col-8">
+            <h5 class="mb-0"> Error during validation!</h5>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        </div>
+          <div class="row my-4">
+          <div class="text-center mx-auto">
+            {% for message in messages %}
+            <textarea readonly class="form-control" rows="5">{{ message }}</textarea>
+            {% endfor %}
+          </div>
+          </div>
+          <div class="row">
+          <div class="text-center mx-auto">
+            <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}">canonicalize your substrate/product SMILES</a>.</h6>
+            <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('troubleshooting') }}">troubleshooting page</a>.</h6>
+          </div>
+          </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="border start_box">
+        <div class="m-3">
+            <div class="row d-flex align-items-center justify-content-end">
+                <div class="col-auto">
+                    <label class="form-label m-0">Show/hide videos</label>
+                </div>
+                <div class="col-auto">
+                    <button class="accordion-button-info p-0" type="button" data-bs-toggle="collapse" data-bs-target="#video-tutorial" aria-controls="video-tutorial" aria-expanded="true"></button>
+                </div>
+            </div>
+            <div class="collapse show" id="video-tutorial">
+                <div class="row my-2">
+                    <div class="col-12 col-md-6 mx-auto text-center">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/wYX6cbh35W0?si=TgxKpKXgPsI1ELf5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 mx-auto text-center">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/OqFg9jCZq6U?si=ZNIAkjzkuChVDtSv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row my-4">
+        <div class="col text-center mx-auto">
+            <h6>See also our handy <a rel="MITE Peptide SMILES Drawer" href="{{ url_for('peptide') }}" class="custom-link" target="_blank"><b>peptide SMILES generator</b></a> and <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}"><b>SMILES canonicalizer</b></a> tool.</h6>
+            <p><i><span class="mandatory">*</span>mandatory; <span class="mandatory">**</span>conditionally mandatory</i></p>
+        </div>
+    </div>
+    <form id="miteForm" method="post" action="{{ url_for('submission_preview') }}">
+        <input type="hidden" name="token" value="{{ token }}">
+        <input type="hidden" name="changelog" value='{{ data.changelog | tojson }}'>
+        <input type="hidden" name="accession" value="{{ data.accession }}">
+        <input type="hidden" name="status" value="{{ data.status }}">
+        <div class="row my-2" id="row-enzyme">
+            <div class="col-md-6" id="col-enzyme">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="fw-semibold lh-2 text-center">Enzyme Information</h2>
+                        <p class="mb-2 text-center">General information on the tailoring enzyme</p>
+                    </div>
+                </div>
+                <div class="card card-body">
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-name"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-description"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="comment-general"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-uniprot"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-genpept"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-mibig"></div>
+                        </div>
+                        <div class="col">
+                            <div id="enzyme-wikidata"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-cofactors"></div>
+                        </div>
+                    </div>
+                    <div class="row m-2 g-2">
+                        <div class="col">
+                            <div id="enzyme-ref"></div>
+                            <button type="button" class="btn btn-secondary my-2" onclick="insertEnzymeRefForm(document.getElementById('enzyme-ref'))">Add Reference</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" id="col-auxenzyme">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="fw-semibold lh-2 text-center">Auxiliary Enzymes</h2>
+                        <p class="mb-2 text-center">Enzymes required for the function of the tailoring enzyme in question</p>
+                    </div>
+                </div>
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div id="aux-enzymes"></div>
+                            <button type="button" class="btn btn-secondary my-2" onclick="insertAuxEnzymeForm(document.getElementById('aux-enzymes'))">Add Auxiliary Enzyme</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-2" id="row-reaction">
+            <div class="row my-2">
+                <div class="col">
+                    <h2 class="fw-semibold lh-2 text-center">Reaction Information</h2>
+                    <p class="mb-2 text-center">Reaction information for this tailoring enzyme</p>
+                </div>
+            </div>
+            <div class="card card-body">
+                <div class="row mb-2">
+                    <div class="col">
+                        <h5 class="fw-semibold lh-2">Reaction Entries</h5>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col">
+                        <div id="reactions"></div>
+                        <button type="button" class="btn btn-secondary my-2" id="add-reaction-btn">Add Reaction</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mb-2">
+            <div class="col-auto d-flex justify-content-center align-items-center">
+                <div class="form-floating">
+                    <input id="changelog-comment" name="changelog-comment" class="form-control" placeholder="n/a" value='{{ data.changelog[-1].comment }}' type="text" required title="Briefly describe your changes. If you submit a new entry, simply state 'New entry'">
+                    <label for="changelog-comment" class="form-label">Describe your changes<span class="mandatory">*</span> <i class="bi bi-question-circle"></i></label>
+                </div>
+            </div>
+            <div class="col-auto d-flex justify-content-center align-items-center p-0">
+                <div class="col">
+                    <button id="submit" type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Preview entry</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="{{ url_for('static', path='js/submission.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
+<script>
+    const formVals = {{ form_vals | tojson | safe }};
+    document.getElementById('add-reaction-btn').addEventListener('click', () => {
+        const container = document.getElementById('reactions');
+        insertReactionForm(container, formVals);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const data = {{ data | tojson | safe }};
+        const formVals = {{ form_vals | tojson | safe }};
+    
+        createHtmlEnzymeName(document.getElementById('enzyme-name'), data)
+        createHtmlEnzymeDescription(document.getElementById('enzyme-description'), data)
+        createGeneralComment(document.getElementById('comment-general'), data)
+        createHtmlEnzymeUniprot(document.getElementById('enzyme-uniprot'), data)
+        createHtmlEnzymeGenpept(document.getElementById('enzyme-genpept'), data)
+        createHtmlEnzymeMibig(document.getElementById('enzyme-mibig'), data)
+        createHtmlEnzymeWikidata(document.getElementById('enzyme-wikidata'), data)
+        createHtmlEnzymeCofactors(document.getElementById('enzyme-cofactors'), data, formVals)
+        populateEnzymeRefForm(document.getElementById('enzyme-ref'), data)
+        populateAuxEnzymeForm(document.getElementById('aux-enzymes'), data)
+        populateReactionForm(document.getElementById('reactions'), data, formVals)
+        testFirefoxMobile()
+
+        disableButton(document.getElementById('miteForm'), document.getElementById('submit'))
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% import '_macro_navigation.html' as macro %}
+{% block content %}
+<div class="container-fluid mt-2">
+    <div class="row mb-2 text-center align-items-center">
+        {% if prev_exists %}
+        <div class="col-auto text-start">
+            {{ macro.render_return(prev, url_for('repository', mite_id=prev)) }}
+        </div>
+        {% else %}
+        <div class="col-auto text-start invisible">
+            {{ macro.render_return(prev, url_for('repository', mite_id=prev)) }}
+        </div>
+        {% endif %}
+        <div class="col text-center">
+            <span class="fs-2 fw-bold align-middle">{{ data.accession }} </span>
+            <span class="align-middle"><a href="{{ url_for('download_entry', accession=data.accession ) }}" class="btn btn-secondary btn-sm"><i class="bi bi-download"></i></a></span>
+        </div>
+        {% if next_exists %}
+        <div class="col-auto text-end">
+            {{ macro.render_forward(next, url_for('repository', mite_id=next)) }}
+        </div>
+        {% else %}
+        <div class="col-auto text-end invisible">
+            {{ macro.render_forward(next, url_for('repository', mite_id=next)) }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-4">
+            <div class="row justify-content-center align-items-baseline mb-2">
+                <div class="col-auto d-flex justify-content-center align-items-center">
+                    <div class="fw-semibold text-muted lead">Modify entry</div>
+                </div>
+                <div class="col-auto d-flex justify-content-center align-items-center p-0">
+                    <button class="accordion-button-info collapsed p-0" type="button" data-bs-toggle="collapse" data-bs-target="#modify-entry-box" aria-controls="modify-entry-box" aria-expanded="false"></button>
+                </div>
+            </div>
+            <div class="collapse" id="modify-entry-box">
+                <form id="modify-entry" method="post" action="{{ url_for('submission_existing') }}">
+                    <input type="hidden" name="token" value="{{ token }}">
+                    <input type="hidden" name="mite_id" value="{{ data.accession }}">
+                    <div class="row mb-2 align-items-center">
+                        <div class="col">
+                            <div class="form-floating">
+                                <input id="submitter" minlength="19" maxlength="19" name="submitter" class="form-control" placeholder="n/a" type="text" title="Enter your ORCID or leave empty for an anonymous submission. Your ORCID allows us to credit the effort you invested in data curation, as described in our Terms of Use.">
+                                <label for="submitter" class="form-label">ORCID <i class="bi bi-question-circle"></i></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="True" id="terms-of-use-check" name="terms-of-use-check" required>
+                              <label class="form-check-label" for="terms-of-use-check">I have read and approve of the <a target="_blank" class="custom-link" href="{{ url_for('termsofuse') }}">Terms of Use</a>.</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-secondary btn-sm" id="modify-entry-submit" type="submit"><i class="bi bi-pen"></i> Modify entry</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% if data.status == "retired" %}
+    {% include 'retired.html' %}
+{% else %}
+    {% include 'active.html' %}
+{% endif %}
+</div>
+<script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/arrow_navigation.js') }}" defer></script>
+<script type="text/javascript" src="{{ url_for('static', path='js/copy_clipboard.js') }}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        disableButton(document.getElementById('modify-entry'), document.getElementById('modify-entry-submit'))
+    });
+</script>
+{% endblock %}

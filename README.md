@@ -1,6 +1,67 @@
 mite_web
 =========
 
+# NOTA BENE: FULL REFACTOR IS UNDERWAY. README IS LIKELY OUTDATED
+
+
+
+## Prepare release
+
+- If app update: check version update in [`pyproject.toml`](pyproject.toml) and [`CHANGELOG`](CHANGELOG.md)
+- If only data update: update version and records of `mite_data` and `mite_web_extras` in [`build_docker.sh`](build_docker.sh)
+
+
+## Production build
+
+TL;DR: Intended for PAAS. Supports automated building with baked-in data(base).
+
+0. Remove `data/` directory, if present
+
+1. Build (optionally, run) the container
+```commandline
+docker build --build-arg DATA=<mite_data record> --build-arg EXTRAS=<mite_web_extras record> --tag web-<version>-data-<version>-extras-<version> .
+docker run -p 8000:8000 web-<version>-data-<version>-extras-<version>
+```
+Bakes specified versions of `mite_data` and `mite_web_extras` in the container. 
+
+2. Prepare environment variables (see `.env.example`)
+To create reviewer passwords, a `.csv` file with `orcid,password` is required. 
+To create base64-encoded hashed information, run `uv run python scripts/hash_pw.py <input.csv>`
+
+
+## Development build
+
+TL;DR: Hot reloading/watch, data injection, reads variables from .env
+
+**Nota bene: assumes that `uv` is installed.**
+
+1. Install dependencies with `uv`
+```commandline
+uv sync
+```
+
+2. Run script to download data from Zenodo.
+```commandline
+uv run python scripts/prepare_data.py <mite_data record ID> <mite_web_extras record ID>
+```
+This data is considered dummy data for dev purposes only and will override data baked in during prod builds.
+
+3. Run script to build database
+```commandline
+uv run python -m scripts.create_db
+```
+
+4.Run docker compose
+```commandline
+docker compose -f dev-compose.yml build
+docker compose -f dev-compose.yml up --watch
+```
+Will watch recursively watch directories and reload on changes
+
+
+## OLD SETUP BELOW
+
+
 [![DOI](https://zenodo.org/badge/874302233.svg)](https://doi.org/10.5281/zenodo.14933931)
 
 Contents

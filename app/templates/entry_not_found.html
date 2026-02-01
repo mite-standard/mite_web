@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col mx-auto text-center">
+            <h1>Could not find entry with MITE ID <b>{{ mite_id }}</b>.</h1>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-auto mx-auto text-center">
+            <h3>Possible reasons are:</h3>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-auto mx-auto text-center">
+            <ul class="lh-base list-unstyled my-2">
+                <li><p class="lead my-1">The MITE ID was misspelled.</p></li>
+                <li><p class="lead my-1">The MITE ID has not been assigned yet.</p></li>
+                <li><p class="lead my-1">The MITE entry is still in review and pending.</p></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

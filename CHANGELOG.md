@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] UNRELEASED
+
+### Changed
+
+- Complete rework of app to follow 12 factor app principles
+- App is now stateless: GitHub is stateful "backend"
+- Data transfer now conducted via GitHub API
+
+### Added
+
+- Authentication for reviewers
+
+
 ## [1.7.4] 02-01-2026
 
 ### Fixed

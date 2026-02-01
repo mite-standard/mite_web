@@ -1,17 +1,19 @@
 # Config
-mite_web/mite_web/queries
-mite_web/mite_web/dumps
-mite_web/mite_web/data
-mite_web/mite_web/mite_data
-mite_web/mite_web/static/img
-mite_web/mite_web/submissions
-mite_web/mite_web/open_prs
-config.py
-.idea
-.ruff-cache
+backup_data/
+mite_web/mite_web/queries/
+mite_web/mite_web/dumps/
+mite_web/mite_web/data/
+mite_web/mite_web/mite_data/
+mite_web/mite_web/static/img/
+mite_web/mite_web/submissions/
+mite_web/mite_web/open_prs/
+.idea/
+.ruff-cache/
 .env
 mite_web/.venv
+data/
 .venv
+reviewers.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

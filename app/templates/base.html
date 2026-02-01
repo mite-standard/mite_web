@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+  <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+      <title> {% block title %} Minimum Information about a Tailoring Enzyme Repository {% endblock %} </title>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/css/query-builder.default.min.css">
+      <link rel="shortcut icon" href="{{ url_for('static', path='images/favicon.ico') }}">
+      <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+  </head>
+  <body class="d-flex flex-column vh-100 {% if preview %}preview-mode{% endif %}">
+    {% block header%}
+      <header>
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark navbar-custom p-1">
+          <div class="container-fluid px-5 navbar-font-size">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+              <img src="{{ url_for('static', path='images/mite_logo_alt.svg') }}"
+                   alt="MITE alt logo" width="150" height="40">
+            </a>
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="navbarSupportedContent" class="collapse navbar-collapse">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Repository</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('overview') }}">Overview - Active Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('retired') }}">Overview - Retired Entries</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('submission') }}">Submit an Entry</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Documentation</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('tutorial') }}">Tutorial</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('troubleshooting') }}">Troubleshooting</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('faqs') }}">Frequently Asked Questions</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('termsofuse') }}">Terms of Use</a></li>
+                      <li><a class="dropdown-item" href="{{ openapi_url }}">API Documentation (OpenAPI)</a></li>
+                      <li><a class="dropdown-item" href="{{ redoc_url }}">API Documentation (Redoc)</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Utilities</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{{ url_for('download') }}">Downloads</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('pathway') }}">In Silico Pathway Simulation</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('peptide') }}">Peptide SMILES Converter</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('canonicalize') }}">Canonicalize SMILES</a></li>
+                      <li><a class="dropdown-item" href="{{ url_for('flatten') }}">Remove Stereochemistry</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                </li>
+              </ul>
+              <ul class="navbar-nav flex-row ml-auto">
+                <li class="nav-item">
+                  <a class="btn btn-link nav-link" target="_blank" href="https://github.com/orgs/mite-standard/discussions/5" aria-label="Maintenance tooltip" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Show scheduled maintenance info">
+                    <i class="bi bi-tools" style="font-size: 24px;"></i>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <button class="btn btn-link nav-link" id="theme-toggle" aria-label="Toggle theme" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle light/dark theme">
+                    <i class="bi bi-sun" id="theme-icon" style="font-size: 24px;"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+    {% endblock %}
+    {% block content %}
+      <main>
+        The content was not populated
+      </main>
+    {% endblock %}
+    {% block footer %}
+      <footer class="container-fluid text-muted py-3 border-top">
+        <div class="row">
+          <div class="col">
+            <div class="d-flex flex-column text-center">
+              <div class="mt-auto px-5">
+                <h6 class="text-uppercase fw-bold mb-1"><a rel="mite_web repository" href="https://github.com/mite-standard/mite_web" class="custom-link" target="_blank">MITE Website</a> hosting <a rel="mite_data repository" href="https://github.com/mite-standard/mite_data" class="custom-link" target="_blank">MITE Data</a> v{{version_mite_data}}</h6>
+                <p class="mb-0">Please submit bug reports through the <a rel="mite_web issues" href="https://github.com/mite-standard/mite_web/issues" class="custom-link" target="_blank">Issues tracker</a>. For feature requests and general discussions, feel free to open a <a rel="mite_web discussion" href="https://github.com/orgs/mite-standard/discussions" class="custom-link" target="_blank">new discussion</a> on the MITE Discussions board.</p>
+                <p class="mb-0">MITE Website © 2024 - present Mitja M. Zdouc <a class="custom-link" target="_blank" href="{{ url_for('contact') }}">and individual contributors</a> under the <a rel="license" href="https://opensource.org/license/mit/" class="custom-link" target="_blank">MIT License.</a> All displayed data is licensed under <a rel="license" class="custom-link" target="_blank" href="https://creativecommons.org/public-domain/cc0/">CC0</a>. If you have found the data/software useful, please <a rel="cite" href="https://doi.org/10.1093/nar/gkaf969" class="custom-link" target="_blank">cite us.</a></p>
+                <div>
+                  <a class="nav-link" href="https://github.com/mite-standard" target="_blank" rel="noopener" aria-label="GitHub MITE-Standard Organisation Page"><i class="bi bi-github"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    {% endblock %}
+    {% block scripts %}
+      <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.23.5/dist/bootstrap-table.min.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/jQuery-QueryBuilder/dist/js/query-builder.standalone.min.js"></script>
+      <script type="text/javascript" src="{{ url_for('static', path='js/dark_theme.js') }}" defer></script>
+    {% endblock %}
+  </body>
+</html>

@@ -1,0 +1,104 @@
+[project]
+name = "mite_web"
+version = "2.0.0.beta.1"
+description = "MITE (Minimum Information about a Tailoring Enzyme) Database Web App"
+readme = "README.md"
+requires-python = ">=3.12.0,<3.13.0" # because of rdkit 2024 in mite_extras
+license-files = ["LICENSE"]
+authors = [
+    { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
+]
+keywords = [
+    "cheminformatics",
+    "genomics"
+]
+classifiers = [
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry"
+]
+
+dependencies = [
+    "biopython~=1.84",
+    "fastapi[standard]~=0.128.0",
+    "mite_extras",
+    "pandas~=2.2",
+    "requests~=2.32",
+    "rdkit==2024.3.6",
+    "sqlalchemy~=2.0",
+    "uvicorn~=0.40.0",
+    "pydantic-settings~=2.12",
+    "pytest>=9.0.2",
+    "python-multipart>=0.0.21",
+    "pygithub>=2.8.1",
+    "async-lru>=2.0.5",
+    "bcrypt==4.3.0",
+]
+
+[project.urls]
+"Repository" = "https://github.com/mite-standard/mite_web"
+
+# Below are settings for different tools we use for testing and linting
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    # flake8-bugbear
+    "B",
+    # flake8-comprehensions
+    "C4",
+    # flake8-eradicate/eradicate
+    "ERA",
+    # isort
+    "I",
+    # pep8-naming
+    "N",
+    # flake8-pie
+    "PIE",
+    # pygrep
+    "PGH",
+    # ruff checks
+    "RUF",
+    # flake8-simplify
+    "SIM",
+    # flake8-type-checking
+    "TCH",
+    # flake8-tidy-imports
+    "TID",
+    # pyupgrade
+    "UP",
+]
+ignore = [
+    # whitespace-before-punctuation
+    "E203",
+    # unneccesary True False
+    "SIM210",
+    # combine nested if conditionals
+    "SIM102",
+    # if-else block
+    "SIM108",
+    # Unnecessary `set` comprehension
+    "C416",
+    # Incompatible (?) with FastAPI
+    "B008",
+    # C408 Unnecessary `dict` call (rewrite as a literal)
+    "C408",
+    # upper-case vars
+    "N806",
+    # breaks Pydantic/FastAPI
+    "UP007"
+]
+
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+pythonpath = [
+    "."
+]

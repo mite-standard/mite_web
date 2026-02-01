@@ -1,0 +1,223 @@
+<h3 class="mb-3">Enzyme Information</h3>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active custom-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="home" aria-selected="true"><b>General Information</b></button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link custom-link" id="changelog-tab" data-bs-toggle="tab" data-bs-target="#changelog" type="button" role="tab" aria-controls="changelog" aria-selected="false"><b>Changelog</b></button>
+    </li>
+    {% if data.enzyme.auxiliaryEnzymes is defined %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link custom-link" id="auxenz-tab" data-bs-toggle="tab" data-bs-target="#auxenz" type="button" role="tab" aria-controls="auxenz" aria-selected="false"><b>Auxiliary Enzymes</b></button>
+    </li>
+    {% endif %}
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+        <div class="table-responsive">
+            <table class="table table-striped mt-3">
+            <tbody>
+                <tr>
+                    <td><b>Accession ID</b></td><td>{{ data.accession }}</td>
+                </tr>
+                <tr>
+                    <td><b>Entry Status</b></td><td>Status: {{ data.status }}</td>
+                </tr>
+                <tr>
+                    <td><b>Enzyme Name</b></td><td>{{ data.enzyme.get("name") }}</td>
+                </tr>
+                <tr>
+                    <td><b>Enzyme Description</b></td><td>{{ data.enzyme.get("description") }}</td>
+                </tr>
+                <tr>
+                    <td><b>Database References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if data.enzyme.databaseIds is defined %}
+                            {% if data.enzyme.databaseIds.get("uniprot") %}
+                                {% if data.enzyme.databaseIds.get("uniprot").startswith("UPI") %}
+                                <li>UniParc: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniparc:{{ data.enzyme.databaseIds.get("uniprot")}}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% else %}
+                                <li>UniProtKB: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ data.enzyme.databaseIds.get("uniprot")}}'>{{ data.enzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% endif %}
+                            {% endif %}
+                            {% if data.enzyme.databaseIds.get("genpept") %}
+                            <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ data.enzyme.databaseIds.get("genpept") }}'>{{ data.enzyme.databaseIds.get("genpept") }}</a></li>
+                            {% endif %}
+                            {% if data.enzyme.databaseIds.get("mibig") %}
+                            <li>MIBiG: <a class="custom-link" target="_blank" href='https://bioregistry.io/mibig:{{ data.enzyme.databaseIds.get("mibig") }}'>{{ data.enzyme.databaseIds.get("mibig") }}</a></li>
+                            {% endif %}
+                            {% if data.enzyme.databaseIds.get("wikidata") %}
+                            <li>Wikidata: <a class="custom-link" target="_blank" href='https://bioregistry.io/wikidata:{{ data.enzyme.databaseIds.get("wikidata") }}'>{{ data.enzyme.databaseIds.get("wikidata") }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li>No database crosslinks available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                {% if data.enzyme.cofactors is defined %}
+                <tr>
+                    <td><b>Cofactors</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                            {% if data.enzyme.cofactors.organic is defined %}
+                            <li><b>Organic</b></li>
+                            <li>
+                                <ul class="list-unstyled mb-0">
+                                {% for row in data.enzyme.cofactors.organic %}
+                                    <li>{{ row }}</li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                            {% if data.enzyme.cofactors.inorganic is defined %}
+                            <li><b>Inorganic</b></li>
+                            <li>
+                                <ul class="list-unstyled mb-0">
+                                {% for row in data.enzyme.cofactors.inorganic %}
+                                    <li>{{ row }}</li>
+                                {% endfor %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td><b>References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if data.enzyme.references is defined %}
+                            {% for row in data.enzyme.references %}
+                            <li><a class="custom-link" target="_blank" href="https://www.doi.org/{{ row.split(':') | last }}">{{ row }}</a></li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No references available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+                {% if data.comment is defined %}
+                <tr>
+                    <td><b>Comment</b></td><td>{{ data.comment }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td><b>Enzyme Visualization (AlphaFold-predicted)</b></td>
+                    {% if data.enzyme.databaseIds.uniprot is defined %}
+                    <td>
+                        <div>
+                            <a target="_blank" href="https://alphafold.ebi.ac.uk/entry/{{ data.enzyme.databaseIds.get('uniprot') }}">
+                                <img style="max-width: 100%; height: auto;" src="{{ url_for('img', path=data.accession + '.png') }}" alt="Protein visualized by PyMol OS">
+                            </a>
+                        </div>
+                    </td>
+                    {% else %}
+                    <td>UniProt ID not available - could not render visualization</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="changelog" role="tabpanel" aria-labelledby="changelog-tab">
+        {% for entry in data.changelog %}
+        <div class="my-2"><p><b>Version {{ entry.version }} ({{ entry.date }})</b></p></div>
+        <div class="table-responsive">
+            <table class="table table-striped my-3">
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td><b>Contributor(s)</b></td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for curator in entry.contributors %}
+                                            {% if curator == "AAAAAAAAAAAAAAAAAAAAAAAA" %}
+                                            <li>Anonymous MITE contributor</li>
+                                            {% else %}
+                                            <li><a target="_blank" class="custom-link" href="https://orcid.org/{{ curator }}">{{ curator }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Reviewer(s)</b></td>
+                                    <td>
+                                        <ul class="list-unstyled mb-0">
+                                            {% for reviewer in entry.reviewers %}
+                                            {% if reviewer == "BBBBBBBBBBBBBBBBBBBBBBBB" %}
+                                            <li>Entry not reviewed (but all automated validation checks passed)</li>
+                                            {% else %}
+                                            <li><a target="_blank" class="custom-link" href="https://orcid.org/{{ reviewer }}">{{ reviewer }}</a></li>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><b>Comment</b></td>
+                                    <td>"{{ entry.comment }}"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% if data.enzyme.auxiliaryEnzymes is defined %}
+    <div class="tab-pane fade" id="auxenz" role="tabpanel" aria-labelledby="auxenz-tab">
+        {% for auxenzyme in data.enzyme.auxiliaryEnzymes %}
+        <div class="my-2"><p><b>Auxiliary Enzyme #{{ loop.index }}</b></p></div>
+        <div class="table-responsive">
+            <table class="table table-striped my-3">
+            <tbody>
+                <tr>
+                    <td><b>Enzyme Name</b></td>
+                    <td>{{ auxenzyme.name }}</td>
+                </tr>
+                {% if auxenzyme.description is defined %}
+                <tr>
+                    <td><b>Description</b></td>
+                    <td>{{ auxenzyme.description }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td><b>Database References</b></td>
+                    <td>
+                        <ul class="list-unstyled mb-0">
+                        {% if auxenzyme.databaseIds is defined %}
+                            {% if auxenzyme.databaseIds.get("uniprot") %}
+                                {% if auxenzyme.databaseIds.get("uniprot").startswith("UPI") %}
+                                <li>UniParc: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniparc:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% else %}
+                                <li>UniProtKB: <a class="custom-link" target="_blank" href='https://bioregistry.io/uniprot:{{ auxenzyme.databaseIds.get("uniprot") }}'>{{ auxenzyme.databaseIds.get("uniprot") }}</a></li>
+                                {% endif %}
+                            {% endif %}
+                            {% if auxenzyme.databaseIds.get("genpept") %}
+                            <li>NCBI GenPept: <a class="custom-link" target="_blank" href='https://bioregistry.io/ncbiprotein:{{ auxenzyme.databaseIds.get("genpept") }}'>{{ auxenzyme.databaseIds.get("genpept") }}</a></li>
+                            {% endif %}
+                            {% if auxenzyme.databaseIds.get("wikidata") %}
+                            <li>Wikidata: <a class="custom-link" target="_blank" href='https://bioregistry.io/wikidata:{{ auxenzyme.databaseIds.get("wikidata") }}'>{{ auxenzyme.databaseIds.get("wikidata") }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li>No database crosslinks available</li>
+                        {% endif %}
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

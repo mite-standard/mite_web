@@ -13,3 +13,15 @@ repos:
     - id: ruff
       args: [ --fix ]
     - id: ruff-format
+- repo: local
+  hooks:
+    - id: uv-upgrade
+      name: uv-upgrade
+      pass_filenames: false
+      entry: uv lock --upgrade
+      language: system
+    - id: pytest
+      name: pytest
+      entry: uv run pytest
+      language: system
+      pass_filenames: false

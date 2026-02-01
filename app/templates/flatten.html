@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">Remove Stereochemistry</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="lead mb-2">This page offers functionality to remove stereochemistry information from a SMILES string.</p>
+        </div>
+    </div>
+    <div class="row">
+        {% if messages %}
+        <div class="card card-body">
+            <div class="col text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during stereochemistry removal!</h4>
+                <ul class="lh-base list-unstyled">
+                {% for message in messages %}
+                    <li><p class="lead mb-1">{{ message }}</p></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <form method="post" action="{{ url_for('flatten_query') }}">
+        <div class="row my-2">
+            <div class="col">
+                <div class="form-floating">
+                    <input id="smiles" name="smiles" class="form-control" minlength="1" aria-describedby="SmilesHelp" type="text" required>
+                    <label for="smiles" class="form-label">SMILES String</label>
+                    <div id="SmilesHelp" class="form-text">An isomeric SMILES string from which stereochemistry information should be removed.</div>
+                </div>
+            </div>
+        </div>
+        {% if smiles_in %}
+        <div class="row mb-2">
+            <div class="col">
+                <h4 class="fw-semibold lh-2">Input SMILES string</h4>
+                <p><b>{{ smiles_in | trim }}</b></p>
+                <h4 class="fw-semibold lh-2">Output SMILES string</h4>
+                <p><b>{{ smiles_out | trim }}</b></p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row mb-2">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Remove Stereochemistry</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
