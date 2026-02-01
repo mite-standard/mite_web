@@ -5,6 +5,12 @@ mite_web
 
 
 
+## Prepare release
+
+- If app update: check version update in [`pyproject.toml`](pyproject.toml) and [`CHANGELOG`](CHANGELOG.md)
+- If only data update: update version and records of `mite_data` and `mite_web_extras` in [`build_docker.sh`](build_docker.sh)
+
+
 ## Production build
 
 TL;DR: Intended for PAAS. Supports automated building with baked-in data(base).
