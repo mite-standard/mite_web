@@ -4,6 +4,13 @@ mite_web
 # NOTA BENE: FULL REFACTOR IS UNDERWAY. README IS LIKELY OUTDATED
 
 
+## Deployment Production
+
+### Bioinformatics.nl
+
+Update [`docker_compose`](production/bioinformatics.nl/compose.yml) for version (or set to latest)
+Add `.env` variables
+
 
 ## Prepare release
 
