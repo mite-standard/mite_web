@@ -6,6 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  APP_VERSION: ${{ github.ref_name }}
 
 jobs:
   build-and-push-image:
