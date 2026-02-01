@@ -9,7 +9,14 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Complete rework of app to follow 12 factor app philosophy
+- Complete rework of app to follow 12 factor app principles
+- App is now stateless: GitHub is stateful "backend"
+- Data transfer now conducted via GitHub API
+
+### Added
+
+- Authentication for reviewers
+
 
 ## [1.7.4] 02-01-2026
 
