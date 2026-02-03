@@ -121,7 +121,7 @@ docker compose -f dev-compose.yml build
 docker compose -f dev-compose.yml up --watch
 ```
 
-Sometimes, the hot reloading doesn't work perfectly.
+Sometimes, the hot reloading doesn't work perfectly (e.g. dependency updates).
 In these cases, terminate with `ctrl+c` and rebuild.
 
 #### Deployment Checklist
