@@ -1,6 +1,6 @@
 [project]
 name = "mite_web"
-version = "2.0.0.beta.5"
+version = "2.0.0.beta.6"
 description = "MITE (Minimum Information about a Tailoring Enzyme) Database Web App"
 readme = "README.md"
 requires-python = ">=3.12.0,<3.13.0" # because of rdkit 2024 in mite_extras
@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "biopython~=1.84",
+    "biopython~=1.86",
     "fastapi[standard]~=0.128.0",
     "mite_extras",
     "pandas~=2.2",

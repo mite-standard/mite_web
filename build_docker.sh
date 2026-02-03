@@ -5,16 +5,18 @@ IMAGE="ghcr.io/mite-standard/mite_web"
 
 APP_VERSION="${APP_VERSION:?APP_VERSION not set}"
 
-DATA_VERSION="1.21"
-DATA_RECORD=17998707
+# mite_data Zenodo: https://doi.org/10.5281/zenodo.13294303
+MITE_DATA_VERSION="1.22"
+MITE_DATA_RECORD=18469940
 
-EXTRAS_VERSION="0.5.0"
-EXTRAS_RECORD=17999487
+# mite_web_extras Zenodo: https://doi.org/10.5281/zenodo.17453501
+MITE_WE_VERSION="1.22"
+MITE_WE_RECORD=18470761
 
 docker build \
-  --build-arg DATA="$DATA_RECORD" \
-  --build-arg EXTRAS="$EXTRAS_RECORD" \
+  --build-arg DATA="$MITE_DATA_RECORD" \
+  --build-arg EXTRAS="$MITE_WE_RECORD" \
   --tag "$IMAGE:$APP_VERSION" \
-  --tag "$IMAGE:$APP_VERSION-data-$DATA_VERSION-extras-$EXTRAS_VERSION" \
+  --tag "$IMAGE:$APP_VERSION-data-$MITE_DATA_VERSION-extras-$MITE_WE_VERSION" \
   --tag "$IMAGE:latest" \
   .
