@@ -602,7 +602,7 @@ dependencies = [
 requires-dist = [
     { name = "async-lru", specifier = ">=2.0.5" },
     { name = "bcrypt", specifier = "==4.3.0" },
-    { name = "biopython", specifier = "~=1.84" },
+    { name = "biopython", specifier = "~=1.86" },
     { name = "fastapi", extras = ["standard"], specifier = "~=0.128.0" },
     { name = "mite-extras" },
     { name = "pandas", specifier = "~=2.2" },

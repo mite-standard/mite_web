@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "biopython~=1.84",
+    "biopython~=1.86",
     "fastapi[standard]~=0.128.0",
     "mite_extras",
     "pandas~=2.2",
