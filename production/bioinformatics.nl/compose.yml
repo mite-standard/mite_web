@@ -1,6 +1,6 @@
 services:
   app:
-    image: ghcr.io/mite-standard/mite_web:v2.0.0.beta.5-data-1.21-extras-0.5.0
+    image: ghcr.io/mite-standard/mite_web:latest
     networks:
       - app_network
 

@@ -9,14 +9,15 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 
-- Complete rework of app to follow 12 factor app principles
-- App is now stateless: GitHub is stateful "backend"
+- Complete rework of app to follow 12 factor app principles (stateless and containerized)
+- Moved from Flask to FastAPI
 - Data transfer now conducted via GitHub API
+- Replacement of PostgreSQL with SQLite for easier containerization and management
 
 ### Added
 
 - Authentication for reviewers
-
+- Expanded API functionality of MITE
 
 ## [1.7.4] 02-01-2026
 

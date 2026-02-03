@@ -1,133 +1,65 @@
 mite_web
 =========
 
-# NOTA BENE: FULL REFACTOR IS UNDERWAY. README IS LIKELY OUTDATED
-
-
-## Deployment Production
-
-### Bioinformatics.nl
-
-Update [`docker_compose`](production/bioinformatics.nl/compose.yml) for version (or set to latest)
-Add `.env` variables
-
-
-## Prepare release
-
-- If app update: check version update in [`pyproject.toml`](pyproject.toml) and [`CHANGELOG`](CHANGELOG.md)
-- If only data update: update version and records of `mite_data` and `mite_web_extras` in [`build_docker.sh`](build_docker.sh)
-
-
-## Production build
-
-TL;DR: Intended for PAAS. Supports automated building with baked-in data(base).
-
-0. Remove `data/` directory, if present
-
-1. Build (optionally, run) the container
-```commandline
-docker build --build-arg DATA=<mite_data record> --build-arg EXTRAS=<mite_web_extras record> --tag web-<version>-data-<version>-extras-<version> .
-docker run -p 8000:8000 web-<version>-data-<version>-extras-<version>
-```
-Bakes specified versions of `mite_data` and `mite_web_extras` in the container. 
-
-2. Prepare environment variables (see `.env.example`)
-To create reviewer passwords, a `.csv` file with `orcid,password` is required. 
-To create base64-encoded hashed information, run `uv run python scripts/hash_pw.py <input.csv>`
-
-
-## Development build
-
-TL;DR: Hot reloading/watch, data injection, reads variables from .env
-
-**Nota bene: assumes that `uv` is installed.**
-
-1. Install dependencies with `uv`
-```commandline
-uv sync
-```
-
-2. Run script to download data from Zenodo.
-```commandline
-uv run python scripts/prepare_data.py <mite_data record ID> <mite_web_extras record ID>
-```
-This data is considered dummy data for dev purposes only and will override data baked in during prod builds.
-
-3. Run script to build database
-```commandline
-uv run python -m scripts.create_db
-```
-
-4.Run docker compose
-```commandline
-docker compose -f dev-compose.yml build
-docker compose -f dev-compose.yml up --watch
-```
-Will watch recursively watch directories and reload on changes
-
-
-## OLD SETUP BELOW
-
-
 [![DOI](https://zenodo.org/badge/874302233.svg)](https://doi.org/10.5281/zenodo.14933931)
 
 Contents
 -----------------
 - [Overview](#overview)
 - [Documentation](#documentation)
-- [System Requirements](#system-requirements)
-- [Installation Guide](#installation-guide)
-- [Quick Start](#quick-start)
+- [Quickstart Guide](#quickstart-guide)
 - [Attribution](#attribution)
 - [For Developers](#for-developers)
 
 ## Overview
 
 **MITE** (Minimum Information about a Tailoring Enzyme) is a community-driven database for the characterization of tailoring enzymes.
-These enzymes play crucial roles in the biosynthesis of secondary or specialized metabolites, naturally occurring molecules with strong biological activities, such as antibiotic properties.
+These enzymes play crucial roles in the biosynthesis of secondary or specialized metabolites.
+These naturally occurring molecules often show strong biological activities, and many drugs (e.g. antibiotics) derive from them.
 
-This repository manages the code for the [MITE Webpage](https://mite.bioinformatics.nl/).
+This repository manages the code for the [MITE Database](https://mite.bioinformatics.nl/) webapp.
 
 For more information, visit the [MITE Data Standard Organization page](https://github.com/mite-standard) or read our [publication]( https://doi.org/10.1093/nar/gkaf969).
 
 ## Documentation
 
-This repository contains code for the MITE Webpage, allowing to visualize data and receive submissions for new and existing MITE entries.
+This repository contains code for the MITE Webpage, allowing to visualize data and receive submissions for new and updates for existing entries.
 
 Note that the web presence **does not store MITE entries** *per se*. The MITE ground truth dataset lives in [mite_data](https://github.com/mite-standard/mite_data).
 
+## Quickstart guide
 
-## System Requirements
+While the [MITE Database](https://mite.bioinformatics.nl/) is primarily intended to be used online, it can also be used offline.
 
-**Nota bene: this application is only tested on Linux. For an online version, see [here](https://mite.bioinformatics.nl/).**
+### Installation Guide
 
-### OS Requirements
+*Nota bene: while this application should work on any OS, it has only been tested on Ubuntu Linux 20.04 and 22.04.*
+*For an online version, see the [MITE Website](https://mite.bioinformatics.nl/).*
 
-Local installation was tested on:
+Assuming that Docker is installed:
 
-- Ubuntu Linux 20.04 and 22.04 (command line)
+```commandline
+docker run -p 8000:8000 ghcr.io/mite-standard/mite_web:latest
+```
 
-#### Python dependencies
+You can now use the database running on http://127.0.0.1:8000/.
 
-Dependencies including exact versions are specified in the [pyproject.toml](./pyproject.toml) file.
+### Limitations
 
-## Installation Guide
+By default, the application runs in `development` mode. 
+Data submission and review are restricted in this mode:
 
-### Deploy Docker locally
+- No submission dashboard
+- Newly created entries can only be downloaded, but not submitted to GitHub
+- Entries cannot be reviewed.
 
-- Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Add the `.env` file as indicated below (with at least the **mandatory** params)
-- Build the docker image `docker-compose -f docker-compose.yml build --no-cache` (potentially with `sudo`)
-- Start the docker `docker-compose -f docker-compose.yml up -d` (potentially with `sudo`)
-- Open the application in any browser with the URL http://127.0.0.1:1340/
-- To stop the application, run `docker-compose stop` (potentially with `sudo`)
-- To take down the database, run `docker-compose down -v --rmi all`
+If entries are to be submitted to the repository, please contact the developers.
 
 ## Attribution
 
 ### License
 
-`mite_schema` is an open source tool licensed under the MIT license (see [LICENSE](LICENSE)).
+`mite_web` is an open source tool licensed under the MIT license (see [LICENSE](LICENSE)).
 
 ### Publications
 
@@ -139,113 +71,102 @@ This work was supported by the Netherlands Organization for Scientific Research 
 
 ## For Developers
 
-**Nota bene: since version `1.5.0`, development is only possible using the docker-container**
+### Application logic
 
-**Nota bene: regularly update `uv.lock` using `uv lock --upgrade`**
+*Nota bene: while this application should work on any OS, it has only been tested on Ubuntu Linux 20.04 and 22.04.*
+
+Since `mite_web 2.0.0`, the application follows 12-factor-app principles. 
+Data from [mite_data](https://github.com/mite-standard/mite_data) is baked into the image, alongside a read-only SQLite DB for relational querying.
+All parameters are provided as environment variables. 
+The app itself is stateless, with [mite_data's GitHub repository](https://github.com/mite-standard/mite_data) acting as stateful backend (data transfer via the GitHub API).
 
 ### Development build
 
-- Download or clone this [repository](https://github.com/mite-standard/mite_web)
-- Add the `.env` file as indicated below (with at least the **mandatory** params)
-- Populate the app by changing into `mite_web` and running `uv run python mite_web/prepare_mite_data.py` (if applicable, remove `.venv`, `data` and `static/img` dirs)
-- Build the docker image using `docker-compose build`. This will mount the `mite_web` directory for more convenient file editing (no need to rebuild every time).
-- Start the docker image with `docker-compose up -d`. The image will be available at http://127.0.0.1:1340/.
-- Changes within the `mite_web` folder will be mirrored inside the docker image but require stopping and restarting the docker container with `docker-compose stop && docker-compose up` (`gunicorn` does not support reloading on change with the current build)
-- Changes in the PostgreSQL DB will only be applied if old tables are dropped with `docker-compose down -v`
+This build simplifies development by hot reloading (recursively watching directories for changes. 
+Data from [mite_data](https://github.com/mite-standard/mite_data) is downloaded once and then injected into the image.
+Variables are read from an .env file (see [.env.example](.env.example)).
+
+#### Installation
+
+*Nota bene: assumes that `uv` is installed.*
+
+1. Download and install dependencies
+```commandline
+git clone git@github.com:mite-standard/mite_data.git
+uv sync
+uv run pre-commit install
+```
+
+2. Run tests
+```commandline
+uv run pytest
+```
+Tests will also run via `pre-commit` and GitHub Actions on PRs into main
+
+3. Run script to download data from Zenodo.
+```commandline
+uv run python scripts/prepare_data.py <mite_data Zenodo record ID> <mite_web_extras Zenodo record ID> # positional args: order must be exact
+```
+This data is considered dummy data for dev purposes only. 
+Make sure to remove it before any (manual) production builds.
+
+4. Run script to build database
+```commandline
+uv run python -m scripts.create_db
+```
+
+5. Run docker compose
+```commandline
+docker compose -f dev-compose.yml build
+docker compose -f dev-compose.yml up --watch
+```
+
+Sometimes, the hot reloading doesn't work perfectly.
+In these cases, terminate with `ctrl+c` and rebuild.
+
+#### Deployment Checklist
+
+The main software artifact produced by this repo are Docker containers deposited in the GitHub Container Repository.
+These containers are created automatically via GitHub Actions on every new Release.
+
+There are two "types" of releases for Mite Web
+
+1. Only code update
+2. Update of code and of baked-in data ([mite_data](https://github.com/mite-standard/mite_data) and [mite_web_extras](https://github.com/mite-standard/mite_web_extras))
+
+
+##### 1. Only code update
+
+- Branch out
+- Perform code updates
+- Update version in [`pyproject.toml`](pyproject.toml)
+- Describe changes in [`CHANGELOG`](CHANGELOG.md)
+- Merge to main
+- Create a new release
+
+##### 2. Update of code and baked-in data
+
+- As in 1., with addition of:
+- In [build_docker.sh](build_docker.sh), update [mite_data's](https://doi.org/10.5281/zenodo.13294303) `MITE_DATA_VERSION` and `MITE_DATA_RECORD` and [mite_web_extras'](https://doi.org/10.5281/zenodo.17453501) `MITE_WE_VERSION` and `MITE_WE_RECORD`
+
 
 ### Production build
 
-#### First startup
-
-##### 1. Clone the repository
-
-```commandline
-git clone https://github.com/mite-standard/mite_web
-cd mite_web
-```
-
-##### 2. Create configuration file
-
-```commandline
-# .env
-# mandatory
-POSTGRES_PASSWORD=<yoursecurepassword>
-POSTGRES_DB=mite_database
-# optional
-GITHUB_TOKEN=<personal-access-token-classic(scopes: 'admin:public_key', 'gist', 'read:org', 'repo')>
-GITHUB_NAME=<gh-acc name>
-GITHUB_MAIL=<gh-acc mail>
-SECRET_KEY=<your_secret_key>
-ONLINE=True
-```
-
-##### 3. Build Docker images
-
-```commandline
-docker-compose -f docker-compose.yml build --no-cache
-```
-
-This builds both `mite_web` and `nginx` images. The mite_web directory is not mounted in production; all code is baked into the image.
-
-##### 4. Start the services
-
-```commandline
-docker-compose -f docker-compose.yml up -d
-```
-
-##### (5. Remove all services)
-
-```commandline
-docker-compose down -v --rmi all
-```
-
-#### Update/redeploy
+*Nota bene: production build should be exclusively deployed from Docker images (e.g. from [GHCR](ghcr.io/mite-standard/mite_web))*
 
 *Nota bene*: make sure to announce the downtime in the [Web App Status](https://github.com/orgs/mite-standard/discussions/5) thread.
 
-##### 1. Save existing dumps (optional)
-Preserves links to any open `mite_data` PRs on GitHub
+Mite Web requires certain parameters to be run in production mode.
+These parameters should be provided as environment variables as specified by the respective platform provider.
+An example can be found in [.env.example](.env.example).
 
-```commandline
-docker cp mite_web-mite_web-1:/mite_web/mite_web/dumps .
-```
+If parameters are not provided, the application will automatically start in development mode, where any GitHub API interaction is prevented.
 
-##### 2. Toggle maintenance mode and stop the `mite_web` application 
+While most parameters are [self-explanatory](.env.example), the reviewer orcids, GitHub tags, and passwords need to be provided as a base64-encoded string.
+The easiest way to get this is to create a csv file (see [reviewers.example.csv](reviewers.example.csv)) and run `uv run python scripts/hash_pw.py <input.csv>` on it.
 
-```commandline
-docker exec mite_web-nginx-1 touch /etc/nginx/maintenance.flag
-docker exec mite_web-nginx-1 nginx -s reload
-docker-compose stop mite_web postgres && docker-compose rm -v postgres
-```
+#### Bioinformatics.nl
 
-This assumes that only the `mite_web` container needs to be updated. `nginx` will continue to run and automatically serve a `maintenance.html` page.
-
-##### 3. Pull the newest release
-
-```commandline
-git pull
-```
-
-##### 4. Build the `mite_web` image
-
-```commandline
-docker-compose -f docker-compose.yml build --no-cache mite_web
-```
-
-##### 5. Restart the `mite_web` image and switch off maintenance mode
-
-```commandline
-docker-compose -f docker-compose.yml up -d --build --force-recreate postgres && docker-compose -f docker-compose.yml up -d --build --force-recreate mite_web
-docker exec mite_web-nginx-1 rm /etc/nginx/maintenance.flag
-docker exec mite_web-nginx-1 nginx -s reload
-```
-
-##### 6. Transfer existing dumps
-
-```commandline
-docker cp ./dumps mite_web-mite_web-1:/mite_web/mite_web && docker cp ./dumps/. mite_web-mite_web-1:/mite_web/mite_web/open_prs
-```
-
-##### 7. Perform a test submission
-
-Check if submission system works by performing a test submission. If not, there are possibly issues with the connection to GitHub.
+- Download the [bioinformatics.nl](production/bioinformatics.nl) directory
+- Add parameters in an `.env` file (see [.env.example](.env.example)
+- Run `docker compose up`
