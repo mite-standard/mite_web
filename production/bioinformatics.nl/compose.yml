@@ -1,6 +1,8 @@
 services:
   app:
     image: ghcr.io/mite-standard/mite_web:latest
+    restart: unless-stopped
+    env_file: .env
     networks:
       - app_network
 
