@@ -167,6 +167,7 @@ The easiest way to get this is to create a csv file (see [reviewers.example.csv]
 
 #### Bioinformatics.nl
 
-- Download the [bioinformatics.nl](production/bioinformatics.nl) directory
+- Download the content of the [bioinformatics.nl](production/bioinformatics.nl) directory (e.g. with `curl --output <filename> <URL>`)
+- Specify the desired container version in [compose.yml](production/bioinformatics.nl/compose.yml)
 - Add parameters in an `.env` file (see [.env.example](.env.example)
-- Run `docker compose up`
+- Run `docker compose -f compose.yml up`
