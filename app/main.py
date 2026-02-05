@@ -11,7 +11,7 @@ from app.core.shared import load_active, load_form_vals, load_retired, load_tabl
 from app.core.templates import configure_templates
 from app.db.database import engine
 from app.services.github import authenticate_pat
-from app.web.pages import download, pages, repository, robots
+from app.web.pages import debug, download, pages, repository, robots
 from app.web.views import overview, pathway, structures, submission
 
 setup_logger()
@@ -65,6 +65,7 @@ app.include_router(download.router)
 app.include_router(robots.router)
 app.include_router(repository.router)
 app.include_router(submission.router)
+app.include_router(debug.router)
 
 
 # TODO: implement, github authentication

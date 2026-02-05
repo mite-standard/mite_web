@@ -39,13 +39,3 @@ async def about(request: Request):
 @router.get("/contact", include_in_schema=False, response_class=HTMLResponse)
 async def contact(request: Request):
     return templates.TemplateResponse(request=request, name="contact.html")
-
-
-@router.get("/debug", include_in_schema=False)
-async def debug(request: Request):
-    return dict(request.headers)
-
-
-@router.get("/debug-scheme", include_in_schema=False)
-async def debug_scheme(request: Request):
-    return {"scheme": request.url.scheme, "base_url": str(request.base_url)}
