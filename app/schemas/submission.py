@@ -212,7 +212,7 @@ class MiteService:
     def parse(self, data: dict) -> dict:
         """Convert form data to format compatible with MiteData"""
 
-        data = {
+        return {
             "accession": data["accession"][0],
             "status": data["status"][0],
             "comment": data["comment"][0],
@@ -220,8 +220,6 @@ class MiteService:
             "enzyme": self.enzyme(data),
             "reactions": self.reactions(data),
         }
-
-        return {k: v for k, v in data.items() if v != ""}
 
     @staticmethod
     def changelog(data: dict) -> list:
@@ -248,7 +246,7 @@ class MiteService:
             },
         }
 
-        nr_auxenz = self.get_nr_instances(
+        nr_auxenz = self.get_form_instance(
             data=data, pattern=re.compile(r"auxenzyme\[(\d+)\]")
         )
         if nr_auxenz:
@@ -274,62 +272,71 @@ class MiteService:
 
     def reactions(self, data: dict) -> list:
         """Parse out reaction information"""
-        reactions = {
-            i: self.get_nr_instances(
-                data=data,
-                pattern=re.compile(rf"reaction\[({i})\]knownreaction\[(\d+)\]"),
-            )
-            for i in self.get_nr_instances(
-                data=data, pattern=re.compile(r"reaction\[(\d+)\]")
-            )
-        }
+        reactions = {}
+        for idx in self.get_form_instance(
+            data, pattern=re.compile(r"reaction\[(\d+)\]")
+        ):
+            reactions[idx] = self.get_instance_known_reactions(data, idx)
+
         data_mite = []
-        for key, value in reactions.items():
+        for rx, krx in reactions.items():
             data_mite.append(
                 {
-                    "tailoring": data.get(f"reaction[{key}]tailoring[]", [""]),
-                    "description": data.get(f"reaction[{key}]description", [""])[0],
-                    "reactionSMARTS": data.get(f"reaction[{key}]smarts", [""])[0],
+                    "tailoring": data.get(f"reaction[{rx}]tailoring[]", [""]),
+                    "description": data.get(f"reaction[{rx}]description", [""])[0],
+                    "reactionSMARTS": data.get(f"reaction[{rx}]smarts", [""])[0],
                     "databaseIds": {
-                        "rhea": data.get(f"reaction[{key}]rhea", [""])[0],
-                        "ec": data.get(f"reaction[{key}]ec", [""])[0],
+                        "rhea": data.get(f"reaction[{rx}]rhea", [""])[0],
+                        "ec": data.get(f"reaction[{rx}]ec", [""])[0],
                     },
                     "evidence": {
-                        "evidenceCode": data.get(
-                            f"reaction[{key}]evidencecode[]", [""]
-                        ),
-                        "references": data.get(f"reaction[{key}]ref[]", [""]),
+                        "evidenceCode": data.get(f"reaction[{rx}]evidencecode[]", [""]),
+                        "references": data.get(f"reaction[{rx}]ref[]", [""]),
                     },
-                    "reactions": [],
+                    "reactions": self.get_krxs(data, rx=rx, krx=krx),
                 }
             )
-            for index in value:
-                data_mite[int(key)]["reactions"].append(
-                    {
-                        "substrate": data.get(
-                            f"reaction[{key}]knownreaction[{index}]substrate", [""]
-                        )[0],
-                        "products": data.get(
-                            f"reaction[{key}]knownreaction[{index}]products[]", [""]
-                        ),
-                        "forbidden_products": data.get(
-                            f"reaction[{key}]knownreaction[{index}]forbiddenproducts[]"
-                        ),
-                        "isIntermediate": data.get(
-                            f"reaction[{key}]knownreaction[{index}]intermediate", [""]
-                        )[0],
-                        "description": data.get(
-                            f"reaction[{key}]knownreaction[{index}]description", [""]
-                        )[0],
-                    }
-                )
-            return data_mite
+        return data_mite
 
     @staticmethod
-    def get_nr_instances(data: dict, pattern: Any) -> list:
-        """Find number of patterns to inform parsing"""
+    def get_krxs(data: dict, rx: int, krx: list[int]):
+        """Parse known reaction dict from form data"""
+        examples = []
+        for k in krx:
+            examples.append(
+                {
+                    "substrate": data.get(
+                        f"reaction[{rx}]knownreaction[{k}]substrate", [""]
+                    )[0],
+                    "products": data.get(
+                        f"reaction[{rx}]knownreaction[{k}]products[]", [""]
+                    ),
+                    "forbidden_products": data.get(
+                        f"reaction[{rx}]knownreaction[{k}]forbiddenproducts[]"
+                    ),
+                    "isIntermediate": data.get(
+                        f"reaction[{rx}]knownreaction[{k}]intermediate", [""]
+                    )[0],
+                    "description": data.get(
+                        f"reaction[{rx}]knownreaction[{k}]description", [""]
+                    )[0],
+                }
+            )
+        return examples
+
+    @staticmethod
+    def get_form_instance(data: dict, pattern: Any) -> list:
+        """Find number of reaction patterns to inform parsing"""
         return sorted(
-            {match.group(1) for key in data if (match := pattern.search(key))}
+            {int(match.group(1)) for key in data if (match := pattern.search(key))}
+        )
+
+    @staticmethod
+    def get_instance_known_reactions(data: dict, idx: int) -> list:
+        """Find number of patterns to inform parsing"""
+        re_known_r = re.compile(rf"reaction\[{idx}\]knownreaction\[(\d+)\]")
+        return sorted(
+            {int(match.group(1)) for key in data if (match := re_known_r.search(key))}
         )
 
     @staticmethod
