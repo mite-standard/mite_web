@@ -120,7 +120,12 @@ async def submission_existing(
     data_model = ExistDraftService().parse(form=form)
 
     if repo:
-        await create_pr(repo=repo, branch=state.u_id, data=data_model.data)
+        await create_pr(
+            repo=repo,
+            branch=state.u_id,
+            data=data_model.data,
+            name=data_model.data["accession"],
+        )
 
     state.step = "preview"
     state.issued = time.time()
@@ -236,9 +241,12 @@ async def submission_submit(
 
     if repo:
         await draft_to_full(repo=repo, branch=state.u_id)
-        await upsert_json_file(
-            repo=repo, branch=state.u_id, data=model.data.to_json(), name=state.u_id
-        )
+        data = model.data.to_json()
+        await upsert_json_file(repo=repo, branch=state.u_id, data=data, name=state.u_id)
+        if data["accession"] != "MITE9999999":
+            await upsert_json_file(
+                repo=repo, branch=state.u_id, data=data, name=data["accession"]
+            )
 
     return templates.TemplateResponse(
         request=request,

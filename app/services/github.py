@@ -60,8 +60,11 @@ def process_pulls(pulls: list[PullRequest]) -> dict:
     return board
 
 
-async def create_pr(repo: Repository, branch: str, data: dict):
-    """Create PR for new/modified entry"""
+async def create_pr(repo: Repository, branch: str, data: dict, name: str | None = None):
+    """Create PR for new/modified entry
+
+    For existing entries, creates a second file with the correct name for easier diffs
+    """
 
     def _push():
         try:
@@ -74,12 +77,24 @@ async def create_pr(repo: Repository, branch: str, data: dict):
                     sha=base_ref.object.sha,
                 )
 
+            content = json.dumps(data, indent=4)
+
             repo.create_file(
                 path=f"mite_data/data/{branch}.json",
-                message=f"Add submission",
-                content=json.dumps(data, indent=4),
+                message=f"Add submission UUID file",
+                content=content,
                 branch=branch,
             )
+            if name:
+                path = f"mite_data/data/{name}.json"
+                existing = repo.get_contents(path, ref=branch)
+                repo.update_file(
+                    path=path,
+                    message=f"Update entry {name}",
+                    content=content,
+                    sha=existing.sha,
+                    branch=branch,
+                )
 
             repo.create_pull(
                 title=f"Contributor submission {data['enzyme']['name']}",
