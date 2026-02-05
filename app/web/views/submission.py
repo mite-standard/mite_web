@@ -232,11 +232,12 @@ async def submission_submit(
         raise HTTPException(400)
 
     raw_data = json.loads(form["data_form"])
+    model = MiteData(raw_data=raw_data)
 
     if repo:
         await draft_to_full(repo=repo, branch=state.u_id)
         await upsert_json_file(
-            repo=repo, branch=state.u_id, data=raw_data, name=state.u_id
+            repo=repo, branch=state.u_id, data=model.data.to_json(), name=state.u_id
         )
 
     return templates.TemplateResponse(
