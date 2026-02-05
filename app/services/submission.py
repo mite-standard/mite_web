@@ -1,47 +1,47 @@
-import base64
-import hashlib
-import hmac
-import time
+import logging
 
 from fastapi import HTTPException
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from mite_schema import SchemaManager
 
 from app.core.config import settings
 from app.schemas.submission import SubmissionState
 
+logger = logging.getLogger(__name__)
+
+
+def get_state_serializer() -> URLSafeTimedSerializer:
+    return URLSafeTimedSerializer(
+        secret_key=settings.secret,
+        salt="submission-state-v1",
+    )
+
 
 def sign_state(state: SubmissionState) -> str:
-    """Sign content with HMAC logic"""
-    payload = state.model_dump_json().encode()
-    sig = hmac.new(
-        settings.secret.encode(),
-        payload,
-        hashlib.sha256,
-    ).digest()
-
-    return base64.urlsafe_b64encode(payload + b"." + sig).decode()
+    """Sign content"""
+    serializer = get_state_serializer()
+    return serializer.dumps(state.model_dump())
 
 
 def verify_state(token: str) -> SubmissionState:
-    """Decode signed content."""
-    raw = base64.urlsafe_b64decode(token.encode())
-    payload, sig = raw.rsplit(b".", 1)
+    """Decode and validate signed content."""
+    serializer = get_state_serializer()
 
-    expected = hmac.new(
-        settings.secret.encode(),
-        payload,
-        hashlib.sha256,
-    ).digest()
-
-    if not hmac.compare_digest(sig, expected):
-        raise ValueError("Invalid signature")
-
-    state = SubmissionState.model_validate_json(payload)
-
-    if time.time() - state.issued > settings.max_age:
-        raise ValueError("Token expired")
-
-    return state
+    try:
+        data = serializer.loads(token, max_age=settings.max_age)
+        return SubmissionState.model_validate(data)
+    except SignatureExpired as e:
+        s = "Submission token expired"
+        logger.warning(s)
+        raise HTTPException(400, detail=s) from e
+    except BadSignature as e:
+        s = "Submission token signature invalid"
+        logger.warning(s)
+        raise HTTPException(400, detail=s) from e
+    except Exception as e:
+        s = f"Error during decoding of signed token: {e!s}"
+        logger.warning(s)
+        raise HTTPException(400, detail=s) from e
 
 
 def check_schema(data: dict):

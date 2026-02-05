@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -7,10 +8,39 @@ from app.schemas.submission import (
     ExistDraftData,
     ExistDraftForm,
     ExistDraftService,
+    MiteService,
     NewDraftData,
     NewDraftForm,
     NewDraftService,
 )
+
+
+@pytest.fixture
+def form_input():
+    return {
+        "reaction[0]smarts": [""],
+        "reaction[0]description": [""],
+        "reaction[0]rhea": [""],
+        "reaction[0]ec": [""],
+        "reaction[0]tailoring[]": [""],
+        "reaction[0]evidencecode[]": [""],
+        "reaction[0]ref[]": [""],
+        "reaction[0]knownreaction[0]substrate": [""],
+        "reaction[0]knownreaction[0]description": [""],
+        "reaction[0]knownreaction[0]intermediate": [""],
+        "reaction[0]knownreaction[0]products[]": [""],
+        "reaction[1]smarts": [""],
+        "reaction[1]description": [""],
+        "reaction[1]rhea": [""],
+        "reaction[1]ec": [""],
+        "reaction[1]tailoring[]": [""],
+        "reaction[1]evidencecode[]": [""],
+        "reaction[1]ref[]": [""],
+        "reaction[1]knownreaction[0]substrate": [""],
+        "reaction[1]knownreaction[0]description": [""],
+        "reaction[1]knownreaction[0]intermediate": [""],
+        "reaction[1]knownreaction[0]products[]": [""],
+    }
 
 
 @pytest.mark.slow
@@ -172,3 +202,29 @@ def test_exists_service_valid(exist_model, kwargs):
     results = service.parse(ExistDraftForm(**kwargs))
     assert isinstance(results, ExistDraftData)
     assert len(results.data["changelog"]) == 3
+
+
+def test_parse_reactions(form_input):
+    model = MiteService()
+    parsed = model.reactions(form_input)
+    assert len(parsed) == 2
+
+
+def test_get_form_instance(form_input):
+    model = MiteService()
+    parsed = model.get_form_instance(
+        form_input, pattern=re.compile(r"reaction\[(\d+)\]")
+    )
+    assert parsed == [0, 1]
+
+
+def test_get_known_reactions(form_input):
+    model = MiteService()
+    parsed = model.get_instance_known_reactions(form_input, idx=0)
+    assert parsed == [0]
+
+
+def test_get_krxs(form_input):
+    model = MiteService()
+    parsed = model.get_krxs(form_input, rx=0, krx=[0])
+    assert len(parsed) == 1

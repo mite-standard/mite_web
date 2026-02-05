@@ -120,7 +120,12 @@ async def submission_existing(
     data_model = ExistDraftService().parse(form=form)
 
     if repo:
-        await create_pr(repo=repo, branch=state.u_id, data=data_model.data)
+        await create_pr(
+            repo=repo,
+            branch=state.u_id,
+            data=data_model.data,
+            name=data_model.data["accession"],
+        )
 
     state.step = "preview"
     state.issued = time.time()
@@ -232,12 +237,16 @@ async def submission_submit(
         raise HTTPException(400)
 
     raw_data = json.loads(form["data_form"])
+    model = MiteData(raw_data=raw_data)
 
     if repo:
         await draft_to_full(repo=repo, branch=state.u_id)
-        await upsert_json_file(
-            repo=repo, branch=state.u_id, data=raw_data, name=state.u_id
-        )
+        data = model.data.to_json()
+        await upsert_json_file(repo=repo, branch=state.u_id, data=data, name=state.u_id)
+        if data["accession"] != "MITE9999999":
+            await upsert_json_file(
+                repo=repo, branch=state.u_id, data=data, name=data["accession"]
+            )
 
     return templates.TemplateResponse(
         request=request,
