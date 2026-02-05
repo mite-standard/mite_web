@@ -44,3 +44,8 @@ async def contact(request: Request):
 @router.get("/debug", include_in_schema=False)
 async def debug(request: Request):
     return dict(request.headers)
+
+
+@router.get("/debug-scheme", include_in_schema=False)
+async def debug_scheme(request: Request):
+    return {"scheme": request.url.scheme, "base_url": str(request.base_url)}
