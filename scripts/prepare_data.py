@@ -193,24 +193,6 @@ class RecordManager(BaseModel):
         )
         shutil.move(
             src=trgt.joinpath(sdir)
-            .joinpath("mite_data/metadata/product_list.pickle")
-            .resolve(),
-            dst=self.loc.resolve(),
-        )
-        shutil.move(
-            src=trgt.joinpath(sdir)
-            .joinpath("mite_data/metadata/reaction_fps.pickle")
-            .resolve(),
-            dst=self.loc.resolve(),
-        )
-        shutil.move(
-            src=trgt.joinpath(sdir)
-            .joinpath("mite_data/metadata/substrate_list.pickle")
-            .resolve(),
-            dst=self.loc.resolve(),
-        )
-        shutil.move(
-            src=trgt.joinpath(sdir)
             .joinpath("mite_data/metadata/summary.csv")
             .resolve(),
             dst=self.loc.resolve(),
@@ -292,8 +274,7 @@ class RecordManager(BaseModel):
         for key, val in metadata["entries"].items():
             summary["entries"][key] = {
                 "accession": val["accession"],
-                "status": val["status_icon"],
-                "status_plain": val["status"],
+                "status": val["status"],
                 "name": val["enzyme_name"],
                 "tailoring": val["tailoring"],
                 "cofactors_organic": val["cofactors_organic"],
@@ -304,7 +285,7 @@ class RecordManager(BaseModel):
                 "domain": val["domain"],
                 "kingdom": val["kingdom"],
                 "phylum": val["phylum"],
-                "class": val["class"],
+                "class": val["class_name"],
                 "order": val["order"],
                 "family": val["family"],
             }
@@ -324,12 +305,12 @@ class RecordManager(BaseModel):
             active = {
                 key: val
                 for key, val in summary["entries"].items()
-                if val.get("status_plain") == "active"
+                if val.get("status") == "active"
             }
             retired = {
                 key: val
                 for key, val in summary["entries"].items()
-                if val.get("status_plain") == "retired"
+                if val.get("status") == "retired"
             }
             with open(self.loc.joinpath("active.json"), "w") as f:
                 f.write(json.dumps(active))
