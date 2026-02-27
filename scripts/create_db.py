@@ -96,7 +96,7 @@ class DBSeeder(BaseModel):
             domain_id=summary.get("domain"),
             kingdom_id=summary.get("kingdom"),
             phylum_id=summary.get("phylum"),
-            class_id=summary.get("class_name"),
+            class_id=summary.get("class"),
             order_id=summary.get("order"),
             family_id=summary.get("family"),
             cofactors=_add_cofactors(),
