@@ -166,7 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formVals = {{ form_vals | tojson | safe }};
     initCustomQueryBuilder(formVals);
     disableButton(document.getElementById('queryForm'), document.getElementById('queryForm-submit'))
-    disableButton(document.getElementById('new-submission'), document.getElementById('queryCsv-submit'))
 });
 </script>
 {% endblock %}
