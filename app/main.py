@@ -39,6 +39,8 @@ async def lifespan(app: FastAPI):
     app.state.table_headers = load_table_head()
     app.state.form_vals = load_form_vals()
 
+    # todo: read in fingerprint hashes as shared data
+
     yield
 
     logger.info("App shutting down.")
@@ -66,6 +68,3 @@ app.include_router(robots.router)
 app.include_router(repository.router)
 app.include_router(submission.router)
 app.include_router(debug.router)
-
-
-# TODO: implement, github authentication

@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import pickle
 import shutil
 import sys
 import time
@@ -8,8 +9,10 @@ from importlib import metadata
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
 import requests
 from pydantic import BaseModel, Field
+from rdkit.Chem import PandasTools, rdChemReactions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -17,6 +20,127 @@ handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
 if not logger.handlers:
     logger.addHandler(handler)
+
+
+class MolInfo(BaseModel):
+    """Models info required for mol file artifacts"""
+
+    accession: str
+    idx_csv_smarts: str
+    idx_csv_smiles: str
+    reactionsmarts: str
+    substrates: str
+    products: str
+
+
+class MolInfoParser:
+    """Parses molecule information"""
+
+    @staticmethod
+    def parse(data: dict) -> [MolInfo]:
+        """Parse MITE entry for mol data"""
+
+        entries = []
+
+        for idx_reaction, reaction in enumerate(data["reactions"], 1):
+            for idx_example, example in enumerate(reaction["reactions"], 1):
+                entries.append(
+                    MolInfo(
+                        accession=data["accession"],
+                        idx_csv_smarts=f"{data["accession"]}.reaction{idx_reaction}",
+                        idx_csv_smiles=f"{data["accession"]}.reaction{idx_reaction}.example{idx_example}",
+                        reactionsmarts=reaction["reactionSMARTS"],
+                        substrates=example["substrate"],
+                        products=f"{'.'.join(example['products'])}",
+                    )
+                )
+
+        return entries
+
+
+class MolInfoStore:
+    """Prepare information for molfile artifacts"""
+
+    def __init__(self, data: Path, dump: Path):
+        self.data = data
+        self.dump = dump
+        self.entries: list[MolInfo] = []
+
+    def insert_entry(self, path: Path):
+        with open(path) as f:
+            data = json.load(f)
+
+        if data["status"] != "active":
+            return
+
+        models = MolInfoParser().parse(data=data)
+        self.entries.extend(models)
+
+    def write_substrate_pickle(self):
+        df_substrates = (
+            pd.DataFrame(
+                [
+                    e.model_dump(include={"idx_csv_smiles", "substrates"})
+                    for e in self.entries
+                ]
+            )
+            .rename(columns={"idx_csv_smiles": "mite_id"})
+            .sort_values("mite_id")
+        )
+        PandasTools.AddMoleculeColumnToFrame(
+            df_substrates,
+            smilesCol="substrates",
+            molCol="ROMol_substrates",
+            includeFingerprints=True,
+        )
+        with open(self.dump / "substrate_list.pickle", "wb") as outfile:
+            pickle.dump(
+                obj=df_substrates, file=outfile, protocol=pickle.HIGHEST_PROTOCOL
+            )
+
+    def write_product_pickle(self):
+        df_products = (
+            pd.DataFrame(
+                [
+                    e.model_dump(include={"idx_csv_smiles", "products"})
+                    for e in self.entries
+                ]
+            )
+            .rename(columns={"idx_csv_smiles": "mite_id"})
+            .sort_values("mite_id")
+        )
+        PandasTools.AddMoleculeColumnToFrame(
+            df_products,
+            smilesCol="products",
+            molCol="ROMol_products",
+            includeFingerprints=True,
+        )
+        with open(self.dump / "product_list.pickle", "wb") as outfile:
+            pickle.dump(obj=df_products, file=outfile, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def write_reaction_pickle(self):
+        df_reaction = (
+            pd.DataFrame(
+                [
+                    e.model_dump(include={"idx_csv_smarts", "reactionsmarts"})
+                    for e in self.entries
+                ]
+            )
+            .rename(columns={"idx_csv_smarts": "mite_id"})
+            .sort_values("mite_id")
+        )
+        df_reaction["reaction_fps"] = df_reaction["reactionsmarts"].apply(
+            lambda x: rdChemReactions.CreateStructuralFingerprintForReaction(
+                rdChemReactions.ReactionFromSmarts(x)
+            )
+        )
+        df_reaction["diff_reaction_pfs"] = df_reaction["reactionsmarts"].apply(
+            lambda x: rdChemReactions.CreateDifferenceFingerprintForReaction(
+                rdChemReactions.ReactionFromSmarts(x)
+            )
+        )
+        with open(self.dump / "reaction_fps.pickle", "wb") as outfile:
+            pickle.dump(obj=df_reaction, file=outfile, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def get_version() -> str:
@@ -64,6 +188,7 @@ class RecordManager(BaseModel):
 
         self.generate_summary()
         self.diff_active_retired()
+        self.create_molfiles()
 
         logger.info("RecordManager: Completed")
 
@@ -76,7 +201,7 @@ class RecordManager(BaseModel):
         logger.info("RecordManager: Start mite_data download")
 
         rsps_meta = self.session.get(
-            f"https://zenodo.org/api/records/{self.r_data}", timeout=12.1
+            f"https://zenodo.org/api/records/{self.r_data}", timeout=60.1
         )
         if rsps_meta.status_code != 200:
             raise RuntimeError(
@@ -111,7 +236,7 @@ class RecordManager(BaseModel):
         logger.info("RecordManager: Start mite_web_extras download")
 
         rsps_meta = self.session.get(
-            f"https://zenodo.org/api/records/{self.r_extras}", timeout=12.1
+            f"https://zenodo.org/api/records/{self.r_extras}", timeout=60.1
         )
         if rsps_meta.status_code != 200:
             raise RuntimeError(
@@ -317,6 +442,22 @@ class RecordManager(BaseModel):
             with open(self.loc.joinpath("retired.json"), "w") as f:
                 f.write(json.dumps(retired))
         logger.info("RecordManager: Completed creation of active/retired")
+
+    def create_molfiles(self) -> None:
+        """Generate fingerprints smiles and smarts fingerprints"""
+        logger.info("RecordManager: Started creation of molfiles")
+
+        loc_data = self.loc / "data"
+        model = MolInfoStore(data=loc_data, dump=self.loc)
+
+        for entry in loc_data.glob("MITE*.json"):
+            model.insert_entry(entry)
+
+        model.write_product_pickle()
+        model.write_substrate_pickle()
+        model.write_reaction_pickle()
+
+        logger.info("RecordManager: Completed creation of molfiles")
 
 
 def main(data: str, extras: str):
