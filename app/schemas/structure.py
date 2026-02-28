@@ -49,6 +49,7 @@ class SmilesProvider:
 
     @classmethod
     def get(cls):
+        """Merges columns back into dataframe"""
         if cls._df is None:
             df = pd.read_csv(settings.data_dir.joinpath("download/dump_smiles.csv"))
             df["ROMol_substrates"] = SubstratesProvider.get()

@@ -77,7 +77,7 @@ class MolInfoStore:
         self.entries.extend(models)
 
     def write_substrate_pickle(self):
-        df_substrates = (
+        df = (
             pd.DataFrame(
                 [
                     e.model_dump(include={"idx_csv_smiles", "substrates"})
@@ -88,18 +88,16 @@ class MolInfoStore:
             .sort_values("mite_id")
         )
         PandasTools.AddMoleculeColumnToFrame(
-            df_substrates,
+            df,
             smilesCol="substrates",
             molCol="ROMol_substrates",
             includeFingerprints=True,
         )
         with open(self.dump / "substrate_list.pickle", "wb") as outfile:
-            pickle.dump(
-                obj=df_substrates, file=outfile, protocol=pickle.HIGHEST_PROTOCOL
-            )
+            pickle.dump(obj=list(df["ROMol_substrates"]), file=outfile)
 
     def write_product_pickle(self):
-        df_products = (
+        df = (
             pd.DataFrame(
                 [
                     e.model_dump(include={"idx_csv_smiles", "products"})
@@ -110,16 +108,17 @@ class MolInfoStore:
             .sort_values("mite_id")
         )
         PandasTools.AddMoleculeColumnToFrame(
-            df_products,
+            df,
             smilesCol="products",
             molCol="ROMol_products",
             includeFingerprints=True,
         )
+
         with open(self.dump / "product_list.pickle", "wb") as outfile:
-            pickle.dump(obj=df_products, file=outfile, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(obj=list(df["ROMol_products"]), file=outfile)
 
     def write_reaction_pickle(self):
-        df_reaction = (
+        df = (
             pd.DataFrame(
                 [
                     e.model_dump(include={"idx_csv_smarts", "reactionsmarts"})
@@ -129,18 +128,18 @@ class MolInfoStore:
             .rename(columns={"idx_csv_smarts": "mite_id"})
             .sort_values("mite_id")
         )
-        df_reaction["reaction_fps"] = df_reaction["reactionsmarts"].apply(
+        df["reaction_fps"] = df["reactionsmarts"].apply(
             lambda x: rdChemReactions.CreateStructuralFingerprintForReaction(
                 rdChemReactions.ReactionFromSmarts(x)
             )
         )
-        df_reaction["diff_reaction_pfs"] = df_reaction["reactionsmarts"].apply(
+        df["diff_reaction_pfs"] = df["reactionsmarts"].apply(
             lambda x: rdChemReactions.CreateDifferenceFingerprintForReaction(
                 rdChemReactions.ReactionFromSmarts(x)
             )
         )
         with open(self.dump / "reaction_fps.pickle", "wb") as outfile:
-            pickle.dump(obj=df_reaction, file=outfile, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(obj=df, file=outfile)
 
 
 def get_version() -> str:
