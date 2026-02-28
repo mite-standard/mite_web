@@ -39,8 +39,6 @@ async def lifespan(app: FastAPI):
     app.state.table_headers = load_table_head()
     app.state.form_vals = load_form_vals()
 
-    # todo: read in fingerprint hashes as shared data
-
     yield
 
     logger.info("App shutting down.")
