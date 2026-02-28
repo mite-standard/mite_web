@@ -10,7 +10,7 @@ MITE_DATA_VERSION="1.23"
 MITE_DATA_RECORD=18806474
 
 # mite_web_extras Zenodo: https://doi.org/10.5281/zenodo.17453501
-MITE_WE_VERSION="1.24"
+MITE_WE_VERSION="1.23"
 MITE_WE_RECORD=18806707
 
 docker build \
