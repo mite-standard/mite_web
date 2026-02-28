@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="fw-semibold lh-2">Test your reaction</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p class="lead mb-2">This page allows to "dry-run" a reaction.</p>
+            <p class="lead mb-2">Simply input the reaction SMARTS and the example substrate and product SMILES to check if the reaction passes validation.</p>
+        </div>
+    </div>
+    <div class="row">
+        {% if messages %}
+        <div class="card card-body">
+            <div class="col text-center mx-auto">
+                <h4 class="fw-semibold lh-2">Error during reaction validation!</h4>
+                <div class="row my-4">
+                  <div class="text-center mx-auto">
+                    {% for message in messages %}
+                    <textarea readonly class="form-control" rows="5">{{ message }}</textarea>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="text-center mx-auto">
+                    <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}">canonicalize your substrate/product SMILES</a>.</h6>
+                    <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('troubleshooting') }}">troubleshooting page</a>.</h6>
+                  </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <form method="post" id="dryrun" action="{{ url_for('dryrun_query') }}">
+        <div class="row mb-2 mt-4">
+          <div class="col">
+              <h3 class="mb-3">Reaction parameters</h3>
+              <div class="form-floating">
+                  <input id="r_smarts" name="r_smarts" class="form-control" minlength="1" placeholder="[#6]1:[#6]:[#6]:[#6]:[#6]:[#6]:1>>[#6]1:[#6]:[#6](-Cl):[#6]:[#6]:[#6]:1" aria-describedby="RSmartsHelp" type="text" value="{% if raw %}{{ raw.r_smarts }}{% endif %}" required>
+                  <label for="r_smarts" class="form-label">Reaction (reaction SMARTS)</label>
+                  <div id="RSmartsHelp" class="form-text">Reaction SMARTS describing substrate specificity and the introduced changes. Use e.g. Ketcher to draw the reaction SMARTS.</div>
+              </div>
+          </div>
+        </div>
+        <div class="row my-2">
+            <div class="col">
+                <div class="form-floating">
+                    <input id="substrate" name="substrate" class="form-control" minlength="1" placeholder="c1ccccc1" aria-describedby="SubstrateHelp" type="text" value="{% if raw %}{{ raw.substrate }}{% endif %}" required>
+                    <label for="substrate" class="form-label">Example substrate (SMILES)</label>
+                    <div id="SubstrateHelp" class="form-text">A SMILES string describing the substrate of the reaction.</div>
+                </div>
+            </div>
+            <div class="col">
+                  <div class="form-floating">
+                      <input id="product" name="product" class="form-control" minlength="1" placeholder="c1cc(Cl)ccc1" aria-describedby="ProductHelp" type="text" value="{% if raw %}{{ raw.product }}{% endif %}" required>
+                      <label for="product" class="form-label">Example product (SMILES)</label>
+                      <div id="ProductHelp" class="form-text">A SMILES string describing the product of the reaction.</div>
+                  </div>
+              </div>
+        </div>
+        <div class="row justify-content-center my-4">
+            <div class="col-auto d-flex justify-content-center align-items-center p-0">
+                <button type="submit" id="dryrun-submit" class="btn btn-primary">Test reaction</button>
+            </div>
+        </div>
+    </form>
+    {% if data %}
+        <h3>Reaction passes validation!</h3>
+        <div class="row my-2 align-items-center">
+            <div class="card-group">
+                <div class="card">
+                    <img class="card-img-top" src="data:image/svg+xml;base64,{{ data['reactions'][0]['reactionSMARTS'][1] }}" alt="reaction SMARTS">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Reaction SMARTS</h5>
+                        <p class="card-text"><button class="btn btn-light btn-sm" data-clipboard-text="{{ data['reactions'][0]['reactionSMARTS'][0] }}">Copy SMILES</button></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-img-top" src="data:image/svg+xml;base64,{{ data['reactions'][0]['reactions'][0]['substrate'][0][1] }}" alt="reaction SMARTS">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Substrate</h5>
+                        <p class="card-text"><button class="btn btn-light btn-sm" data-clipboard-text="{{ data['reactions'][0]['reactions'][0]['substrate'][0][0] }}">Copy SMILES</button></p>
+                    </div>
+                </div>
+                <div class="card">
+                    <img class="card-img-top" src="data:image/svg+xml;base64,{{ data['reactions'][0]['reactions'][0]['products'][0][1] }}" alt="reaction SMARTS">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Product</h5>
+                        <p class="card-text"><button class="btn btn-light btn-sm" data-clipboard-text="{{ data['reactions'][0]['reactions'][0]['products'][0][0] }}">Copy SMILES</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>
+    <script type="text/javascript" src="{{ url_for('static', path='js/copy_clipboard.js') }}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            disableButton(document.getElementById('dryrun'), document.getElementById('dryrun-submit'))
+        });
+    </script>
+</div>
+
+{% endblock %}

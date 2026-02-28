@@ -32,45 +32,6 @@ class DBSeeder(BaseModel):
         default_factory=lambda: Path(__file__).parent.parent.joinpath("data/data")
     )
 
-    @model_validator(mode="after")
-    def validate_data(self):
-        if not self.data_dir.exists():
-            raise RuntimeError(
-                f"Data directory {self.data_dir} does not exist - Abort."
-            )
-        return self
-
-    def prepare_data(self) -> list:
-        """Prepares data for database seeding"""
-
-        seed = []
-        for item in self.data_src.iterdir():
-            if not re.fullmatch(r"MITE[0-9]{7}.json", item.name):
-                continue
-
-            with open(item) as infile:
-                data = json.load(infile)
-
-                if data["status"] != "active":
-                    logger.warning(f"{data["accession"]} is retired - skipped.")
-                    continue
-
-                entry = Entry(
-                    accession=data["accession"],
-                    orcids=self.get_orcids(data["changelog"]),
-                    references=self.get_references(data),
-                    evidences=self.get_evidence(data["reactions"]),
-                    tailoring=self.get_tailoring(data["reactions"]),
-                )
-
-                entry.enzyme = self.get_enzyme(
-                    entry, data["enzyme"], active.get(data["accession"], {})
-                )
-                entry.reactions = self.get_reactions(entry, data["reactions"])
-                seed.append(entry)
-
-        return seed
-
     @staticmethod
     def get_orcids(logs: list) -> str:
         """Parse changelog and concatenate ORCIDs in a string"""

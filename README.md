@@ -82,7 +82,7 @@ The app itself is stateless, with [mite_data's GitHub repository](https://github
 
 ### Development build
 
-This build simplifies development by hot reloading (recursively watching directories for changes. 
+This build simplifies development by hot reloading (recursively watching directories for changes). 
 Data from [mite_data](https://github.com/mite-standard/mite_data) is downloaded once and then injected into the image.
 Variables are read from an .env file (see [.env.example](.env.example)).
 

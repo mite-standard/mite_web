@@ -28,7 +28,7 @@
               {% if header[0] == "accession" %}
               <td><a class="custom-link" target="_blank" href="{{ url_for('repository', mite_id=row[header[0]]) }}">{{ row[header[0]] }}</a></td>
               {% elif header[0] == "status" %}
-              <td class="text-center">{{ row[header[0]] | safe }}</td>
+              <td class="text-center"><i class="bi bi-circle"></i></td>
               {% elif header[0] == "description" %}
               <td>{{ row[header[0]] | truncate(75, True) }}</td>
               {% elif header[0] == "reaction_description" %}

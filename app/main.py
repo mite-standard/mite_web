@@ -66,6 +66,3 @@ app.include_router(robots.router)
 app.include_router(repository.router)
 app.include_router(submission.router)
 app.include_router(debug.router)
-
-
-# TODO: implement, github authentication
