@@ -36,6 +36,12 @@ class SmilesParams(BaseModel):
         return v
 
 
+class DryrunParams(BaseModel):
+    substrate: str = Field(..., min_length=1)
+    product: str = Field(..., min_length=1)
+    r_smarts: str = Field(..., min_length=1)
+
+
 class GetStructure(BaseModel):
     smiles: str = None
 

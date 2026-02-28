@@ -2,9 +2,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
+from mite_extras import MiteParser
 
 from app.core.templates import templates
-from app.schemas.structures import GetStructure, PeptideParams, SmilesParams
+from app.schemas.structures import (
+    DryrunParams,
+    GetStructure,
+    PeptideParams,
+    SmilesParams,
+)
 
 router = APIRouter(prefix="/structure", tags=["views"])
 
@@ -85,5 +91,70 @@ async def flatten_query(request: Request, params: Annotated[SmilesParams, Form()
             name="flatten.html",
             context={
                 "messages": f"An error occurred while removing SMILES stereochemistry: {e!s}"
+            },
+        )
+
+
+@router.get("/dryrun", include_in_schema=False, response_class=HTMLResponse)
+async def dryrun(request: Request):
+    return templates.TemplateResponse(request=request, name="dryrun.html")
+
+
+@router.post("/dryrun/query", include_in_schema=False, response_class=HTMLResponse)
+async def dryrun_query(
+    request: Request,
+    params: Annotated[DryrunParams, Form()],
+):
+    data = {
+        "accession": "MITE0000000",
+        "status": "active",
+        "changelog": [
+            {
+                "version": "1",
+                "date": "2024-07-30",
+                "contributors": ["0000-0001-6534-6609"],
+                "reviewers": ["0000-0001-6534-6609"],
+                "comment": "Dummy",
+            }
+        ],
+        "enzyme": {
+            "name": "AviG2",
+            "references": ["doi:10.1016/j.chembiol.2004.08.016"],
+            "databaseIds": {"uniprot": "Q93KW1"},
+        },
+        "reactions": [
+            {
+                "tailoring": ["Methylation"],
+                "reactionSMARTS": params.r_smarts,
+                "reactions": [
+                    {
+                        "substrate": params.substrate,
+                        "products": [params.product],
+                        "isIntermediate": False,
+                    }
+                ],
+                "evidence": {
+                    "evidenceCode": ["Knock-out studies"],
+                    "references": ["doi:10.1016/j.chembiol.2004.08.016"],
+                },
+            }
+        ],
+    }
+
+    try:
+        parser = MiteParser()
+        parser.parse_mite_json(data=data)
+        return templates.TemplateResponse(
+            request=request,
+            name="dryrun.html",
+            context={"data": parser.to_html(), "raw": params.model_dump()},
+        )
+    except Exception as e:
+        return templates.TemplateResponse(
+            request=request,
+            name="dryrun.html",
+            context={
+                "messages": [f"During data validation, an error has occurred: {e!s}"],
+                "raw": params.model_dump(),
             },
         )
