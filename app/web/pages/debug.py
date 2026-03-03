@@ -1,6 +1,6 @@
 import hashlib
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response, status
 
 from app.core.config import settings
 
@@ -20,3 +20,8 @@ async def debug_scheme(request: Request):
 @router.get("/secret", include_in_schema=False)
 def debug_secret():
     return hashlib.sha256(settings.secret.encode()).hexdigest()
+
+
+@router.head("/health", include_in_schema=False)
+async def health_check():
+    return Response(status_code=status.HTTP_200_OK)
