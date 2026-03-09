@@ -90,7 +90,7 @@ function createHtmlEnzymeGenpept(container, data = {}) {
 function createHtmlEnzymeMibig(container, data = {}) {
     const entryHtml = `
         <div class="form-floating">
-            <input id="enzyme_mibig" name="enzyme_mibig" pattern="^BGC.+" minlength="10" maxlength="10" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.mibig ?? "")}" title="MIBiG ID of the BGC containing the enzyme">
+            <input id="enzyme_mibig" name="enzyme_mibig" class="form-control form-control-sm" placeholder="n/a" type="text" value="${escapeHtml(data?.enzyme?.databaseIds?.mibig ?? "")}" title="MIBiG ID of the BGC containing the enzyme">
             <label for="enzyme_mibig" class="form-label">MIBiG ID <i class="bi bi-question-circle"></i></label>
         </div>
     `;
