@@ -46,7 +46,12 @@ def verify_state(token: str) -> SubmissionState:
 
 def check_schema(data: dict):
     """Check if data meets schema"""
-    SchemaManager().validate_mite(data)
+    try:
+        SchemaManager().validate_mite(data)
+    except Exception as e:
+        s = f"Entry does not pass JSON Schema validation: {e!s}"
+        logger.warning(s)
+        raise HTTPException(400, detail=s) from e
 
 
 def check_own_entry(user: str, data: dict):
