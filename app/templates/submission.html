@@ -90,10 +90,27 @@
     </div>
   </form>
   {% if kanban %}
-  <div class="kanban">
+  <div class="row my-3">
+    <div class="col">
+      <h3 class="fw-semibold lh-2">Kanban Board</h3>
+      <p>
+        This <a href="https://en.wikipedia.org/wiki/Kanban_board">Kanban Board</a> gives an overview of the entries currently under preparation.
+        <br>
+        Before starting a new submission, please check if your enzyme hasn't already been described.
+      </p>
+    </div>
+  </div>
+  <div class="kanban my-2">
     {% for column, prs in kanban.items() %}
       <div class="kanban-column">
         <h3>{{ column }}</h3>
+        {% if column == "Draft" %}
+        <p>Incomplete entries currently under work</p>
+        {% elif column == "In Review" %}
+        <p>Completed entries waiting for review</p>
+        {% else %}
+        <p>Reviewed entries waiting for the next release</p>
+        {% endif %}
 
         {% for pr in prs %}
           <div class="kanban-card">
@@ -108,8 +125,6 @@
       </div>
     {% endfor %}
   </div>
-  {% else %}
-    <h3 class="my-3">Kanban board not supported in development mode.</h3>
   {% endif %}
 </div>
 <script type="text/javascript" src="{{ url_for('static', path='js/disable_button.js') }}" defer></script>

@@ -58,8 +58,8 @@ async def submission(
             u_id=str(uuid.uuid1()), step="draft", issued=time.time(), role="submitter"
         )
     )
-    kanban = None
 
+    kanban = {"Draft": [], "In Review": [], "Reviewed": []}
     if repo:
         kanban = await get_kanban_cached(repo)
 
