@@ -23,7 +23,7 @@ def test_check_schema_valid(mite_entry):
 
 
 def test_check_schema_invalid():
-    with pytest.raises(ValueError):
+    with pytest.raises(HTTPException):
         check_schema({})
 
 
