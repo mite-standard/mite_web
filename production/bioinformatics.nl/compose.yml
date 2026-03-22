@@ -16,6 +16,7 @@ services:
       - app
     networks:
       - app_network
+    restart: unless-stopped
 
 networks:
   app_network:
