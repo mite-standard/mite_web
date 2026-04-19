@@ -126,6 +126,8 @@ In these cases, terminate with `ctrl+c` and rebuild.
 
 #### Deployment Checklist
 
+*Nota bene: releases must be prepared locally to update the `uv.lock` file; else, builds fail.*
+
 The main software artifact produced by this repo are Docker containers deposited in the GitHub Container Repository.
 These containers are created automatically via GitHub Actions on every new Release.
 
