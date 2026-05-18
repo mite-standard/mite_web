@@ -93,7 +93,7 @@ Variables are read from an .env file (see [.env.example](.env.example)).
 1. Download and install dependencies
 ```commandline
 git clone git@github.com:mite-standard/mite_data.git
-uv sync
+uv sync --extra dev
 uv run pre-commit install
 ```
 
