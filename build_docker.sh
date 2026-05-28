@@ -6,11 +6,11 @@ IMAGE="ghcr.io/mite-standard/mite_web"
 APP_VERSION="${APP_VERSION:?APP_VERSION not set}"
 
 # mite_data Zenodo: https://doi.org/10.5281/zenodo.13294303
-MITE_DATA_VERSION="1.27"
-MITE_DATA_RECORD=20268257
+MITE_DATA_VERSION="1.28"
+MITE_DATA_RECORD=20434013
 
 # mite_web_extras Zenodo: https://doi.org/10.5281/zenodo.17453501
-MITE_WE_VERSION="1.27"
+MITE_WE_VERSION="1.28"
 MITE_WE_RECORD=20268414
 
 docker build \
