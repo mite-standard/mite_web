@@ -11,7 +11,7 @@ MITE_DATA_RECORD=20434013
 
 # mite_web_extras Zenodo: https://doi.org/10.5281/zenodo.17453501
 MITE_WE_VERSION="1.28"
-MITE_WE_RECORD=20268414
+MITE_WE_RECORD=20434432
 
 docker build \
   --build-arg DATA="$MITE_DATA_RECORD" \
