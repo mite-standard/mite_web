@@ -124,7 +124,7 @@ Submission ID: {branch}
 
 ## TODO Reviewers
 
-- Review the entry [HERE](https://mite.bioinformatics.nl/submission/review/{branch})
+- Review the entry [HERE](https://mite.lisc.univie.ac.at/submission/review/{branch})
 
 *This action was performed by `mite-bot`*
 """
