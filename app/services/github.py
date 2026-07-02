@@ -111,10 +111,10 @@ async def create_pr(repo: Repository, branch: str, data: dict, name: str | None 
     return await run_in_threadpool(_push)
 
 
-async def draft_to_full(repo: Repository, branch: str) -> PullRequest:
+async def draft_to_full(repo: Repository, branch: str, data: dict) -> PullRequest:
     """Convert draft to full pull request"""
     body = f"""
-A submission was performed via the MITE web portal and needs reviewing.
+{data['enzyme']['name']} is a {data['enzyme'].get("description", "unknown enzyme")} performing {", ".join([i for i in data['reactions'][0]["tailoring"]])}.
 
 Submission ID: {branch}
 
