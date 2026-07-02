@@ -114,17 +114,17 @@ async def create_pr(repo: Repository, branch: str, data: dict, name: str | None 
 async def draft_to_full(repo: Repository, branch: str, data: dict) -> PullRequest:
     """Convert draft to full pull request"""
     body = f"""
-{data['enzyme']['name']} is a {data['enzyme'].get("description", "unknown enzyme")} performing {", ".join([i for i in data['reactions'][0]["tailoring"]])}.
+## Review requested    
+    
+**{data['enzyme']['name']}** is a **{data['enzyme'].get("description", "unknown enzyme")}** performing **{", ".join([i for i in data['reactions'][0]["tailoring"]])}**.
 
-Submission ID: {branch}
+Please review the entry [HERE](https://mite.lisc.univie.ac.at/submission/review/{branch})
 
-## Review requested
+#### Reviewers notified
 
 {", ".join(settings.reviewer_gh_tags)}
 
-## TODO Reviewers
-
-- Review the entry [HERE](https://mite.lisc.univie.ac.at/submission/review/{branch})
+#### Submission ID: {branch}
 
 *This action was performed by `mite-bot`*
 """

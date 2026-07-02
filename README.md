@@ -121,6 +121,8 @@ docker compose -f dev-compose.yml build
 docker compose -f dev-compose.yml up --watch
 ```
 
+You can now use the database running on http://127.0.0.1:8000/.
+
 Sometimes, the hot reloading doesn't work perfectly (e.g. dependency updates).
 In these cases, terminate with `ctrl+c` and rebuild.
 
