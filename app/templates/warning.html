@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if messages %}
 <div class="mx-4 my-2">
   <div class="alert alert-light" role="alert">
     <div class="row">
@@ -24,4 +25,5 @@
       </div>
   </div>
 </div>
+{% endif %}
 {% endblock %}
