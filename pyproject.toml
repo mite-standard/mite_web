@@ -8,32 +8,21 @@ module-root = ""
 
 [project]
 name = "mite_web"
-version = "2.0.0.beta.22"
+version = "2.0.0.beta.23"
 description = "MITE (Minimum Information about a Tailoring Enzyme) Database Web App"
 readme = "README.md"
-requires-python = ">=3.12.0,<3.13.0" # because of rdkit 2024 in mite_extras
+requires-python = ">=3.12.0"
 license-files = ["LICENSE"]
 authors = [
     { name = "Mitja M. Zdouc", email = "zdoucmm@gmail.com" }
-]
-keywords = [
-    "cheminformatics",
-    "genomics"
-]
-classifiers = [
-    "Programming Language :: Python :: 3.12",
-    "Operating System :: POSIX :: Linux",
-    "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "Topic :: Scientific/Engineering :: Chemistry"
 ]
 
 dependencies = [
     "biopython~=1.86",
     "fastapi[standard]~=0.128.0",
-    "mite_extras",
+    "mite_extras>=1.6.6",
     "pandas~=2.2",
     "requests~=2.32",
-    "rdkit==2024.3.6",
     "sqlalchemy~=2.0",
     "uvicorn~=0.40.0",
     "pydantic-settings~=2.12",
