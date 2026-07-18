@@ -144,10 +144,19 @@ async def dryrun_query(
     try:
         parser = MiteParser()
         parser.parse_mite_json(data=data)
+
+        messages = []
+        for r in parser.entry.reactions:
+            messages.extend(r.warnings)
+
         return templates.TemplateResponse(
             request=request,
             name="dryrun.html",
-            context={"data": parser.to_html(), "raw": params.model_dump()},
+            context={
+                "data": parser.to_html(),
+                "raw": params.model_dump(),
+                "messages": messages,
+            },
         )
     except Exception as e:
         return templates.TemplateResponse(
