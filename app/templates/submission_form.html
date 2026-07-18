@@ -8,33 +8,7 @@
             <p>Hover over <i class="bi bi-question-circle"></i> icons to see more information.</p>
         </div>
     </div>
-    {% if messages %}
-    <div class="mx-4 my-2">
-      <div class="alert alert-light" role="alert">
-        <div class="row">
-          <div class="col-8">
-            <h5 class="mb-0"> Error during validation!</h5>
-          </div>
-          <div class="col-4">
-            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        </div>
-          <div class="row my-4">
-          <div class="text-center mx-auto">
-            {% for message in messages %}
-            <textarea readonly class="form-control" rows="5">{{ message }}</textarea>
-            {% endfor %}
-          </div>
-          </div>
-          <div class="row">
-          <div class="text-center mx-auto">
-            <h6>If you have issues with compound aromaticity, try to <a class="custom-link" target="_blank" href="{{ url_for('canonicalize') }}">canonicalize your substrate/product SMILES</a>.</h6>
-            <h6>For more troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('troubleshooting') }}">troubleshooting page</a>.</h6>
-          </div>
-          </div>
-      </div>
-    </div>
-    {% endif %}
+    {% include 'warning.html' %}
     <div class="border start_box">
         <div class="m-3">
             <div class="row d-flex align-items-center justify-content-end">

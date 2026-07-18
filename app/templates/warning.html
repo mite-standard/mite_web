@@ -1,0 +1,28 @@
+{% block content %}
+{% if messages %}
+<div class="mx-4 my-2">
+  <div class="alert alert-light" role="alert">
+    <div class="row">
+      <div class="col-8">
+        <h5 class="mb-0"> Validation detected an issue!</h5>
+      </div>
+      <div class="col-4">
+        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+      <div class="row my-4">
+      <div class="text-center mx-auto">
+        {% for message in messages %}
+        <textarea readonly class="form-control" rows="5">{{ message }}</textarea>
+        {% endfor %}
+      </div>
+      </div>
+      <div class="row">
+      <div class="text-center mx-auto">
+        <h6>For troubleshooting tips, see the <a class="custom-link" target="_blank" href="{{ url_for('troubleshooting') }}">troubleshooting page</a>.</h6>
+      </div>
+      </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

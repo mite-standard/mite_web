@@ -169,6 +169,7 @@ class MiteData(BaseModel):
 
     raw_data: dict
     data: MiteParser
+    warnings: list
 
     @model_validator(mode="before")
     @classmethod
@@ -179,6 +180,12 @@ class MiteData(BaseModel):
         schema_manager = SchemaManager()
         schema_manager.validate_mite(instance=parser.to_json())
         values["data"] = parser
+
+        messages = []
+        for r in parser.entry.reactions:
+            messages.extend(r.warnings)
+        values["warnings"] = messages
+
         return values
 
     @model_validator(mode="after")
@@ -207,7 +214,7 @@ class MiteData(BaseModel):
 
 
 class MiteService:
-    """Data convertion and enrichment"""
+    """Data convertion and enrichment prior to schema validation"""
 
     def parse(self, data: dict) -> dict:
         """Convert form data to format compatible with MiteData"""
