@@ -69,8 +69,6 @@ def is_genpept(acc: str, timeout: float = 7.0) -> bool:
 
         return int(response.json()["esearchresult"]["count"]) > 0
 
-    except requests.Timeout:
-        return False
     except requests.RequestException:
         return False
     except (ValueError, KeyError, TypeError):
