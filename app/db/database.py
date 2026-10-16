@@ -5,8 +5,8 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.core.config import settings
 
 engine = create_engine(
-    f"sqlite:///{settings.data_dir.resolve()}/app.db?mode=ro",
-    connect_args={"check_same_thread": False, "uri": True},
+    f"sqlite:///{settings.data_dir.resolve()}/app.db?mode=ro&uri=true",
+    connect_args={"check_same_thread": False},
 )
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
