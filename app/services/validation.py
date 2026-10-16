@@ -52,15 +52,29 @@ def is_genpept(acc: str, timeout: float = 7.0) -> bool | None:
         None if exception, e.g. timeout
 
     """
+    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
+
     try:
-        r = requests.head(
-            url=f"https://www.ncbi.nlm.nih.gov/protein/{acc}",
+        response = requests.get(
+            url,
+            params={
+                "db": "protein",
+                "term": f"{acc}[Accession]",
+                "retmode": "json",
+                "retmax": 1,
+            },
             timeout=timeout,
-            allow_redirects=False,
         )
-        return r.status_code == 200
-    except requests.RequestException:
+        response.raise_for_status()
+
+        return int(response.json()["esearchresult"]["count"]) > 0
+
+    except requests.Timeout:
         return None
+    except requests.RequestException:
+        return False
+    except (ValueError, KeyError, TypeError):
+        return False
 
 
 def is_uniprot(acc: str, timeout: float = 3.0) -> bool | None:
