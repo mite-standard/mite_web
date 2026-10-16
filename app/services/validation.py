@@ -44,7 +44,7 @@ def check_mite_id(s: str) -> None:
         raise ValueError("MITE Accession invalid.")
 
 
-def is_genpept(acc: str, timeout: float = 7.0) -> bool | None:
+def is_genpept(acc: str, timeout: float = 7.0) -> bool:
     """Check if string is a valid genbank entry
 
     Returns:
@@ -70,7 +70,7 @@ def is_genpept(acc: str, timeout: float = 7.0) -> bool | None:
         return int(response.json()["esearchresult"]["count"]) > 0
 
     except requests.Timeout:
-        return None
+        return False
     except requests.RequestException:
         return False
     except (ValueError, KeyError, TypeError):

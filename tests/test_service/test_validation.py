@@ -42,7 +42,7 @@ def test_genpept_invalid():
 
 
 def test_genpept_timeout():
-    assert validation.is_genpept(acc="AAK83184.1", timeout=0.000000001) is None
+    assert validation.is_genpept(acc="AAK83184.1", timeout=0.000000001) is False
 
 
 @pytest.mark.slow
