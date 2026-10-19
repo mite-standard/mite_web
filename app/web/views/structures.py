@@ -1,7 +1,8 @@
 from typing import Annotated
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from mite_extras import MiteParser
 
 from app.core.templates import templates
@@ -97,72 +98,83 @@ async def flatten_query(request: Request, params: Annotated[SmilesParams, Form()
 
 @router.get("/dryrun", include_in_schema=False, response_class=HTMLResponse)
 async def dryrun(request: Request):
+    def _prep_json(p: DryrunParams) -> dict:
+        return {
+            "accession": "MITE0000000",
+            "status": "active",
+            "changelog": [
+                {
+                    "version": "1",
+                    "date": "2024-07-30",
+                    "contributors": ["0000-0001-6534-6609"],
+                    "reviewers": ["0000-0001-6534-6609"],
+                    "comment": "Dummy",
+                }
+            ],
+            "enzyme": {
+                "name": "AviG2",
+                "references": ["doi:10.1016/j.chembiol.2004.08.016"],
+                "databaseIds": {"uniprot": "Q93KW1"},
+            },
+            "reactions": [
+                {
+                    "tailoring": ["Methylation"],
+                    "reactionSMARTS": p.r_smarts,
+                    "reactions": [
+                        {
+                            "substrate": p.substrate,
+                            "products": [p.product],
+                            "isIntermediate": False,
+                        }
+                    ],
+                    "evidence": {
+                        "evidenceCode": ["Knock-out studies"],
+                        "references": ["doi:10.1016/j.chembiol.2004.08.016"],
+                    },
+                }
+            ],
+        }
+
+    params_raw = dict(request.query_params)
+    print(params_raw)  # TODO: remove
+
+    if params_raw:
+        try:
+            params = DryrunParams(**params_raw)
+            parser = MiteParser()
+            parser.parse_mite_json(data=_prep_json(params))
+
+            messages = []
+            for r in parser.entry.reactions:
+                messages.extend(r.warnings)
+
+            return templates.TemplateResponse(
+                request=request,
+                name="dryrun.html",
+                context={
+                    "data": parser.to_html(),
+                    "messages": messages,
+                },
+            )
+        except Exception as e:
+            return templates.TemplateResponse(
+                request=request,
+                name="dryrun.html",
+                context={
+                    "messages": [
+                        f"During data validation, an error has occurred: {e!s}"
+                    ]
+                },
+            )
+
     return templates.TemplateResponse(request=request, name="dryrun.html")
 
 
 @router.post("/dryrun/query", include_in_schema=False, response_class=HTMLResponse)
-async def dryrun_query(
-    request: Request,
-    params: Annotated[DryrunParams, Form()],
-):
-    data = {
-        "accession": "MITE0000000",
-        "status": "active",
-        "changelog": [
-            {
-                "version": "1",
-                "date": "2024-07-30",
-                "contributors": ["0000-0001-6534-6609"],
-                "reviewers": ["0000-0001-6534-6609"],
-                "comment": "Dummy",
-            }
-        ],
-        "enzyme": {
-            "name": "AviG2",
-            "references": ["doi:10.1016/j.chembiol.2004.08.016"],
-            "databaseIds": {"uniprot": "Q93KW1"},
-        },
-        "reactions": [
-            {
-                "tailoring": ["Methylation"],
-                "reactionSMARTS": params.r_smarts,
-                "reactions": [
-                    {
-                        "substrate": params.substrate,
-                        "products": [params.product],
-                        "isIntermediate": False,
-                    }
-                ],
-                "evidence": {
-                    "evidenceCode": ["Knock-out studies"],
-                    "references": ["doi:10.1016/j.chembiol.2004.08.016"],
-                },
-            }
-        ],
-    }
+async def dryrun_query(request: Request):
+    forms = dict(await request.form())
 
-    try:
-        parser = MiteParser()
-        parser.parse_mite_json(data=data)
-
-        messages = []
-        for r in parser.entry.reactions:
-            messages.extend(r.warnings)
-
-        return templates.TemplateResponse(
-            request=request,
-            name="dryrun.html",
-            context={
-                "data": parser.to_html(),
-                "messages": messages,
-            },
-        )
-    except Exception as e:
-        return templates.TemplateResponse(
-            request=request,
-            name="dryrun.html",
-            context={
-                "messages": [f"During data validation, an error has occurred: {e!s}"],
-                "raw": params.model_dump(),
-            },
-        )
+    return RedirectResponse(
+        url=f"/structure/dryrun?{urlencode(forms)}",
+        status_code=303,
+    )
