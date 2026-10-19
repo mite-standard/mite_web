@@ -169,9 +169,9 @@ If parameters are not provided, the application will automatically start in deve
 While most parameters are [self-explanatory](.env.example), the reviewer orcids, GitHub tags, and passwords need to be provided as a base64-encoded string.
 The easiest way to get this is to create a csv file (see [reviewers.example.csv](reviewers.example.csv)) and run `uv run python scripts/hash_pw.py <input.csv>` on it.
 
-#### Bioinformatics.nl
+#### lisc.univie.ac.at
 
-- Download the content of the [bioinformatics.nl](production/bioinformatics.nl) directory (e.g. with `curl --output <filename> <URL>`)
-- Specify the desired container version in [compose.yml](production/bioinformatics.nl/compose.yml)
+- Download the content of the [lisc.univie.ac.at](production/lisc.univie.ac.at) directory (e.g. with `curl --output <filename> <URL>`)
+- Specify the desired container version in [compose.yml](production/lisc.univie.ac.at/compose.yml)
 - Add parameters in an `.env` file (see [.env.example](.env.example)
 - Run `docker compose -f compose.yml up`
