@@ -154,7 +154,6 @@ async def dryrun_query(
             name="dryrun.html",
             context={
                 "data": parser.to_html(),
-                "raw": params.model_dump(),
                 "messages": messages,
             },
         )

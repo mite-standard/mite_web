@@ -21,7 +21,7 @@
           <div class="col">
               <h3 class="mb-3">Reaction parameters</h3>
               <div class="form-floating">
-                  <input id="r_smarts" name="r_smarts" class="form-control" minlength="1" placeholder="[#6]1:[#6]:[#6]:[#6]:[#6]:[#6]:1>>[#6]1:[#6]:[#6](-Cl):[#6]:[#6]:[#6]:1" aria-describedby="RSmartsHelp" type="text" value="{% if raw %}{{ raw.r_smarts }}{% endif %}" required>
+                  <input id="r_smarts" name="r_smarts" class="form-control" minlength="1" placeholder="[#6]1:[#6]:[#6]:[#6]:[#6]:[#6]:1>>[#6]1:[#6]:[#6](-Cl):[#6]:[#6]:[#6]:1" aria-describedby="RSmartsHelp" type="text" value="{% if data %}{{ data['reactions'][0]['reactionSMARTS'][0] }}{% endif %}" required>
                   <label for="r_smarts" class="form-label">Reaction (reaction SMARTS)</label>
                   <div id="RSmartsHelp" class="form-text">Reaction SMARTS describing substrate specificity and the introduced changes. Use e.g. Ketcher to draw the reaction SMARTS.</div>
               </div>
@@ -30,14 +30,14 @@
         <div class="row my-2">
             <div class="col">
                 <div class="form-floating">
-                    <input id="substrate" name="substrate" class="form-control" minlength="1" placeholder="c1ccccc1" aria-describedby="SubstrateHelp" type="text" value="{% if raw %}{{ raw.substrate }}{% endif %}" required>
+                    <input id="substrate" name="substrate" class="form-control" minlength="1" placeholder="c1ccccc1" aria-describedby="SubstrateHelp" type="text" value="{% if data %}{{ data['reactions'][0]['reactions'][0]['substrate'][0][0] }}{% endif %}" required>
                     <label for="substrate" class="form-label">Example substrate (SMILES)</label>
                     <div id="SubstrateHelp" class="form-text">A SMILES string describing the substrate of the reaction.</div>
                 </div>
             </div>
             <div class="col">
                   <div class="form-floating">
-                      <input id="product" name="product" class="form-control" minlength="1" placeholder="c1cc(Cl)ccc1" aria-describedby="ProductHelp" type="text" value="{% if raw %}{{ raw.product }}{% endif %}" required>
+                      <input id="product" name="product" class="form-control" minlength="1" placeholder="c1cc(Cl)ccc1" aria-describedby="ProductHelp" type="text" value="{% if data %}{{ data['reactions'][0]['reactions'][0]['products'][0][0] }}{% endif %}" required>
                       <label for="product" class="form-label">Example product (SMILES)</label>
                       <div id="ProductHelp" class="form-text">A SMILES string describing the product of the reaction.</div>
                   </div>
