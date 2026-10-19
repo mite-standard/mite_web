@@ -128,15 +128,31 @@ class MolInfoStore:
             .rename(columns={"idx_csv_smarts": "mite_id"})
             .sort_values("mite_id")
         )
-        df["reaction_fps"] = df["reactionsmarts"].apply(
-            lambda x: rdChemReactions.CreateStructuralFingerprintForReaction(
-                rdChemReactions.ReactionFromSmarts(x)
-            )
+
+        def create_fingerprint(row, fingerprint_func):
+            try:
+                reaction = rdChemReactions.ReactionFromSmarts(row["reactionsmarts"])
+                return fingerprint_func(reaction)
+            except Exception as e:
+                print(f"Error processing mite_id: {row['mite_id']}")
+                print(f"reactionsmarts: {row['reactionsmarts']}")
+                print(f"Error: {e}")
+                raise
+
+        df["reaction_fps"] = df.apply(
+            lambda row: create_fingerprint(
+                row,
+                rdChemReactions.CreateStructuralFingerprintForReaction,
+            ),
+            axis=1,
         )
-        df["diff_reaction_pfs"] = df["reactionsmarts"].apply(
-            lambda x: rdChemReactions.CreateDifferenceFingerprintForReaction(
-                rdChemReactions.ReactionFromSmarts(x)
-            )
+
+        df["diff_reaction_pfs"] = df.apply(
+            lambda row: create_fingerprint(
+                row,
+                rdChemReactions.CreateDifferenceFingerprintForReaction,
+            ),
+            axis=1,
         )
         with open(self.dump / "reaction_fps.pickle", "wb") as outfile:
             pickle.dump(obj=df, file=outfile)
