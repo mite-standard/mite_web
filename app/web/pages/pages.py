@@ -11,21 +11,6 @@ async def index(request: Request):
     return templates.TemplateResponse(request=request, name="index.html")
 
 
-@router.get("/tutorial", include_in_schema=False, response_class=HTMLResponse)
-async def tutorial(request: Request):
-    return templates.TemplateResponse(request=request, name="tutorial.html")
-
-
-@router.get("/troubleshooting", include_in_schema=False, response_class=HTMLResponse)
-async def troubleshooting(request: Request):
-    return templates.TemplateResponse(request=request, name="troubleshooting.html")
-
-
-@router.get("/faqs", include_in_schema=False, response_class=HTMLResponse)
-async def faqs(request: Request):
-    return templates.TemplateResponse(request=request, name="faqs.html")
-
-
 @router.get("/termsofuse", include_in_schema=False, response_class=HTMLResponse)
 async def termsofuse(request: Request):
     return templates.TemplateResponse(request=request, name="termsofuse.html")
