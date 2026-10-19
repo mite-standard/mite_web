@@ -136,7 +136,6 @@ async def dryrun(request: Request):
         }
 
     params_raw = dict(request.query_params)
-    print(params_raw)  # TODO: remove
 
     if params_raw:
         try:
@@ -172,7 +171,9 @@ async def dryrun(request: Request):
 
 @router.post("/dryrun/query", include_in_schema=False, response_class=HTMLResponse)
 async def dryrun_query(request: Request):
-    forms = dict(await request.form())
+    forms_raw = dict(await request.form())
+    params = DryrunParams(**forms_raw)
+    forms = params.model_dump(exclude_none=True)
 
     return RedirectResponse(
         url=f"/structure/dryrun?{urlencode(forms)}",
