@@ -162,7 +162,8 @@ async def dryrun(request: Request):
                 context={
                     "messages": [
                         f"During data validation, an error has occurred: {e!s}"
-                    ]
+                    ],
+                    "raw": params_raw,
                 },
             )
 
